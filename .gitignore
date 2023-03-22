@@ -7,11 +7,17 @@
 # e.g., .venv_py38, .venv_py39 ...
 .venv*
 
-# private and/or temporary stuffs
+# private stuffs
 */privates/
 */private/
+privates/
+private/
+
+# temporary stuffs
 */temps/
 */temp/
+temps/
+temp/
 
 
 # ========================== #
