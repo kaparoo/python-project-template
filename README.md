@@ -20,8 +20,9 @@
 <details>
 <summary><strong>Table of Contents</strong></summary>
 
-- [:wave: Overview](#wave-overview)
-- [:balance_scale: License](#balance_scale-license)  
+- [***YOUR PROJECT NAME HERE***](#your-project-name-here)
+  - [:wave: **Overview**](#wave-overview)
+  - [:balance\_scale: **License**](#balance_scale-license)
 
 </details>
 
