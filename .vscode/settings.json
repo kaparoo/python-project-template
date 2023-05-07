@@ -27,8 +27,8 @@
             "source.organizeImports": true,
         },
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
     },
-    "python.formatting.provider": "black",
 
     // ==================== //
     //        Testing       //
