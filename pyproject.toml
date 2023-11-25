@@ -81,33 +81,39 @@ path = "project/__about__.py"
 # https://hatch.pypa.io/latest/version/
 
 [tool.mypy]
+allow_redefinition = true
+exclude = ["tests/"]
+pretty = true
+show_error_codes = true
+show_column_numbers = true
+warn_redundant_casts = true
 warn_return_any = true
 warn_unused_configs = true
-allow_redefinition = true
-show_column_numbers = true
-show_error_codes = true
-pretty = true
-exclude = ["tests/"]
+warn_unused_ignores = true
+warn_unreachable = true
 # See the following documentation for more information
 # https://mypy.readthedocs.io/en/stable/config_file.html
+# https://mypy.readthedocs.io/en/stable/config_file.html#example-pyproject-toml
 
 [tool.black]
 line-length = 88
+include = '\.pyi?$'
 # See the following documentation for more information
-# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html
+# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
 
 [tool.pytest.ini_options]
 testpaths = ["tests/"]
 # See the following documentation for more information
-# https://docs.pytest.org/en/latest/reference/customize.html
+# https://docs.pytest.org/en/latest/reference/customize.html#pyproject-toml
+# https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
 
 [tool.ruff]
 line-length = 88
 ignore-init-module-imports = true
-# See the following documentations for more information
-# https://beta.ruff.rs/docs/configuration/
-# https://beta.ruff.rs/docs/settings/
-# https://beta.ruff.rs/docs/rules/
+# See the following documentation for more information
+# https://docs.astral.sh/ruff/configuration/
+# https://docs.astral.sh/ruff/settings/
+# https://docs.astral.sh/ruff/rules/
 
 [tool.ruff.flake8-annotations]
 allow-star-arg-any = true
