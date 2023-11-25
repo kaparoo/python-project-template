@@ -105,7 +105,30 @@ testpaths = ["tests/"]
 [tool.ruff]
 cache-dir = "./.cache/ruff"
 extend-exclude = [".cache", ".venv*", ".vscode", "tests"]
-extend-select = ["I", "UP", "ANN", "B", "C4", "PIE", "RSE", "RET", "SIM", "TCH"]
+extend-select = [
+    "I",     # isort
+    "UP",    # pyupgrade
+    "YTT",   # flake8-2020
+    "ANN",   # flake8-annotations
+    "BLE",   # flake8-blind-except
+    "B",     # flake8-bugbear
+    "A",     # flake8-builtins
+    "C4",    # flake8-comprehensions
+    "PIE",   # flake8-pie
+    "RSE",   # flake8-raise
+    "RET",   # flake8-return
+    "SLOT",  # flake8-slots
+    "SIM",   # flake8-simplify
+    "TCH",   # flake8-type-checking
+    "ARG",   # flake8-unused-arguments
+    "PGH",   # pygrep-hooks
+    "PL",    # Pylint
+    "TRY",   # tryceratops
+    "FLY",   # flynt
+    "PERF",  # Perflint
+    "FURB",  # refurb
+    "RUF",   # Ruff-specific rules
+]
 ignore-init-module-imports = true
 # See the following documentation for more information
 # https://docs.astral.sh/ruff/configuration/
