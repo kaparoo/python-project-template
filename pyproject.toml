@@ -82,6 +82,7 @@ path = "project/__about__.py"
 
 [tool.mypy]
 allow_redefinition = true
+cache_dir = "./.cache/mypy"
 exclude = ["tests/"]
 pretty = true
 show_error_codes = true
@@ -102,12 +103,14 @@ include = '\.pyi?$'
 # https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
 
 [tool.pytest.ini_options]
+cache_dir = "./.cache/pytest"
 testpaths = ["tests/"]
 # See the following documentation for more information
 # https://docs.pytest.org/en/latest/reference/customize.html#pyproject-toml
 # https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
 
 [tool.ruff]
+cache-dir = "./.cache/ruff"
 line-length = 88
 ignore-init-module-imports = true
 # See the following documentation for more information
