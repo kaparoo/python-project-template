@@ -56,7 +56,6 @@ dev = [
     "hatch",
     "ruff",
     "mypy",
-    "black",
     "pytest",
 ]
 # Reserved for future addition of --only-deps option to `pip install`
@@ -71,7 +70,7 @@ GitHub = "https://www.github.com/YOUR/REPOSITORY"
 
 [tool.hatch.build]
 only-include = ["project"]
-# See the following documentations for more information
+# See the following documentation for more information
 # https://hatch.pypa.io/latest/build/
 # https://hatch.pypa.io/latest/config/build/
 
@@ -96,12 +95,6 @@ warn_unreachable = true
 # https://mypy.readthedocs.io/en/stable/config_file.html
 # https://mypy.readthedocs.io/en/stable/config_file.html#example-pyproject-toml
 
-[tool.black]
-line-length = 88
-include = '\.pyi?$'
-# See the following documentation for more information
-# https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
-
 [tool.pytest.ini_options]
 cache_dir = "./.cache/pytest"
 testpaths = ["tests/"]
@@ -111,18 +104,23 @@ testpaths = ["tests/"]
 
 [tool.ruff]
 cache-dir = "./.cache/ruff"
-line-length = 88
+extend-exclude = [".cache", ".venv*", ".vscode", "tests"]
+extend-select = ["I", "UP", "ANN", "B", "C4", "PIE", "RSE", "RET", "SIM", "TCH"]
 ignore-init-module-imports = true
 # See the following documentation for more information
 # https://docs.astral.sh/ruff/configuration/
 # https://docs.astral.sh/ruff/settings/
 # https://docs.astral.sh/ruff/rules/
 
-[tool.ruff.flake8-annotations]
+[tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true
+mypy-init-return = true
 
-[tool.ruff.flake8-unused-arguments]
+[tool.ruff.lint.flake8-type-checking]
+exempt-modules = ["typing", "typing_extensions"]
+
+[tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["project"]
