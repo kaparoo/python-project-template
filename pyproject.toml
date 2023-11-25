@@ -129,6 +129,15 @@ extend-select = [
     "FURB",  # refurb
     "RUF",   # Ruff-specific rules
 ]
+extend-ignore = [
+    "PLR0904",  # too-many-public-methods
+    "PLR0911",  # too-many-return-statements
+    "PLR0912",  # too-many-branches
+    "PLR0913",  # too-many-arguments
+    "PLR0915",  # too-many-statements
+    "PLR0916",  # too-many-boolean-expressions
+    "PLR2004",  # magiv-value-comparison
+]
 ignore-init-module-imports = true
 # See the following documentation for more information
 # https://docs.astral.sh/ruff/configuration/
@@ -137,7 +146,10 @@ ignore-init-module-imports = true
 
 [tool.ruff.lint.flake8-annotations]
 allow-star-arg-any = true
+ignore-fully-untyped = true
 mypy-init-return = true
+suppress-dummy-args = true
+suppress-none-returning = true
 
 [tool.ruff.lint.flake8-type-checking]
 exempt-modules = ["typing", "typing_extensions"]
