@@ -16,22 +16,22 @@ build-backend = "hatchling.build"
 # ========================== #
 
 [project]
-name = "YOUR_PROJECT_NAME"
+name = "YOUR_PROJECT_NAME"  # FIX HERE
 dynamic = ["version"]
-description = "YOUR_PROJECT_DESCRIPTION"
+description = "YOUR_PROJECT_DESCRIPTION"  # FIX HERE
 readme = "README.md"
-requires-python = "PYTHON_VERSION_SPECIFIER"
+requires-python = "PYTHON_VERSION_SPECIFIER"  # FIX HERE
 license = { file = "LICENSE" }
-authors = [
-    { name = "AUTHOR_NAME", email = "AUTHOR_EMAIL" },
+authors = [ 
+    { name = "AUTHOR_NAME", email = "AUTHOR@EMAIL" },  # FIX HERE
 ]
 maintainers = [
-    { name = "MAINTAINER_NAME", email = "MAINTAINER_EMAIL"}
+    { name = "MAINTAINER_NAME", email = "MAINTAINER@EMAIL"},  # FIX HERE
 ]
 keywords = [
-    "YOUR",
-    "PROJECT",
-    "KEYWORDS",
+    "YOUR",      # FIX HERE
+    "PROJECT",   # FIX HERE
+    "KEYWORDS",  # FIX HERE
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -46,9 +46,9 @@ classifiers = [
     # See https://pypi.org/classifiers/ for more classifiers
 ]
 dependencies = [
-    "YOUR",
-    "PROJECT",
-    "DEPENDENCIES",
+    "YOUR",          # FIX HERE
+    "PROJECT",       # FIX HERE
+    "DEPENDENCIES",  # FIX HERE
 ]
 
 [project.optional-dependencies]
@@ -62,20 +62,20 @@ dev = [
 # See https://github.com/pypa/pip/issues/11440 for more information
 
 [project.urls]
-GitHub = "https://www.github.com/YOUR/REPOSITORY"
+GitHub = "https://www.github.com/YOUR/REPOSITORY"  # FIX HERE
 
 # ========================== #
 #      [tool.*] Sections     #
 # ========================== #
 
 [tool.hatch.build]
-only-include = ["project"]
+only-include = ["project"]  # FIX HERE
 # See the following documentation for more information
 # https://hatch.pypa.io/latest/build/
 # https://hatch.pypa.io/latest/config/build/
 
 [tool.hatch.version]
-path = "project/__about__.py"
+path = "project/__about__.py"  # FIX HERE
 # See the following documentation for more information
 # https://hatch.pypa.io/latest/version/
 
@@ -136,7 +136,7 @@ extend-ignore = [
     "PLR0913",  # too-many-arguments
     "PLR0915",  # too-many-statements
     "PLR0916",  # too-many-boolean-expressions
-    "PLR2004",  # magiv-value-comparison
+    "PLR2004",  # magic-value-comparison
 ]
 ignore-init-module-imports = true
 # See the following documentation for more information
@@ -158,4 +158,4 @@ exempt-modules = ["typing", "typing_extensions"]
 ignore-variadic-names = true
 
 [tool.ruff.lint.isort]
-known-first-party = ["project"]
+known-first-party = ["project"]  # FIX HERE
