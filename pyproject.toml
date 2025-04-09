@@ -121,11 +121,36 @@ exempt-modules = ["typing", "typing_extensions"]
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
 
+[tool.ruff.lint.isort]
+known-first-party = ["project"]  # FIX HERE
+
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true
 
 [tool.ruff.lint.pydoclint]
 ignore-one-line-docstrings = true  # Skip docstrings which fit on a single line.
 
-[tool.ruff.lint.isort]
-known-first-party = ["project"]  # FIX HERE
+# Following fields are omitted and use default values (ruff v0.11.4)
+# - tool.ruff.analyze
+# - tool.ruff.format
+# - tool.ruff.lint.flake8-bandit
+# - tool.ruff.lint.flake8-boolean-trap
+# - tool.ruff.lint.flake8-bugbear
+# - tool.ruff.lint.flake8-builtins
+# - tool.ruff.lint.flake8-comprehensions
+# - tool.ruff.lint.flake8-copyright
+# - tool.ruff.lint.flake8-errmsg
+# - tool.ruff.lint.flake8-gettext
+# - tool.ruff.lint.flake8-implicit-str-concat
+# - tool.ruff.lint.flake8-import-conventions
+# - tool.ruff.lint.flake8-pytest-style
+# - tool.ruff.lint.flake8-quotes
+# - tool.ruff.lint.flake8-self
+# - tool.ruff.lint.flake8-tidy-imports
+# - tool.ruff.lint.mccabe
+# - tool.ruff.lint.pep8-naming
+# - tool.ruff.lint.pyflakes
+# - tool.ruff.lint.pylint
+# - tool.ruff.lint.pydocstyle
+# - tool.ruff.lint.pyupgrade
+# - tool.ruff.lint.ruff
