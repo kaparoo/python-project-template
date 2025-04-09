@@ -1,86 +1,46 @@
-# See the following PEPs for more information
-# https://peps.python.org/pep-0517/
-# https://peps.python.org/pep-0518/
-# https://peps.python.org/pep-0621/
-
-# ========================== #
-#        Build System        #
-# ========================== #
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 # ========================== #
 #      Project Metadata      #
 # ========================== #
 
 [project]
-name = "YOUR_PROJECT_NAME"  # FIX HERE
-dynamic = ["version"]
-description = "YOUR_PROJECT_DESCRIPTION"  # FIX HERE
+name = "PROJECT_NAME"  # FIX HERE
+version = "0.1.0"
+description = "PROJECT_DESCRIPTION"  # FIX HERE
 readme = "README.md"
-requires-python = "PYTHON_VERSION_SPECIFIER"  # FIX HERE
-license = { file = "LICENSE" }
-authors = [ 
-    { name = "AUTHOR_NAME", email = "AUTHOR@EMAIL" },  # FIX HERE
-]
-maintainers = [
-    { name = "MAINTAINER_NAME", email = "MAINTAINER@EMAIL"},  # FIX HERE
-]
-keywords = [
-    "YOUR",      # FIX HERE
-    "PROJECT",   # FIX HERE
-    "KEYWORDS",  # FIX HERE
+requires-python = ">=3.12.9"  # FIX HERE
+license = "MIT"
+authors = [
+    { name = "Jaewoo Park", email = "kaparoo2001@gmail.com" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Typing :: Typed",
     # See https://pypi.org/classifiers/ for more classifiers
 ]
-dependencies = [
-    "YOUR",          # FIX HERE
-    "PROJECT",       # FIX HERE
-    "DEPENDENCIES",  # FIX HERE
-]
-
-[project.optional-dependencies]
-dev = [
-    "hatch",
-    "ruff",
-    "mypy",
-    "pytest",
-]
-# Reserved for future addition of --only-deps option to `pip install`
-# See https://github.com/pypa/pip/issues/11440 for more information
+keywords = []  # FIX HERE
+dependencies = []  # FIX HERE
 
 [project.urls]
-GitHub = "https://www.github.com/YOUR/REPOSITORY"  # FIX HERE
+GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
 
 # ========================== #
 #      [tool.*] Sections     #
 # ========================== #
 
-[tool.hatch.build]
-only-include = ["project"]  # FIX HERE
-# See the following documentation for more information
-# https://hatch.pypa.io/latest/build/
-# https://hatch.pypa.io/latest/config/build/
-
-[tool.hatch.version]
-path = "project/__about__.py"  # FIX HERE
-# See the following documentation for more information
-# https://hatch.pypa.io/latest/version/
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pytest>=8.3.5",
+    "ruff>=0.11.4",
+]
 
 [tool.mypy]
-allow_redefinition = true
 cache_dir = "./.cache/mypy"
 exclude = ["tests/"]
 pretty = true
@@ -91,6 +51,9 @@ warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = true
 warn_unreachable = true
+allow_redefinition = true
+no_implicit_optional = true
+# plugins = ["numpy.typing.mypy_plugin"]  # Uncomment if using numpy
 # See the following documentation for more information
 # https://mypy.readthedocs.io/en/stable/config_file.html
 # https://mypy.readthedocs.io/en/stable/config_file.html#example-pyproject-toml
@@ -105,7 +68,6 @@ testpaths = ["tests/"]
 [tool.ruff]
 cache-dir = "./.cache/ruff"
 extend-exclude = [".cache", ".venv*", ".vscode", "tests"]
-ignore-init-module-imports = true
 # See the following documentation for more information
 # https://docs.astral.sh/ruff/configuration/
 # https://docs.astral.sh/ruff/settings/
@@ -134,10 +96,9 @@ extend-select = [
     "TRY",   # tryceratops
     "FLY",   # flynt
     "PERF",  # Perflint
-    # "FURB",  # refurb (in preview)
     "RUF",   # Ruff-specific rules
 ]
-extend-ignore = [
+ignore = [
     "PLR0904",  # too-many-public-methods
     "PLR0911",  # too-many-return-statements
     "PLR0912",  # too-many-branches
@@ -159,6 +120,12 @@ exempt-modules = ["typing", "typing_extensions"]
 
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
+
+[tool.ruff.lint.pycodestyle]
+ignore-overlong-task-comments = true
+
+[tool.ruff.lint.pydoclint]
+ignore-one-line-docstrings = true  # Skip docstrings which fit on a single line.
 
 [tool.ruff.lint.isort]
 known-first-party = ["project"]  # FIX HERE
