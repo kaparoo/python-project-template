@@ -74,7 +74,7 @@ extend-exclude = [".cache", ".venv*", ".vscode", "tests"]
 # https://docs.astral.sh/ruff/rules/
 
 [tool.ruff.lint]
-extend-select = [
+select = [
     "ERA",   # eradicate
     "YTT",   # flake8-2020
     "ANN",   # flake8-annotations
@@ -89,8 +89,9 @@ extend-select = [
     "PIE",   # flake8-pie
     "RSE",   # flake8-raise
     "RET",   # flake8-return
-    "SLOT",  # flake8-slots
+    "SLF",   # flake8-self
     "SIM",   # flake8-simplify
+    "SLOT",  # flake8-slots
     "TC",    # flake8-type-checking
     "ARG",   # flake8-unused-arguments
     "PTH",   # flake8-use-pathlib
@@ -99,7 +100,8 @@ extend-select = [
     "NPY",   # NumPy-specific rules
     "N",     # pep8-naming
     "PERF",  # Perflint
-    "F",   # pyflakes
+    "E",     # pycodestyle (errors)
+    "F",     # pyflakes
     "PGH",   # pygre p-hooks
     "PL",    # Pylint
     "UP",    # pyupgrade
