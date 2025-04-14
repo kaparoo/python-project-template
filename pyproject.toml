@@ -76,6 +76,13 @@ no_implicit_optional = true
 # https://mypy.readthedocs.io/en/stable/config_file.html
 # https://mypy.readthedocs.io/en/stable/config_file.html#example-pyproject-toml
 
+[[tool.mypy.overrides]]
+module = [
+    "torchvision",
+    "torchvision.*",
+]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 cache_dir = "./.cache/pytest"
 testpaths = ["tests/"]
