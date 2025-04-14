@@ -39,7 +39,6 @@ GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
-    "pytest>=8.3.5",
     "ruff>=0.11.4",
 ]
 
@@ -82,13 +81,6 @@ module = [
     "torchvision.*",
 ]
 ignore_missing_imports = true
-
-[tool.pytest.ini_options]
-cache_dir = "./.cache/pytest"
-testpaths = ["tests/"]
-# See the following documentation for more information
-# https://docs.pytest.org/en/latest/reference/customize.html#pyproject-toml
-# https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
 
 [tool.ruff]
 cache-dir = "./.cache/ruff"
