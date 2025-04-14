@@ -24,7 +24,10 @@ classifiers = [
     # See https://pypi.org/classifiers/ for more classifiers
 ]
 keywords = []  # FIX HERE
-dependencies = []  # FIX HERE
+dependencies = [
+  "torch>=2.6.0",
+  "torchvision>=0.21.0",
+]
 
 [project.urls]
 GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
@@ -39,6 +42,21 @@ dev = [
     "pytest>=8.3.5",
     "ruff>=0.11.4",
 ]
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu124", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+torchvision = [
+  { index = "pytorch-cu124", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu124"
+url = "https://download.pytorch.org/whl/cu124"
+explicit = true
+# See the following documentation for more information
+# https://docs.astral.sh/uv/guides/integration/pytorch
 
 [tool.mypy]
 cache_dir = "./.cache/mypy"
