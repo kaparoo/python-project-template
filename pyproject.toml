@@ -37,7 +37,7 @@ GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
 dev = [
     "mypy>=1.15.0",
     "pytest>=8.3.5",
-    "ruff>=0.11.4",
+    "ruff>=0.11.6",
 ]
 
 [tool.mypy]
