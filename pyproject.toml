@@ -68,22 +68,12 @@ addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importli
 # https://docs.pytest.org/en/stable/reference/reference.html#configuration-options
 
 [tool.ruff]
-# Require specific ruff version (for environment consistency)
 required-version = ">=0.14.13"
-# Cache directory
 cache-dir = "./.cache/ruff"
-# Exclude patterns
 extend-exclude = [".cache", ".venv*", ".vscode", "tests"]
-# Line length (default: 88, Black-compatible)
 line-length = 88
-# Indentation width (default: 4)
 indent-width = 4
-# Enable preview mode for unstable features (uncomment to enable)
-# preview = true
-# See the following documentation for more information
-# https://docs.astral.sh/ruff/configuration/
-# https://docs.astral.sh/ruff/settings/
-# https://docs.astral.sh/ruff/rules/
+# preview = true  # Uncomment to enable unstable features
 
 [tool.ruff.lint]
 select = [
@@ -166,11 +156,9 @@ suppress-dummy-args = true
 suppress-none-returning = true
 
 [tool.ruff.lint.flake8-bandit]
-# Security checks can be customized here if needed
 # check-typed-exception = true
 
 [tool.ruff.lint.flake8-pytest-style]
-# Pytest style configuration
 fixture-parentheses = true
 mark-parentheses = true
 parametrize-names-type = "tuple"
@@ -178,7 +166,6 @@ parametrize-values-type = "tuple"
 parametrize-values-row-type = "tuple"
 
 [tool.ruff.lint.flake8-quotes]
-# Quote style configuration (should match tool.ruff.format.quote-style)
 inline-quotes = "double"
 multiline-quotes = "double"
 docstring-quotes = "double"
@@ -191,29 +178,20 @@ exempt-modules = ["typing", "typing_extensions"]
 ignore-variadic-names = true
 
 [tool.ruff.lint.isort]
-# TEMPLATE NOTE: Replace "project" with your actual project/package name
-known-first-party = ["project"]
+known-first-party = ["project"]  # TEMPLATE: Replace with your project name
 
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true
 
 [tool.ruff.lint.pydoclint]
-ignore-one-line-docstrings = true  # Skip docstrings which fit on a single line.
+ignore-one-line-docstrings = true
 
 [tool.ruff.format]
-# Quote style (default: "double")
 quote-style = "double"
-# Indentation style (default: "space")
 indent-style = "space"
-# Format code examples in docstrings (default: false)
 docstring-code-format = true
-# Line endings (default: "auto" - auto-detect per file)
 line-ending = "auto"
-# Enable preview mode for unstable formatter features (uncomment to enable)
-# preview = true
-# See the following documentation for more information
-# https://docs.astral.sh/ruff/formatter/
-# https://docs.astral.sh/ruff/settings/#format
+# preview = true  # Uncomment to enable unstable formatter features
 
 # Following sections use default values and are omitted (ruff v0.14.13):
 # - tool.ruff.analyze
