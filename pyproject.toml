@@ -7,7 +7,7 @@ name = "PROJECT_NAME"  # FIX HERE
 version = "0.1.0"
 description = "PROJECT_DESCRIPTION"  # FIX HERE
 readme = "README.md"
-requires-python = ">=3.12.9"  # FIX HERE
+requires-python = ">=3.14.0"
 license = "MIT"
 authors = [
     { name = "Jaewoo Park", email = "kaparoo2001@gmail.com" },
@@ -18,7 +18,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: Implementation :: CPython",
     "Typing :: Typed",
     # See https://pypi.org/classifiers/ for more classifiers
