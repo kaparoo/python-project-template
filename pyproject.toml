@@ -70,7 +70,14 @@ addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importli
 [tool.ruff]
 required-version = ">=0.14.13"
 cache-dir = "./.cache/ruff"
-extend-exclude = [".cache", ".venv*", ".vscode", "tests"]
+extend-exclude = [
+    ".cache",
+    "__pycache__",
+    "*.pyc",
+    ".pytest_cache",
+    ".ipynb_checkpoints",
+    "*.egg-info",
+]
 line-length = 88
 indent-width = 4
 # preview = true  # Uncomment to enable unstable features
