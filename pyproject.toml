@@ -36,7 +36,7 @@ GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
-    "pytest>=8.3.5",
+    "pytest>=9.0.2",
     "ruff>=0.11.6",
 ]
 
@@ -58,12 +58,14 @@ no_implicit_optional = true
 # https://mypy.readthedocs.io/en/stable/config_file.html
 # https://mypy.readthedocs.io/en/stable/config_file.html#example-pyproject-toml
 
-[tool.pytest.ini_options]
+[tool.pytest]
+minversion = "9.0"
 cache_dir = "./.cache/pytest"
-testpaths = ["tests/"]
+testpaths = ["tests"]
+addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
 # See the following documentation for more information
-# https://docs.pytest.org/en/latest/reference/customize.html#pyproject-toml
-# https://docs.pytest.org/en/latest/reference/reference.html#ini-options-ref
+# https://docs.pytest.org/en/stable/reference/customize.html
+# https://docs.pytest.org/en/stable/reference/reference.html#configuration-options
 
 [tool.ruff]
 cache-dir = "./.cache/ruff"
