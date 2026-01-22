@@ -75,6 +75,13 @@ line-length = 88
 indent-width = 4
 # preview = true  # Uncomment to enable unstable features
 
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+line-ending = "auto"
+# preview = true  # Uncomment to enable unstable formatter features
+
 [tool.ruff.lint]
 select = [
     # Core linting
@@ -185,13 +192,6 @@ ignore-overlong-task-comments = true
 
 [tool.ruff.lint.pydoclint]
 ignore-one-line-docstrings = true
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-docstring-code-format = true
-line-ending = "auto"
-# preview = true  # Uncomment to enable unstable formatter features
 
 # Following sections use default values and are omitted (ruff v0.14.13):
 # - tool.ruff.analyze
