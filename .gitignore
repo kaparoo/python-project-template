@@ -19,6 +19,9 @@ private/
 temps/
 temp/
 
+# Claude Code settings
+.claude/
+
 
 # ========================== #
 #     Visual Studio Code     #
