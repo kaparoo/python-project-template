@@ -11,14 +11,14 @@ build-backend = "uv_build"
 # ========================== #
 
 [project]
-name = "PROJECT_NAME"  # FIX HERE
+name = "{{ project_name }}"
 version = "0.1.0"
-description = "PROJECT_DESCRIPTION"  # FIX HERE
+description = "{{ project_description }}"
 readme = "README.md"
-requires-python = ">=3.14.0"
+requires-python = ">={{ python_version }}"
 license = "MIT"
 authors = [
-    { name = "Jaewoo Park", email = "kaparoo2001@gmail.com" },
+    { name = "{{ author_name }}", email = "{{ author_email }}" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -26,16 +26,16 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: {{ python_version }}",
     "Programming Language :: Python :: Implementation :: CPython",
     "Typing :: Typed",
     # See https://pypi.org/classifiers/ for more classifiers
 ]
-keywords = []  # FIX HERE
-dependencies = []  # FIX HERE
+keywords = []
+dependencies = []
 
 [project.urls]
-GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
+GitHub = "https://www.github.com/{{ github_username }}/{{ repo_name }}"
 
 # ========================== #
 #      [tool.*] Sections     #
@@ -49,13 +49,13 @@ dev = [
 ]
 
 [tool.uv.build-backend]
-module-name = "project"  # FIX HERE
+module-name = "{{ package_name }}"
 module-root = ""
 # See the following documentation for more information
 # https://docs.astral.sh/uv/concepts/build-backend/
 
 [tool.ty.environment]
-python-version = "3.14"
+python-version = "{{ python_version }}"
 
 [tool.ty.src]
 exclude = ["tests/"]
@@ -218,7 +218,7 @@ exempt-modules = ["typing", "typing_extensions"]
 ignore-variadic-names = true
 
 [tool.ruff.lint.isort]
-known-first-party = ["project"]  # TEMPLATE: Replace with your project name
+known-first-party = ["{{ package_name }}"]
 
 [tool.ruff.lint.pycodestyle]
 ignore-overlong-task-comments = true

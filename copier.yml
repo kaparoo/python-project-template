@@ -1,0 +1,87 @@
+# =================================================================== #
+#  Copier template configuration                                       #
+#  Docs: https://copier.readthedocs.io/en/stable/configuring/          #
+# =================================================================== #
+
+_subdirectory: template
+_templates_suffix: .jinja
+_answers_file: .copier-answers.yml
+
+_exclude:
+  - "copier.yml"
+  - "CHANGELOG.md"
+  - ".git"
+  - "__pycache__"
+  - "*.pyc"
+  - "*.pyo"
+
+
+# =================================================================== #
+#                            Questions                                 #
+# =================================================================== #
+
+# ─── Project identity ───
+
+project_name:
+  type: str
+  help: |
+    Display/PyPI name of the project (lowercase, hyphens allowed).
+    Example: my-awesome-lib
+
+project_description:
+  type: str
+  help: One-line description of the project
+  default: ""
+
+package_name:
+  type: str
+  help: |
+    Importable Python package name.
+    Defaults to a snake_case version of project_name; usually keep the default.
+  default: "{{ project_name | replace('-', '_') | lower }}"
+
+
+# ─── Author info ───
+
+author_name:
+  type: str
+  help: Your full name (used in pyproject.toml and LICENSE)
+  default: "Jaewoo Park"
+
+author_email:
+  type: str
+  help: Your email address
+  default: "kaparoo2001@gmail.com"
+
+
+# ─── GitHub ───
+
+github_username:
+  type: str
+  help: GitHub username or organization
+  default: "kaparoo"
+
+repo_name:
+  type: str
+  help: GitHub repository name (usually same as project_name)
+  default: "{{ project_name }}"
+
+
+# ─── Environment ───
+
+python_version:
+  type: str
+  help: Target Python version (major.minor)
+  choices:
+    - "3.14"
+    - "3.13"
+    - "3.12"
+  default: "3.14"
+
+
+# ─── License ───
+
+license_year:
+  type: int
+  help: Copyright year for the LICENSE file
+  default: 2026

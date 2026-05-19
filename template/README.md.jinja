@@ -1,0 +1,22 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+## Installation
+
+```bash
+uv add {{ project_name }}
+```
+
+## Development
+
+```bash
+uv sync --group dev
+uv run ruff check .
+uv run ty check
+uv run pytest
+```
+
+## License
+
+[MIT](./LICENSE) © {{ license_year }} {{ author_name }}
