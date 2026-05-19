@@ -22,6 +22,9 @@ temp/
 # Claude Code settings
 .claude/
 
+# Tool caches (consolidated location for mypy, pytest, ruff)
+.cache/
+
 
 # ========================== #
 #     Visual Studio Code     #
