@@ -27,6 +27,11 @@ project_name:
   help: |
     Display/PyPI name of the project (lowercase, hyphens allowed).
     Example: my-awesome-lib
+  validator: >-
+    {% if not (project_name | regex_search('^[a-z][a-z0-9]*(-[a-z0-9]+)*$')) %}
+    Must be lowercase, start with a letter, and contain only letters, digits,
+    and single hyphens (PEP 503 normalized form).
+    {% endif %}
 
 project_description:
   type: str
@@ -39,6 +44,11 @@ package_name:
     Importable Python package name.
     Defaults to a snake_case version of project_name; usually keep the default.
   default: "{{ project_name | replace('-', '_') | lower }}"
+  validator: >-
+    {% if not (package_name | regex_search('^[a-z_][a-z0-9_]*$')) %}
+    Must be a valid Python identifier: lowercase letters, digits, and
+    underscores only; must not start with a digit.
+    {% endif %}
 
 
 # ─── Author info ───
