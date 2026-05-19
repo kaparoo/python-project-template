@@ -36,8 +36,8 @@ GitHub = "https://www.github.com/kaparoo/REPOSITORY"  # FIX HERE
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
-    "pytest>=9.0.2",
-    "ruff>=0.14.13",
+    "pytest>=9.0.3",
+    "ruff>=0.15.13",
 ]
 
 [tool.mypy]
@@ -68,7 +68,7 @@ addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importli
 # https://docs.pytest.org/en/stable/reference/reference.html#configuration-options
 
 [tool.ruff]
-required-version = ">=0.14.13"
+required-version = ">=0.15.13"
 cache-dir = "./.cache/ruff"
 extend-exclude = [
     ".cache",
@@ -160,6 +160,7 @@ ignore = [
     "E111",     # indentation-not-multiple-of-four
     "E114",     # indentation-not-multiple-of-four-comment
     "E117",     # over-indented
+    "COM812",   # missing-trailing-comma
 ]
 
 [tool.ruff.lint.flake8-annotations]
