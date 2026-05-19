@@ -18,12 +18,14 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
 addopts = ["-ra", "--import-mode=importlib"]
 
 [tool.ruff]
+cache-dir = "./.cache/ruff"
 line-length = 88
-extend-exclude = [".cache", "__pycache__", "*.pyc", ".pytest_cache"]
+extend-exclude = [".cache", "__pycache__", "*.pyc"]
 
 [tool.ruff.format]
 quote-style = "double"
