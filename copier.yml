@@ -85,3 +85,14 @@ license_year:
   type: int
   help: Copyright year for the LICENSE file
   default: 2026
+
+
+# ─── Optional features ───
+
+use_numpy:
+  type: bool
+  help: |
+    Include NumPy as a runtime dependency and enable NumPy-aware tooling
+    (Ruff ICN rule for `import numpy as np` convention, Data Wrangler
+    VSCode extension).
+  default: false

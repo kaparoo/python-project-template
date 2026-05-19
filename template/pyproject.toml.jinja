@@ -32,7 +32,11 @@ classifiers = [
     # See https://pypi.org/classifiers/ for more classifiers
 ]
 keywords = []
-dependencies = []
+dependencies = [
+{%- if use_numpy %}
+    "numpy>=2.0",
+{%- endif %}
+]
 
 [project.urls]
 GitHub = "https://www.github.com/{{ github_username }}/{{ repo_name }}"
@@ -159,6 +163,10 @@ select = [
     "YTT",   # flake8-2020
     "ERA",   # eradicate
     "NPY",   # NumPy-specific rules
+{%- if use_numpy %}
+    # Import conventions (e.g., `import numpy as np`)
+    "ICN",   # flake8-import-conventions
+{%- endif %}
 ]
 ignore = [
     # Complexity rules (often too strict for practical code)

@@ -5,5 +5,8 @@
         "astral-sh.ty",
         "charliermarsh.ruff",
         "littlefoxteam.vscode-python-test-adapter",
+        {%- if use_numpy %}
+        "ms-toolsai.datawrangler",
+        {%- endif %}
     ]
 }
