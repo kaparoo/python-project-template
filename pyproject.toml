@@ -1,7 +1,7 @@
 # =================================================================== #
-#  This pyproject.toml is for the TEMPLATE REPOSITORY itself           #
-#  (running copier, testing generation). It is NOT distributed.        #
-#  The pyproject.toml for generated projects lives in `template/`.     #
+#  This pyproject.toml is for the TEMPLATE REPOSITORY itself          #
+#  (running copier, testing generation). It is NOT distributed.       #
+#  The pyproject.toml for generated projects lives in `template/`.    #
 # =================================================================== #
 
 [project]
