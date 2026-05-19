@@ -109,6 +109,37 @@ use_numpy:
 
 
 # =================================================================== #
+#                       After-action messages                          #
+# =================================================================== #
+
+_message_after_copy: |
+
+  🎉 Your project '{{ project_name }}' has been created!
+
+     📁 Path:    {{ _copier_conf.dst_path }}
+     📦 Package: {{ package_name }}
+     🐍 Python:  {{ python_version }}
+  {%- if use_numpy %}
+     🧮 NumPy:   enabled
+  {%- endif %}
+
+  Next steps:
+     cd {{ _copier_conf.dst_path }}
+     code .
+
+  The initial commit is already on branch 'main'. Happy coding!
+
+_message_after_update: |
+
+  ✨ '{{ project_name }}' has been updated from the template.
+
+  Review the changes:
+     git diff
+
+  Re-lock dependencies if needed, then commit when ready.
+
+
+# =================================================================== #
 #                Post-generation tasks (require --UNSAFE)              #
 # =================================================================== #
 
