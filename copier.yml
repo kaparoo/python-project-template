@@ -96,3 +96,39 @@ use_numpy:
     (Ruff ICN rule for `import numpy as np` convention, Data Wrangler
     VSCode extension).
   default: false
+
+
+# =================================================================== #
+#                Post-generation tasks (require --UNSAFE)              #
+# =================================================================== #
+
+_tasks:
+  # Initialize a git repository with `main` as the default branch
+  - command: ["git", "init", "-b", "main"]
+    when: "{{ _copier_operation == 'copy' }}"
+
+  # Resolve and lock dependencies (creates uv.lock); also runs on update
+  - command: ["uv", "lock"]
+
+  # Sync the local virtual environment (creates .venv/)
+  - command: ["uv", "sync"]
+
+  # Stage all generated files and create the initial commit
+  - command: ["git", "add", "."]
+    when: "{{ _copier_operation == 'copy' }}"
+  - command: ["git", "commit", "-m", "🎉 Initial commit from copier template"]
+    when: "{{ _copier_operation == 'copy' }}"
+
+
+# =================================================================== #
+#       Migrations (run when updating across template versions)        #
+# =================================================================== #
+
+# Add entries here as breaking changes ship in tagged template releases.
+# Example:
+#   _migrations:
+#     - version: v2.0.0
+#       before:
+#         - command: ["echo", "Migrating to v2.0.0"]
+#       after:
+#         - command: ["uv", "run", "ruff", "check", "--fix", "--unsafe-fixes", "."]
