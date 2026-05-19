@@ -58,7 +58,7 @@ no_implicit_optional = true
 # https://mypy.readthedocs.io/en/stable/config_file.html
 # https://mypy.readthedocs.io/en/stable/config_file.html#example-pyproject-toml
 
-[tool.pytest]
+[tool.pytest.ini_options]
 minversion = "9.0"
 cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
