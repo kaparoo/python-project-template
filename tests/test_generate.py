@@ -169,7 +169,7 @@ def test_tasks_initialize_git_repo_with_initial_commit(tmp_path: Path) -> None:
     assert (project / ".git").is_dir()
     assert (project / "uv.lock").is_file()
 
-    log = subprocess.run(  # noqa: S603
+    log = subprocess.run(
         ["git", "log", "--oneline"],
         cwd=project,
         capture_output=True,
@@ -179,7 +179,7 @@ def test_tasks_initialize_git_repo_with_initial_commit(tmp_path: Path) -> None:
     )
     assert "Initial commit from copier template" in log.stdout
 
-    branch = subprocess.run(  # noqa: S603
+    branch = subprocess.run(
         ["git", "rev-parse", "--abbrev-ref", "HEAD"],
         cwd=project,
         capture_output=True,

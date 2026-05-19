@@ -4,12 +4,43 @@
 #  The pyproject.toml for generated projects lives in `template/`.     #
 # =================================================================== #
 
+[project]
+name = "python-project-template-dev"
+version = "0"
+description = "Development tooling for the copier template (not distributed)."
+requires-python = ">=3.14"
+
 [dependency-groups]
 dev = [
     "copier>=9.15.1",
     "pytest>=9.0.3",
+    "ruff>=0.15.13",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = ["-ra", "--import-mode=importlib"]
+
+[tool.ruff]
+line-length = 88
+extend-exclude = [".cache", "__pycache__", "*.pyc", ".pytest_cache"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint]
+select = [
+    "E", "F", "W",     # core
+    "B", "SIM", "RUF", # quality
+    "I",               # isort
+    "UP",              # pyupgrade
+    "ANN",             # annotations
+    "PT",              # pytest style
+]
+ignore = ["E501", "COM812"]  # formatter-conflict rules
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = true
+parametrize-names-type = "tuple"
+parametrize-values-type = "tuple"
