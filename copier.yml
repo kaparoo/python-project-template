@@ -97,17 +97,6 @@ license_year:
   default: 2026
 
 
-# ─── Optional features ───
-
-use_numpy:
-  type: bool
-  help: |
-    Include NumPy as a runtime dependency and enable NumPy-aware tooling
-    (Ruff ICN rule for `import numpy as np` convention, Data Wrangler
-    VSCode extension).
-  default: false
-
-
 # =================================================================== #
 #                       After-action messages                          #
 # =================================================================== #
@@ -119,9 +108,6 @@ _message_after_copy: |
      📁 Path:    {{ _copier_conf.dst_path }}
      📦 Package: {{ package_name }}
      🐍 Python:  {{ python_version }}
-  {%- if use_numpy %}
-     🧮 NumPy:   enabled
-  {%- endif %}
 
   Next steps:
      cd {{ _copier_conf.dst_path }}

@@ -116,47 +116,16 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     assert "Python :: 3.13" in pyproject
 
 
-# ─── Conditional features (use_numpy) ───
-
-
-def test_default_excludes_numpy_everywhere(tmp_path: Path) -> None:
-    project = _generate(tmp_path)
-    pyproject = (project / "pyproject.toml").read_text()
-    extensions = (project / ".vscode" / "extensions.json").read_text()
-    assert "numpy" not in pyproject
-    assert '"ICN"' not in pyproject
-    assert "datawrangler" not in extensions
-
-
-def test_use_numpy_adds_dependency(tmp_path: Path) -> None:
-    project = _generate(tmp_path, {"use_numpy": True})
-    pyproject = (project / "pyproject.toml").read_text()
-    assert '"numpy>=2.0"' in pyproject
-
-
-def test_use_numpy_adds_icn_rule(tmp_path: Path) -> None:
-    project = _generate(tmp_path, {"use_numpy": True})
-    pyproject = (project / "pyproject.toml").read_text()
-    assert '"ICN"' in pyproject
-
-
-def test_use_numpy_adds_datawrangler_extension(tmp_path: Path) -> None:
-    project = _generate(tmp_path, {"use_numpy": True})
-    extensions = (project / ".vscode" / "extensions.json").read_text()
-    assert "ms-toolsai.datawrangler" in extensions
-
-
 # ─── Answers file ───
 
 
 def test_answers_file_records_all_inputs(tmp_path: Path) -> None:
     project = _generate(
         tmp_path,
-        {"project_name": "answers-test", "use_numpy": True, "python_version": "3.12"},
+        {"project_name": "answers-test", "python_version": "3.12"},
     )
     answers = (project / ".copier-answers.yml").read_text()
     assert "project_name: answers-test" in answers
-    assert "use_numpy: true" in answers
     assert "python_version: '3.12'" in answers
 
 
