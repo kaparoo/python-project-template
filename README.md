@@ -1,35 +1,91 @@
 # python-project-template
 
+[![made with copier](https://img.shields.io/badge/made%20with-copier-purple)](https://github.com/copier-org/copier)
+[![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![ty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ty/main/assets/badge/v0.json)](https://github.com/astral-sh/ty)
+
 A personal [copier](https://copier.readthedocs.io/) template for bootstrapping
-modern Python projects with `uv`, `ruff`, `ty`, and `pytest` pre-configured.
+Python projects with the Astral toolchain — `uv`, `ruff`, `ty` — plus `pytest`,
+all pre-configured.
 
-> **Status**: under construction — copier wiring lands incrementally.
-> The rendered content lives in [`template/`](./template/); the rest of
-> this repo is template-development tooling.
-
-## Quick start (once template is wired)
+## Quick start
 
 ```bash
 # One-time: install copier
 uv tool install copier
 
 # Generate a new project
-copier copy gh:kaparoo/python-project-template my-new-project
-
-# Later: pull template improvements into an existing project
-cd my-new-project
-copier update --trust
+copier copy --UNSAFE gh:kaparoo/python-project-template my-new-project
 ```
+
+`--UNSAFE` is required because the template runs post-generation tasks
+(`git init`, `uv lock`, `uv sync`, and an initial commit). Review
+[`copier.yml`](./copier.yml) before trusting it.
+
+Pull later template improvements into an existing project:
+
+```bash
+cd my-new-project
+copier update --UNSAFE
+```
+
+The `.copier-answers.yml` file in each generated project records the
+answers, so `copier update` can re-render against newer template
+versions without losing your customizations.
+
+## Options
+
+`copier copy` prompts for the following:
+
+| Question | Type | Default | Notes |
+|----------|------|---------|-------|
+| `project_name` | str | *(required)* | PEP 503 form — lowercase, hyphens |
+| `project_description` | str | `""` | One-line summary |
+| `package_name` | str | *derived* | snake_case of `project_name` |
+| `author_name` | str | `Jaewoo Park` | Used in pyproject + LICENSE |
+| `author_email` | str | `kaparoo2001@gmail.com` | |
+| `github_username` | str | `kaparoo` | |
+| `repo_name` | str | `{{ project_name }}` | |
+| `python_version` | choice | `3.14` | `3.12` / `3.13` / `3.14` |
+| `license_year` | int | `2026` | Copyright year |
+| `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
+| `use_pytest` | bool | `true` | Adds `tests/` + pytest config |
+
+- **`is_library = false`** produces an application (no build system, no
+  `py.typed` marker); uv treats it as a non-distributable project.
+- **`use_pytest = false`** omits the entire pytest layer (`tests/`,
+  config, ruff `PT` rule) — useful for ML/DL projects where
+  deterministic test workflows are impractical.
 
 ## Layout
 
 ```
-.                       ← this repo (template source)
-├── copier.yml          ← (Phase 2) question definitions
+.
+├── copier.yml          ← questions, tasks, after-action messages
+├── pyproject.toml      ← workspace dev tooling (copier + pytest + ruff)
 ├── template/           ← files rendered into generated projects
-└── tests/              ← (Phase 5) tests for the template itself
+│   ├── pyproject.toml.jinja
+│   ├── {{ package_name }}/
+│   └── ...
+├── tests/              ← tests for the template itself
+└── AGENTS.md           ← guide for AI assistants working on this repo
 ```
+
+## Development
+
+```bash
+git clone https://github.com/kaparoo/python-project-template
+cd python-project-template
+uv sync --group dev
+uv run pytest          # generation-scenario tests
+```
+
+See [`AGENTS.md`](./AGENTS.md) for commit conventions, workflow rules,
+and the toolchain rationale.
 
 ## License
 
-[MIT](./LICENSE)
+[MIT](./LICENSE) © 2026 Jaewoo Park
