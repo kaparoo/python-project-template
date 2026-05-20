@@ -116,6 +116,52 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     assert "Python :: 3.13" in pyproject
 
 
+# ─── Conditional features (use_pytest) ───
+
+
+def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
+    project = _generate(tmp_path)  # default true
+    assert (project / "tests" / "conftest.py").is_file()
+    pyproject = (project / "pyproject.toml").read_text()
+    assert '"pytest>=9.0.3"' in pyproject
+    assert "[tool.pytest.ini_options]" in pyproject
+    assert '"PT",' in pyproject
+    assert "[tool.ruff.lint.per-file-ignores]" in pyproject
+    assert "[tool.ruff.lint.flake8-pytest-style]" in pyproject
+    extensions = (project / ".vscode" / "extensions.json").read_text()
+    assert "test-adapter" in extensions
+    settings = (project / ".vscode" / "settings.json").read_text()
+    assert "pytestEnabled" in settings
+
+
+def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"use_pytest": False})
+    assert not (project / "tests").exists()
+    pyproject = (project / "pyproject.toml").read_text()
+    assert '"pytest>=' not in pyproject
+    assert "[tool.pytest.ini_options]" not in pyproject
+    assert '"PT",' not in pyproject
+    assert "[tool.ruff.lint.per-file-ignores]" not in pyproject
+    assert "[tool.ruff.lint.flake8-pytest-style]" not in pyproject
+    extensions = (project / ".vscode" / "extensions.json").read_text()
+    assert "test-adapter" not in extensions
+    settings = (project / ".vscode" / "settings.json").read_text()
+    assert "pytestEnabled" not in settings
+
+
+def test_minimal_application_combination(tmp_path: Path) -> None:
+    """Application without pytest: no build-system, no py.typed, no tests."""
+    project = _generate(tmp_path, {"is_library": False, "use_pytest": False})
+    pyproject = (project / "pyproject.toml").read_text()
+    assert "[build-system]" not in pyproject
+    assert '"pytest>=' not in pyproject
+    assert not (project / "tests").exists()
+    assert not (project / "test_app" / "py.typed").exists()
+    # ty and ruff should still be in dev deps
+    assert '"ty>=' in pyproject
+    assert '"ruff>=' in pyproject
+
+
 # ─── Conditional features (is_library) ───
 
 

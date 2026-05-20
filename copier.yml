@@ -113,6 +113,19 @@ is_library:
           no py.typed; uv treats it as an application.
   default: true
 
+use_pytest:
+  type: bool
+  help: |
+    Configure a pytest test suite — `tests/` directory, the `pytest` dev
+    dependency, `[tool.pytest.ini_options]`, the ruff `PT` rule with
+    `[tool.ruff.lint.flake8-pytest-style]`, per-file-ignores for tests,
+    and the test-adapter VSCode extension.
+
+    Disable for ML/DL projects where deterministic pytest workflows are
+    impractical (CUDA non-determinism, GPU dependency, slow steps), or
+    for ad-hoc script collections without test suites.
+  default: true
+
 
 # =================================================================== #
 #                       After-action messages                          #
