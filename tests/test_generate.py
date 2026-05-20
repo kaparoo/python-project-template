@@ -116,6 +116,29 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     assert "Python :: 3.13" in pyproject
 
 
+# ─── Conditional features (is_library) ───
+
+
+def test_is_library_true_includes_build_system_and_py_typed(tmp_path: Path) -> None:
+    project = _generate(tmp_path)  # default true
+    pyproject = (project / "pyproject.toml").read_text()
+    assert "[build-system]" in pyproject
+    assert "uv_build" in pyproject
+    assert "[tool.uv.build-backend]" in pyproject
+    assert '"Typing :: Typed"' in pyproject
+    assert (project / "test_app" / "py.typed").is_file()
+
+
+def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"is_library": False})
+    pyproject = (project / "pyproject.toml").read_text()
+    assert "[build-system]" not in pyproject
+    assert "uv_build" not in pyproject
+    assert "[tool.uv.build-backend]" not in pyproject
+    assert '"Typing :: Typed"' not in pyproject
+    assert not (project / "test_app" / "py.typed").exists()
+
+
 # ─── Answers file ───
 
 

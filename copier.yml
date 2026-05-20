@@ -97,6 +97,23 @@ license_year:
   default: 2026
 
 
+# ─── Project nature ───
+
+is_library:
+  type: bool
+  help: |
+    Is this project a distributable library (wheel/sdist, possibly
+    publishable to PyPI)?
+
+    yes → include `[build-system]` (uv_build) + `[tool.uv.build-backend]`
+          and ship a `py.typed` marker so downstream consumers can use
+          its type hints (PEP 561).
+
+    no  → application / CLI / script / service mode. No build system,
+          no py.typed; uv treats it as an application.
+  default: true
+
+
 # =================================================================== #
 #                       After-action messages                          #
 # =================================================================== #

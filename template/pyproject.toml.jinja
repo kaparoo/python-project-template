@@ -1,3 +1,4 @@
+{% if is_library -%}
 # ========================== #
 #        Build System        #
 # ========================== #
@@ -6,6 +7,7 @@
 requires = ["uv_build>=0.11.15,<0.12"]
 build-backend = "uv_build"
 
+{% endif -%}
 # ========================== #
 #      Project Metadata      #
 # ========================== #
@@ -28,7 +30,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: {{ python_version }}",
     "Programming Language :: Python :: Implementation :: CPython",
+{%- if is_library %}
     "Typing :: Typed",
+{%- endif %}
     # See https://pypi.org/classifiers/ for more classifiers
 ]
 keywords = []
@@ -48,12 +52,14 @@ dev = [
     "ty>=0.0.37",
 ]
 
+{% if is_library -%}
 [tool.uv.build-backend]
 module-name = "{{ package_name }}"
 module-root = ""
 # See the following documentation for more information
 # https://docs.astral.sh/uv/concepts/build-backend/
 
+{% endif -%}
 [tool.ty.environment]
 python-version = "{{ python_version }}"
 
