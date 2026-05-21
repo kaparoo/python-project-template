@@ -83,8 +83,9 @@ uv sync --group dev
 uv run pytest          # generation-scenario tests
 ```
 
-See [`AGENTS.md`](./AGENTS.md) for commit conventions, workflow rules,
-and the toolchain rationale.
+AI coding assistants working on this repository follow
+[`AGENTS.md`](./AGENTS.md), which records the commit conventions,
+workflow rules, and toolchain rationale they must respect.
 
 ## License
 
