@@ -68,57 +68,21 @@ file in `template/` changes, run the suite before committing.
 
 ## Commit convention
 
-Match the existing history exactly. Format:
+Follow the commit convention documented in
+[`README.md`](./README.md#commit-convention) — emoji prefix, backticked
+tool names, single-purpose commits, no rewriting of published history,
+no skipped hooks.
+
+**AI-specific requirement**: append a `Co-Authored-By` trailer with the
+acting assistant's own published identity — do not hardcode one vendor.
 
 ```
-<emoji> <Imperative summary; package/tool names in `backticks`>
-
-<Optional body explaining *why*, in present tense.>
-
 Co-Authored-By: <agent-name> <agent-email>
 ```
 
-Use whatever identity the acting assistant publishes — do not hardcode
-one vendor. Examples:
+Examples:
 - Claude Code → `Co-Authored-By: Claude <noreply@anthropic.com>`
 - GitHub Copilot → `Co-Authored-By: Copilot <198982749+Copilot@users.noreply.github.com>`
-
-### Emoji vocabulary (most-used first)
-
-| Emoji | When |
-|-------|------|
-| `🔧` | Configuration / settings adjustment (catch-all) |
-| `✨` | New feature (new copier option, new capability) |
-| `🔄` | Migration (e.g., `mypy → ty`) |
-| `📝` | Documentation |
-| `♻️` | Restructure / reorganize without behavior change |
-| `🐛` | Bug fix |
-| `🔥` | Remove code or files |
-| `🧹` | Cleanup (remove redundancy) |
-| `🎨` | Cosmetic (whitespace, alignment, comments) |
-| `🙈` | `.gitignore` change |
-| `📄` | License / legal text |
-| `✅` | Tests added or fixed |
-| `⬆️` / `➕` / `➖` | Dependency bump / add / remove (rare; usually `🔧`) |
-| `💥` | Breaking change |
-| `🎉` | Initial commit (used by `_tasks` in generated projects) |
-
-### Examples from history
-
-```
-🔧 Update `pytest` to 9.0.3 and `ruff` to 0.15.13 with `COM812` ignored for formatter compatibility
-✨ Add `is_library` copier option (conditional `[build-system]`, `py.typed`)
-♻️ Restructure repo into copier `template/` subdirectory layout
-🐛 Use the official `ty` shields.io endpoint badge
-```
-
-### Rules
-
-- **Single-purpose commits.** "Fix pytest config" and "bump pytest" are
-  separate commits, not one.
-- **Don't `git rebase -i`** to rewrite published history. Local-only WIP
-  commits can be amended or reset before push.
-- **Don't skip hooks** (`--no-verify`) unless explicitly asked.
 
 ## Toolchain choices (don't second-guess without cause)
 

@@ -83,9 +83,41 @@ uv sync --group dev
 uv run pytest          # generation-scenario tests
 ```
 
-AI coding assistants working on this repository follow
-[`AGENTS.md`](./AGENTS.md), which records the commit conventions,
-workflow rules, and toolchain rationale they must respect.
+### Commit convention
+
+Commit messages use an emoji prefix and wrap package/tool names in
+backticks:
+
+```
+<emoji> <Imperative summary; tool names in `backticks`>
+
+<Optional body explaining *why*>
+```
+
+| Emoji | When |
+|-------|------|
+| 🔧 | Configuration / settings (catch-all) |
+| ✨ | New feature |
+| 🔄 | Migration (e.g. `mypy → ty`) |
+| 📝 | Documentation |
+| ♻️ | Restructure without behavior change |
+| 🐛 | Bug fix |
+| 🔥 | Remove code or files |
+| 🧹 | Cleanup (remove redundancy) |
+| 🎨 | Cosmetic (whitespace, alignment) |
+| 🙈 | `.gitignore` change |
+| 📄 | License / legal text |
+| ✅ | Tests added or fixed |
+| ⬆️ / ➕ / ➖ | Dependency bump / add / remove |
+| 💥 | Breaking change |
+| 🎉 | Initial commit |
+
+Keep commits single-purpose, don't rewrite published history, and
+don't skip git hooks.
+
+AI coding assistants working on this repository additionally follow
+[`AGENTS.md`](./AGENTS.md) for workflow rules and the toolchain
+rationale they must respect.
 
 ## License
 
