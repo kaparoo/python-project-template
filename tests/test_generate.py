@@ -75,7 +75,7 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
 
 def test_project_name_substituted_everywhere(tmp_path: Path) -> None:
     project = _generate(tmp_path, {"project_name": "my-lib"})
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert 'name = "my-lib"' in pyproject
     assert 'module-name = "my_lib"' in pyproject
     assert 'known-first-party = ["my_lib"]' in pyproject
@@ -92,7 +92,7 @@ def test_author_and_github_substituted(tmp_path: Path) -> None:
             "repo_name": "custom-repo",
         },
     )
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"Jane Doe"' in pyproject
     assert '"jane@example.com"' in pyproject
     assert "https://www.github.com/janedoe/custom-repo" in pyproject
@@ -103,14 +103,14 @@ def test_license_year_and_author(tmp_path: Path) -> None:
         tmp_path,
         {"license_year": 2030, "author_name": "Test User"},
     )
-    license_text = (project / "LICENSE").read_text()
+    license_text = (project / "LICENSE").read_text(encoding="utf-8")
     assert "Copyright (c) 2030 Test User" in license_text
 
 
 def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     project = _generate(tmp_path, {"python_version": "3.13"})
-    assert (project / ".python-version").read_text().strip() == "3.13"
-    pyproject = (project / "pyproject.toml").read_text()
+    assert (project / ".python-version").read_text(encoding="utf-8").strip() == "3.13"
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert 'requires-python = ">=3.13"' in pyproject
     assert 'python-version = "3.13"' in pyproject
     assert "Python :: 3.13" in pyproject
@@ -122,37 +122,37 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
 def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     project = _generate(tmp_path)  # default true
     assert (project / "tests" / "conftest.py").is_file()
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
     assert '"PT",' in pyproject
     assert "[tool.ruff.lint.per-file-ignores]" in pyproject
     assert "[tool.ruff.lint.flake8-pytest-style]" in pyproject
-    extensions = (project / ".vscode" / "extensions.json").read_text()
+    extensions = (project / ".vscode" / "extensions.json").read_text(encoding="utf-8")
     assert "test-adapter" in extensions
-    settings = (project / ".vscode" / "settings.json").read_text()
+    settings = (project / ".vscode" / "settings.json").read_text(encoding="utf-8")
     assert "pytestEnabled" in settings
 
 
 def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     project = _generate(tmp_path, {"use_pytest": False})
     assert not (project / "tests").exists()
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=' not in pyproject
     assert "[tool.pytest.ini_options]" not in pyproject
     assert '"PT",' not in pyproject
     assert "[tool.ruff.lint.per-file-ignores]" not in pyproject
     assert "[tool.ruff.lint.flake8-pytest-style]" not in pyproject
-    extensions = (project / ".vscode" / "extensions.json").read_text()
+    extensions = (project / ".vscode" / "extensions.json").read_text(encoding="utf-8")
     assert "test-adapter" not in extensions
-    settings = (project / ".vscode" / "settings.json").read_text()
+    settings = (project / ".vscode" / "settings.json").read_text(encoding="utf-8")
     assert "pytestEnabled" not in settings
 
 
 def test_minimal_application_combination(tmp_path: Path) -> None:
     """Application without pytest: no build-system, no py.typed, no tests."""
     project = _generate(tmp_path, {"is_library": False, "use_pytest": False})
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert "[build-system]" not in pyproject
     assert '"pytest>=' not in pyproject
     assert not (project / "tests").exists()
@@ -167,26 +167,26 @@ def test_minimal_application_combination(tmp_path: Path) -> None:
 
 def test_is_library_true_includes_build_system_and_py_typed(tmp_path: Path) -> None:
     project = _generate(tmp_path)  # default true
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert "[build-system]" in pyproject
     assert "uv_build" in pyproject
     assert "[tool.uv.build-backend]" in pyproject
     assert '"Typing :: Typed"' in pyproject
     assert (project / "test_app" / "py.typed").is_file()
-    readme = (project / "README.md").read_text()
+    readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/v/test-app" in readme
     assert "pypi/dm/test-app" in readme
 
 
 def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> None:
     project = _generate(tmp_path, {"is_library": False})
-    pyproject = (project / "pyproject.toml").read_text()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert "[build-system]" not in pyproject
     assert "uv_build" not in pyproject
     assert "[tool.uv.build-backend]" not in pyproject
     assert '"Typing :: Typed"' not in pyproject
     assert not (project / "test_app" / "py.typed").exists()
-    readme = (project / "README.md").read_text()
+    readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/" not in readme
 
 
@@ -198,7 +198,7 @@ def test_answers_file_records_all_inputs(tmp_path: Path) -> None:
         tmp_path,
         {"project_name": "answers-test", "python_version": "3.12"},
     )
-    answers = (project / ".copier-answers.yml").read_text()
+    answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
     assert "project_name: answers-test" in answers
     assert "python_version: '3.12'" in answers
 
