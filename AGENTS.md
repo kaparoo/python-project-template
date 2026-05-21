@@ -44,7 +44,7 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest` → all 11
+**Workflow**: commit (or stash) all changes → run `uv run pytest` → all 12
 tests should pass in ~35–40 seconds.
 
 ### 2. Both branches of every `copier.yml` option must be tested
@@ -55,7 +55,7 @@ minimum bar.
 
 ### 3. Verify after every `template/` change
 
-`uv run pytest` runs copier in-process for ~10 scenarios. If even one
+`uv run pytest` runs copier in-process for ~12 scenarios. If even one
 file in `template/` changes, run the suite before committing.
 
 ### 4. The integration test runs real `_tasks`
@@ -102,7 +102,7 @@ Co-Authored-By: <agent-id> <noreply@anthropic.com>
 
 ```
 🔧 Update `pytest` to 9.0.3 and `ruff` to 0.15.13 with `COM812` ignored for formatter compatibility
-✨ Add `use_numpy` copier option with conditional dependency, rule, and extension
+✨ Add `is_library` copier option (conditional `[build-system]`, `py.typed`)
 ♻️ Restructure repo into copier `template/` subdirectory layout
 🐛 Use the official `ty` shields.io endpoint badge
 ```
@@ -134,7 +134,8 @@ Manage them on dedicated branches (`pytorch`, etc.).
 
 ### Adding a new copier option
 
-1. Append the question to `copier.yml` under `# ─── Optional features ───`.
+1. Append the question to `copier.yml` under the appropriate
+   `# ─── ... ───` section (e.g. `# ─── Project nature ───`).
 2. Add conditional Jinja blocks in `template/pyproject.toml.jinja`,
    `template/.vscode/extensions.json.jinja`, etc., as needed.
 3. Add tests in `tests/test_generate.py` covering both branches.
