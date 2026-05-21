@@ -11,7 +11,7 @@ A personal [copier](https://copier.readthedocs.io/) template for bootstrapping
 Python projects with the Astral toolchain — `uv`, `ruff`, `ty` — plus `pytest`,
 all pre-configured.
 
-## Quick start
+## 🚀 Quick start
 
 ```bash
 # One-time: install copier
@@ -36,7 +36,7 @@ The `.copier-answers.yml` file in each generated project records the
 answers, so `copier update` can re-render against newer template
 versions without losing your customizations.
 
-## Options
+## ⚙️ Options
 
 `copier copy` prompts for the following:
 
@@ -60,7 +60,7 @@ versions without losing your customizations.
   config, ruff `PT` rule) — useful for ML/DL projects where
   deterministic test workflows are impractical.
 
-## Layout
+## 🗂️ Layout
 
 ```
 .
@@ -74,7 +74,7 @@ versions without losing your customizations.
 └── AGENTS.md           ← guide for AI assistants working on this repo
 ```
 
-## Development
+## 🛠️ Development
 
 ```bash
 git clone https://github.com/kaparoo/python-project-template
@@ -83,7 +83,7 @@ uv sync --group dev
 uv run pytest          # generation-scenario tests
 ```
 
-### Commit convention
+### ✍️ Commit convention
 
 Commit messages use an emoji prefix and wrap package/tool names in
 backticks:
@@ -119,6 +119,6 @@ AI coding assistants working on this repository additionally follow
 [`AGENTS.md`](./AGENTS.md) for workflow rules and the toolchain
 rationale they must respect.
 
-## License
+## ⚖️ License
 
-[MIT](./LICENSE) © 2026 Jaewoo Park
+This project is distributed under the terms of the [MIT](./LICENSE) license.
