@@ -11,7 +11,7 @@ Guidance for AI coding assistants working on this project.
 
 ## Toolchain
 
-The Astral toolchain — keep it unless there is a clear reason to change:
+Keep this toolchain unless there is a clear reason to change:
 
 - `uv`   — environment, locking, running
 - `ruff` — linting + formatting
@@ -19,6 +19,12 @@ The Astral toolchain — keep it unless there is a clear reason to change:
 {%- if use_pytest %}
 - `pytest` — testing
 {%- endif %}
+- `torch` / `torchvision` — deep learning runtime
+
+`torch` and `torchvision` are plain dependencies — `uv` pulls the
+platform-appropriate wheel from PyPI (a CUDA build on Linux, a CPU/MPS
+build on macOS). Pin a specific backend with a `[[tool.uv.index]]`
+entry only when needed.
 
 ## Commands
 

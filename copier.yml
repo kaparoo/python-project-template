@@ -124,7 +124,7 @@ use_pytest:
     Disable for ML/DL projects where deterministic pytest workflows are
     impractical (CUDA non-determinism, GPU dependency, slow steps), or
     for ad-hoc script collections without test suites.
-  default: true
+  default: false
 
 
 # =================================================================== #

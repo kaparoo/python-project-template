@@ -1,9 +1,8 @@
-"""Tests for the copier template.
+"""Tests for the copier template (pytorch branch).
 
 Generates projects with various copier answers and asserts on the rendered
-output. Most tests run with `unsafe=False` to skip _tasks (which spend
-time on `git init` and `uv sync`); a single integration test runs the
-full pipeline to confirm tasks behave end-to-end.
+output. Tests skip _tasks — the heavy `uv sync` would download torch; a
+single integration test runs `uv lock` to confirm the project resolves.
 """
 
 from __future__ import annotations
@@ -30,7 +29,9 @@ def _generate(
     """Render the template into dst with given answers.
 
     `unsafe=True` acknowledges the template declares `_tasks`;
-    `skip_tasks` controls whether they actually execute.
+    `skip_tasks` controls whether they actually execute. `vcs_ref="HEAD"`
+    renders the current commit — without it copier would prefer the
+    latest tag and miss commits made after it.
     """
     answers: dict[str, object] = {"project_name": "test-app"}
     if data:
@@ -42,6 +43,7 @@ def _generate(
         defaults=True,
         unsafe=True,
         skip_tasks=not run_tasks,
+        vcs_ref="HEAD",
     )
     return dst
 
@@ -63,11 +65,12 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
         "CLAUDE.md",
         "test_app/__init__.py",
         "test_app/py.typed",
-        "tests/conftest.py",
         ".copier-answers.yml",
     ]
     missing = [path for path in expected if not (project / path).is_file()]
     assert not missing, f"Missing files: {missing}"
+    # `use_pytest` defaults to false on this branch — no test suite.
+    assert not (project / "tests").exists()
 
 
 # ─── Variable substitution ───
@@ -120,7 +123,7 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
 
 
 def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
-    project = _generate(tmp_path)  # default true
+    project = _generate(tmp_path, {"use_pytest": True})
     assert (project / "tests" / "conftest.py").is_file()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
@@ -230,7 +233,7 @@ def test_agents_md_documents_python_style(tmp_path: Path) -> None:
 
 
 def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
-    project = _generate(tmp_path, {"package_name": "fut_app"})
+    project = _generate(tmp_path, {"package_name": "fut_app", "use_pytest": True})
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert 'required-imports = ["from __future__ import annotations"]' in pyproject
     assert '"__init__.py" = ["I002"]' in pyproject
@@ -244,31 +247,37 @@ def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
     assert "from __future__ import annotations" in conftest
 
 
-# ─── Integration: full pipeline with _tasks ───
+# ─── PyTorch ───
 
 
-def test_tasks_initialize_git_repo_with_initial_commit(tmp_path: Path) -> None:
-    """End-to-end: _tasks should produce a git repo on `main` with one commit."""
-    project = _generate(tmp_path, run_tasks=True)
-    assert (project / ".git").is_dir()
-    assert (project / "uv.lock").is_file()
+def test_torch_in_dependencies(tmp_path: Path) -> None:
+    project = _generate(tmp_path)
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"torch>=2.12"' in pyproject
+    assert '"torchvision"' in pyproject
+    assert "Artificial Intelligence" in pyproject
 
-    log = subprocess.run(
-        ["git", "log", "--oneline"],
+
+# ─── Integration: dependency resolution ───
+
+
+def test_generated_project_resolves_with_torch(tmp_path: Path) -> None:
+    """`uv lock` resolves the generated project — torch is installable.
+
+    This stops short of `uv sync` on purpose: syncing would download the
+    multi-gigabyte torch wheel. Resolution alone confirms torch and
+    torchvision are installable for the chosen Python version.
+    """
+    project = _generate(tmp_path)
+    result = subprocess.run(
+        ["uv", "lock"],
         cwd=project,
         capture_output=True,
         text=True,
         encoding="utf-8",
-        check=True,
+        check=False,
     )
-    assert "Initial commit from copier template" in log.stdout
-
-    branch = subprocess.run(
-        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-        cwd=project,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=True,
-    )
-    assert branch.stdout.strip() == "main"
+    assert result.returncode == 0, result.stderr
+    lock = (project / "uv.lock").read_text(encoding="utf-8")
+    assert 'name = "torch"' in lock
+    assert 'name = "torchvision"' in lock

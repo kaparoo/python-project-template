@@ -30,13 +30,20 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: {{ python_version }}",
     "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 {%- if is_library %}
     "Typing :: Typed",
 {%- endif %}
     # See https://pypi.org/classifiers/ for more classifiers
 ]
 keywords = []
-dependencies = []
+dependencies = [
+    # uv pulls the platform-appropriate wheel from PyPI automatically:
+    # a CUDA build on Linux, a CPU/MPS build on macOS. To pin a specific
+    # backend, add a [[tool.uv.index]] for https://download.pytorch.org/whl/<backend>.
+    "torch>=2.12",
+    "torchvision",
+]
 
 [project.urls]
 GitHub = "https://www.github.com/{{ github_username }}/{{ repo_name }}"
