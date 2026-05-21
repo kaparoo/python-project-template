@@ -38,11 +38,8 @@ classifiers = [
 ]
 keywords = []
 dependencies = [
-    # uv pulls the platform-appropriate wheel from PyPI automatically:
-    # a CUDA build on Linux, a CPU/MPS build on macOS. To pin a specific
-    # backend, add a [[tool.uv.index]] for https://download.pytorch.org/whl/<backend>.
-    "torch>=2.12",
-    "torchvision",
+    "torch>={{ torch_version }}",
+    "torchvision>={{ torchvision_version }}",
 ]
 
 [project.urls]
@@ -69,6 +66,17 @@ module-root = ""
 # https://docs.astral.sh/uv/concepts/build-backend/
 
 {% endif -%}
+# PyTorch wheels come from a dedicated index for the chosen backend.
+# https://docs.astral.sh/uv/guides/integration/pytorch/
+[[tool.uv.index]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/{% if compute_backend == 'cuda' %}cu{{ cuda_version | replace('.', '') }}{% else %}cpu{% endif %}"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch" }
+torchvision = { index = "pytorch" }
+
 [tool.ty.environment]
 python-version = "{{ python_version }}"
 

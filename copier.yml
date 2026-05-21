@@ -127,6 +127,39 @@ use_pytest:
   default: false
 
 
+# ─── PyTorch ───
+
+torch_version:
+  type: str
+  help: Minimum `torch` version.
+  default: "2.11.0"
+
+torchvision_version:
+  type: str
+  help: Minimum `torchvision` version.
+  default: "0.26.0"
+
+compute_backend:
+  type: str
+  help: |
+    PyTorch compute backend. `cpu` works everywhere; `cuda` needs an
+    NVIDIA GPU and routes installs through the matching PyTorch index.
+  choices:
+    - cpu
+    - cuda
+  default: cuda
+
+cuda_version:
+  type: str
+  help: CUDA toolkit version (used only when compute_backend is `cuda`).
+  choices:
+    - "12.6"
+    - "12.8"
+    - "13.0"
+  default: "12.8"
+  when: "{{ compute_backend == 'cuda' }}"
+
+
 # =================================================================== #
 #                       After-action messages                         #
 # =================================================================== #

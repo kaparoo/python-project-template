@@ -21,10 +21,10 @@ Keep this toolchain unless there is a clear reason to change:
 {%- endif %}
 - `torch` / `torchvision` — deep learning runtime
 
-`torch` and `torchvision` are plain dependencies — `uv` pulls the
-platform-appropriate wheel from PyPI (a CUDA build on Linux, a CPU/MPS
-build on macOS). Pin a specific backend with a `[[tool.uv.index]]`
-entry only when needed.
+PyTorch installs from a dedicated `[[tool.uv.index]]` matching the
+chosen compute backend ({% if compute_backend == 'cuda' %}CUDA {{ cuda_version }}{% else %}CPU{% endif %}).
+Re-run `copier` to switch backends, or edit the index URL in
+`pyproject.toml`.
 
 ## Commands
 
