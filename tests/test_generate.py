@@ -222,6 +222,7 @@ def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "## Python style" in agents
     assert "from __future__ import annotations" in agents
+    assert "Google style" in agents
     assert "PEP 723" in agents
 
 

@@ -58,6 +58,11 @@ applying it by hand.
   party, then a trailing `if TYPE_CHECKING:` block (grouped the same
   way). Within a group `import X` precedes `from X import Y`; entries are
   alphabetical.
+- Docstrings are optional — write them where they clarify intent, not
+  mechanically on every function, class, or method. When written, use
+  [Google style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+  (`Args:` / `Returns:` / `Raises:` sections), and omit types from
+  `Args:` entries — the signature already carries them.
 - Standalone runnable scripts carry PEP 723 inline metadata (the
   `# /// script` block). `uv` manages it (`uv add --script`); add or edit
   it by hand only when explicitly asked.
