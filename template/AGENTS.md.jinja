@@ -44,6 +44,24 @@ uv run pytest            # run tests
 - `ty` has no plugin system; rely on standard typing (PEP 681
   `dataclass_transform`, `.pyi` stubs), not type-checker plugins.
 
+## Python style
+
+`ruff` enforces most of this — run `uv run ruff check --fix` rather than
+applying it by hand.
+
+- Every module starts with `from __future__ import annotations` (ruff
+  isort `required-imports`). Empty `__init__.py` package markers are
+  exempt.
+- Use builtin generics — `list`, `dict`, `tuple`, `type` — never
+  `typing.List`, `typing.Dict`, `typing.Tuple`, `typing.Type` (ruff `UP`).
+- Imports are grouped and sorted: standard library, third party, first
+  party, then a trailing `if TYPE_CHECKING:` block (grouped the same
+  way). Within a group `import X` precedes `from X import Y`; entries are
+  alphabetical.
+- Standalone runnable scripts carry PEP 723 inline metadata (the
+  `# /// script` block). `uv` manages it (`uv add --script`); add or edit
+  it by hand only when explicitly asked.
+
 ## Commit convention
 
 Commit messages use a [Gitmoji](https://gitmoji.dev/) prefix and wrap

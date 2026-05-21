@@ -11,4 +11,6 @@ Example fixture:
         return {"key": "value"}
 """
 
+from __future__ import annotations
+
 # Add your shared fixtures and pytest configuration here

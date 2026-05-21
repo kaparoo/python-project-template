@@ -141,7 +141,9 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert '"pytest>=' not in pyproject
     assert "[tool.pytest.ini_options]" not in pyproject
     assert '"PT",' not in pyproject
-    assert "[tool.ruff.lint.per-file-ignores]" not in pyproject
+    # per-file-ignores table still exists (for `__init__.py`), but the
+    # pytest-specific `tests/**` entry is gone.
+    assert '"tests/**"' not in pyproject
     assert "[tool.ruff.lint.flake8-pytest-style]" not in pyproject
     extensions = (project / ".vscode" / "extensions.json").read_text(encoding="utf-8")
     assert "test-adapter" not in extensions
@@ -213,6 +215,32 @@ def test_agents_md_documents_commit_convention(tmp_path: Path) -> None:
     assert "## Commit convention" in agents
     assert "Gitmoji" in agents
     assert "Co-Authored-By" in agents
+
+
+def test_agents_md_documents_python_style(tmp_path: Path) -> None:
+    project = _generate(tmp_path)
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Python style" in agents
+    assert "from __future__ import annotations" in agents
+    assert "PEP 723" in agents
+
+
+# ─── Python file conventions ───
+
+
+def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"package_name": "fut_app"})
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'required-imports = ["from __future__ import annotations"]' in pyproject
+    assert '"__init__.py" = ["I002"]' in pyproject
+
+    # Empty package marker stays empty — no future import.
+    init = (project / "fut_app" / "__init__.py").read_text(encoding="utf-8")
+    assert init.strip() == ""
+
+    # conftest.py is a real module — it carries the future import.
+    conftest = (project / "tests" / "conftest.py").read_text(encoding="utf-8")
+    assert "from __future__ import annotations" in conftest
 
 
 # ─── Integration: full pipeline with _tasks ───
