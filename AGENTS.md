@@ -96,9 +96,6 @@ Examples:
 | Template engine | `copier` (>=9.15.1) | Update-friendly via `.copier-answers.yml` |
 | AI agent config | `AGENTS.md` + `CLAUDE.md` (just `@AGENTS.md`) | Editor-agnostic with Claude Code shim |
 
-**`PyTorch` / `Jupyter`** are explicitly **not** copier options.
-Manage them on dedicated branches (`pytorch`, etc.).
-
 ## Common workflows
 
 ### Adding a new copier option
