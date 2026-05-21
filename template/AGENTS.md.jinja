@@ -1,0 +1,69 @@
+# Agent guide — `{{ project_name }}`
+
+Guidance for AI coding assistants working on this project.
+`CLAUDE.md` loads this file via the `@AGENTS.md` import.
+
+## Project
+
+- Package: `{{ package_name }}/`
+- Python:  {{ python_version }}+
+- Kind:    {% if is_library %}distributable library (`uv_build` backend){% else %}application — not packaged for distribution{% endif %}
+
+## Toolchain
+
+The Astral toolchain — keep it unless there is a clear reason to change:
+
+- `uv`   — environment, locking, running
+- `ruff` — linting + formatting
+- `ty`   — type checking
+{%- if use_pytest %}
+- `pytest` — testing
+{%- endif %}
+
+## Commands
+
+```bash
+uv sync --group dev      # create/refresh the environment
+uv run ruff check .      # lint
+uv run ruff format .     # format
+uv run ty check          # type-check
+{%- if use_pytest %}
+uv run pytest            # run tests
+{%- endif %}
+```
+
+## Conventions
+
+- Keep code fully typed — `ty` runs with `error-on-warning`.
+- Fix `ruff` findings rather than suppressing them, unless there is a
+  clear, commented reason.
+{%- if use_pytest %}
+- Tests live in `tests/` and may use bare `assert` (ruff `S101` is
+  waived there).
+{%- endif %}
+- `ty` has no plugin system; rely on standard typing (PEP 681
+  `dataclass_transform`, `.pyi` stubs), not type-checker plugins.
+
+## Commit convention
+
+Commit messages use a [Gitmoji](https://gitmoji.dev/) prefix and wrap
+package/tool names in backticks:
+
+```
+<emoji> <Imperative summary; tool names in `backticks`>
+
+<Optional body explaining *why*>
+```
+
+Keep commits single-purpose; don't rewrite published history; don't
+skip git hooks. AI assistants append a `Co-Authored-By` trailer with
+their own published identity (e.g. `Claude <noreply@anthropic.com>`).
+
+## Template
+
+Generated from a copier template. `.copier-answers.yml` records the
+answers; run `copier update --UNSAFE` to pull later template changes.
+
+---
+
+<!-- Add project-specific guidance below. -->

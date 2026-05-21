@@ -203,6 +203,18 @@ def test_answers_file_records_all_inputs(tmp_path: Path) -> None:
     assert "python_version: '3.12'" in answers
 
 
+# ─── Agent guide ───
+
+
+def test_agents_md_documents_commit_convention(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"project_name": "agent-app"})
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "agent-app" in agents
+    assert "## Commit convention" in agents
+    assert "Gitmoji" in agents
+    assert "Co-Authored-By" in agents
+
+
 # ─── Integration: full pipeline with _tasks ───
 
 
