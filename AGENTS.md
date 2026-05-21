@@ -75,8 +75,13 @@ Match the existing history exactly. Format:
 
 <Optional body explaining *why*, in present tense.>
 
-Co-Authored-By: <agent-id> <noreply@anthropic.com>
+Co-Authored-By: <agent-name> <agent-email>
 ```
+
+Use whatever identity the acting assistant publishes — do not hardcode
+one vendor. Examples:
+- Claude Code → `Co-Authored-By: Claude <noreply@anthropic.com>`
+- GitHub Copilot → `Co-Authored-By: Copilot <198982749+Copilot@users.noreply.github.com>`
 
 ### Emoji vocabulary (most-used first)
 
