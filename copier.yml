@@ -1,6 +1,6 @@
 # =================================================================== #
-#  Copier template configuration                                       #
-#  Docs: https://copier.readthedocs.io/en/stable/configuring/          #
+#  Copier template configuration                                      #
+#  Docs: https://copier.readthedocs.io/en/stable/configuring/         #
 # =================================================================== #
 
 _subdirectory: template
@@ -17,7 +17,7 @@ _exclude:
 
 
 # =================================================================== #
-#                            Questions                                 #
+#                            Questions                                #
 # =================================================================== #
 
 # ─── Project identity ───
@@ -128,7 +128,7 @@ use_pytest:
 
 
 # =================================================================== #
-#                       After-action messages                          #
+#                       After-action messages                         #
 # =================================================================== #
 
 _message_after_copy: |
@@ -156,7 +156,7 @@ _message_after_update: |
 
 
 # =================================================================== #
-#                Post-generation tasks (require --UNSAFE)              #
+#                Post-generation tasks (require --UNSAFE)             #
 # =================================================================== #
 
 _tasks:
@@ -178,7 +178,7 @@ _tasks:
 
 
 # =================================================================== #
-#       Migrations (run when updating across template versions)        #
+#       Migrations (run when updating across template versions)       #
 # =================================================================== #
 
 # Add entries here as breaking changes ship in tagged template releases.
