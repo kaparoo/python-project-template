@@ -123,8 +123,12 @@ and `pytest` in the integration test.
 
 ### Verifying end-to-end manually (dogfooding)
 
+`--vcs-ref HEAD` renders the current working commit; without it copier
+falls back to the latest Git tag and would miss the `pytorch` branch
+work.
+
 ```bash
-copier copy --UNSAFE . ~/tmp/dogfood-$(date +%s) -d project_name=dogfood
+copier copy --vcs-ref HEAD --UNSAFE . ~/tmp/dogfood-$(date +%s) -d project_name=dogfood
 cd ~/tmp/dogfood-*
 uv run ruff check .
 uv run ty check

@@ -32,9 +32,13 @@ copier copy --vcs-ref pytorch --UNSAFE gh:kaparoo/python-project-template my-ml-
 Pull later template improvements into an existing project:
 
 ```bash
-cd my-new-project
-copier update --UNSAFE
+cd my-ml-project
+copier update --UNSAFE --vcs-ref pytorch
 ```
+
+`--vcs-ref pytorch` is required: the variant lives on the `pytorch`
+branch, so `copier update` would otherwise jump to the latest Git tag
+(which belongs to the base template on `main`).
 
 The `.copier-answers.yml` file in each generated project records the
 answers, so `copier update` can re-render against newer template

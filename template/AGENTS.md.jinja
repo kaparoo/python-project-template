@@ -90,8 +90,12 @@ their own published identity (e.g. `Claude <noreply@anthropic.com>`).
 
 ## Template
 
-Generated from a copier template. `.copier-answers.yml` records the
-answers; run `copier update --UNSAFE` to pull later template changes.
+Generated from the `pytorch` variant of a copier template.
+`.copier-answers.yml` records the answers; run
+`copier update --UNSAFE --vcs-ref pytorch` to pull later template
+changes. `--vcs-ref pytorch` is required — the variant lives on a
+branch, so `copier update` would otherwise jump to the latest Git tag
+(which belongs to the base template).
 
 ---
 
