@@ -6,10 +6,13 @@
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![ty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ty/main/assets/badge/v0.json)](https://github.com/astral-sh/ty)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C.svg?logo=pytorch&logoColor=white)](https://pytorch.org/)
 
-A personal [copier](https://copier.readthedocs.io/) template for bootstrapping
-Python projects with the Astral toolchain — `uv`, `ruff`, `ty` — plus `pytest`,
-all pre-configured.
+The **PyTorch variant** of a personal [copier](https://copier.readthedocs.io/)
+template — bootstraps deep-learning projects with `torch` / `torchvision`
+and the Astral toolchain (`uv`, `ruff`, `ty`) pre-configured.
+
+> This is the **`pytorch` branch**. For the plain base template, see `main`.
 
 ## 🚀 Quick start
 
@@ -17,8 +20,9 @@ all pre-configured.
 # One-time: install copier
 uv tool install copier
 
-# Generate a new project
-copier copy --UNSAFE gh:kaparoo/python-project-template my-new-project
+# Generate a new deep-learning project
+# (--vcs-ref selects this pytorch branch)
+copier copy --vcs-ref pytorch --UNSAFE gh:kaparoo/python-project-template my-ml-project
 ```
 
 `--UNSAFE` is required because the template runs post-generation tasks
@@ -52,13 +56,19 @@ versions without losing your customizations.
 | `python_version` | choice | `3.14` | `3.12` / `3.13` / `3.14` |
 | `license_year` | int | `2026` | Copyright year |
 | `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
-| `use_pytest` | bool | `true` | Adds `tests/` + pytest config |
+| `use_pytest` | bool | `false` | Adds `tests/` + pytest config |
+| `torch_version` | str | `2.11.0` | Minimum `torch` version |
+| `torchvision_version` | str | `0.26.0` | Minimum `torchvision` version |
+| `compute_backend` | choice | `cuda` | `cpu` / `cuda` — selects the PyTorch index |
+| `cuda_version` | choice | `12.8` | `12.6` / `12.8` / `13.0` (asked only for `cuda`) |
 
 - **`is_library = false`** produces an application (no build system, no
   `py.typed` marker); uv treats it as a non-distributable project.
-- **`use_pytest = false`** omits the entire pytest layer (`tests/`,
-  config, ruff `PT` rule) — useful for ML/DL projects where
-  deterministic test workflows are impractical.
+- **`use_pytest`** defaults to `false` here — deterministic pytest
+  workflows are impractical for most deep-learning code.
+- **`compute_backend`** routes `torch` / `torchvision` through a
+  `[[tool.uv.index]]`: `cpu` works everywhere, `cuda` (default, CUDA 12.8)
+  needs an NVIDIA GPU.
 
 ## 🗂️ Layout
 

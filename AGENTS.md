@@ -1,7 +1,11 @@
-# Agent guide — `python-project-template`
+# Agent guide — `python-project-template` (`pytorch` branch)
 
 This file is for AI coding assistants (Claude Code, Copilot, etc.) working
 **on this repository itself** — the copier template source.
+
+> 🔥 This is the **`pytorch` branch** — the PyTorch variant of the template.
+> The plain base template lives on `main`. Changes shared by both branches
+> should land on `main` first and then be merged forward into `pytorch`.
 
 > ⚠️ Do not confuse with [`template/AGENTS.md`](./template/AGENTS.md), which
 > is the (empty) AGENTS.md that ships **inside** generated projects.
@@ -10,8 +14,9 @@ This file is for AI coding assistants (Claude Code, Copilot, etc.) working
 
 ## What this repo is
 
-A personal [copier](https://copier.readthedocs.io/) template for bootstrapping
-Python projects with `uv`, `ruff`, `ty`, and `pytest` pre-configured.
+The **PyTorch variant** of a personal [copier](https://copier.readthedocs.io/)
+template — bootstraps deep-learning projects with `torch` / `torchvision`
+and the Astral toolchain (`uv`, `ruff`, `ty`) pre-configured.
 
 - **Author / sole user**: Jaewoo Park (`kaparoo`)
 - **Audience of generated projects**: also the author
@@ -44,8 +49,8 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest` → all 12
-tests should pass in ~35–40 seconds.
+**Workflow**: commit (or stash) all changes → run `uv run pytest` → all 18
+tests should pass in ~50–60 seconds.
 
 ### 2. Both branches of every `copier.yml` option must be tested
 
@@ -55,16 +60,17 @@ minimum bar.
 
 ### 3. Verify after every `template/` change
 
-`uv run pytest` runs copier in-process for ~12 scenarios. If even one
+`uv run pytest` runs copier in-process for ~18 scenarios. If even one
 file in `template/` changes, run the suite before committing.
 
-### 4. The integration test runs real `_tasks`
+### 4. The integration test resolves real PyTorch dependencies
 
-`test_tasks_initialize_git_repo_with_initial_commit` actually executes
-`git init`, `uv lock`, `uv sync`, `git add`, `git commit`. It needs:
-- `git` and `uv` on PATH
-- A configured git identity (`user.email`, `user.name`)
-- Internet access (uv may download Python or wheels)
+`test_generated_project_resolves_with_torch` runs `uv lock` against a
+freshly generated project to confirm `torch` / `torchvision` are
+installable for the chosen Python version. It deliberately stops short of
+`uv sync` — syncing would download the multi-gigabyte torch wheel. It needs:
+- `uv` on PATH
+- Internet access (uv reaches the PyTorch index for resolution metadata)
 
 ## Commit convention
 
@@ -93,6 +99,7 @@ Examples:
 | Linter / formatter | `ruff` | Single binary, comprehensive ruleset |
 | Type checker | `ty` (beta) | Astral, plugin-free; Ruff `ANN` rules cover annotation enforcement |
 | Test runner | `pytest` | Standard |
+| Deep-learning runtime | `torch` / `torchvision` | Project domain; installed via a dedicated `[[tool.uv.index]]` matching the compute backend |
 | Template engine | `copier` (>=9.15.1) | Update-friendly via `.copier-answers.yml` |
 | AI agent config | `AGENTS.md` + `CLAUDE.md` (just `@AGENTS.md`) | Editor-agnostic with Claude Code shim |
 
@@ -134,4 +141,8 @@ uv build
   to generated projects — `ty` deliberately has no plugin system. Use
   PEP 681 `dataclass_transform` or direct stubs instead.
 - Committing `dist/`, `.venv/`, `.cache/`, `_gen_*/` test artifacts.
-- Force-pushing to `main` without explicit user authorization.
+- Force-pushing to `main` or `pytorch` without explicit user authorization.
+- Switching the PyTorch install to `uv pip install --torch-backend=auto` —
+  that flag only works with `uv pip`, not `uv lock` / `uv sync`. The
+  template pins a dedicated `[[tool.uv.index]]` driven by the
+  `compute_backend` / `cuda_version` answers instead; keep that approach.
