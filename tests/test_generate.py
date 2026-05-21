@@ -30,7 +30,9 @@ def _generate(
     """Render the template into dst with given answers.
 
     `unsafe=True` acknowledges the template declares `_tasks`;
-    `skip_tasks` controls whether they actually execute.
+    `skip_tasks` controls whether they actually execute. `vcs_ref="HEAD"`
+    renders the current commit — without it copier would prefer the
+    latest tag and miss commits made after it.
     """
     answers: dict[str, object] = {"project_name": "test-app"}
     if data:
@@ -42,6 +44,7 @@ def _generate(
         defaults=True,
         unsafe=True,
         skip_tasks=not run_tasks,
+        vcs_ref="HEAD",
     )
     return dst
 

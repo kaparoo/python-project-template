@@ -9,6 +9,14 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-05-21
+
+### Fixed
+
+- `tests/test_generate.py` renders the template at `HEAD` via copier's
+  `vcs_ref`. Without it copier defaults to the latest tag, so commits
+  made after a release tag were silently not exercised by the suite.
+
 ## [1.0.0] - 2026-05-21
 
 First tagged release — a personal copier template for bootstrapping
@@ -46,5 +54,6 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/kaparoo/python-project-template/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/kaparoo/python-project-template/releases/tag/v1.0.0
