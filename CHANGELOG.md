@@ -9,6 +9,16 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Fixed
+
+- Replaced the `shields.io` PyPI monthly downloads badge in the
+  generated `README.md` with a Pepy badge. The `shields.io` endpoint
+  frequently rendered as "rate limited by upstream service" once the
+  generated project was actually published to PyPI
+  ([badges/shields#11620](https://github.com/badges/shields/issues/11620)).
+  Pepy serves the badge image directly and isn't subject to the same
+  rate limits.
+
 ## [1.0.1] - 2026-05-21
 
 ### Fixed
