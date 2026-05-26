@@ -81,8 +81,8 @@ cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
 addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
 {%- if not is_library %}
-# Application mode: without `[build-system]` uv doesn't editable-install
-# the project, so put the root on `sys.path` for the flat-layout package.
+# Application mode has no editable install — put the project root on
+# `sys.path` so tests can import the flat-layout package.
 pythonpath = ["."]
 {%- endif %}
 # See the following documentation for more information
