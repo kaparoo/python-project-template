@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-05-21
+
 ### Fixed
 
 - Generated projects with `is_library=false` + `use_pytest=true` now set
@@ -68,5 +70,6 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.0...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.1...pytorch
+[1.0.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.0...pytorch-v1.0.1
 [1.0.0]: https://github.com/kaparoo/python-project-template/releases/tag/pytorch-v1.0.0
