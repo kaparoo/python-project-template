@@ -18,6 +18,13 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Fixed
 
+- Generated projects with `is_library=false` + `use_pytest=true` now set
+  `pythonpath = ["."]` under `[tool.pytest.ini_options]`. Without
+  `[build-system]` uv does not editable-install the project, so the
+  flat-layout package was not importable from `tests/` under pytest's
+  default `--import-mode=importlib`. Added a `tests/test_generate.py`
+  case for the previously-untested combination.
+
 - Replaced the `shields.io` PyPI monthly downloads badge in the
   generated `README.md` with a Pepy badge. The `shields.io` endpoint
   frequently rendered as "rate limited by upstream service" once the

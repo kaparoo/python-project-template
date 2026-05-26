@@ -95,6 +95,11 @@ minversion = "9.0"
 cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
 addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+{%- if not is_library %}
+# Application mode has no editable install — put the project root on
+# `sys.path` so tests can import the flat-layout package.
+pythonpath = ["."]
+{%- endif %}
 # See the following documentation for more information
 # https://docs.pytest.org/en/stable/reference/customize.html
 # https://docs.pytest.org/en/stable/reference/reference.html#configuration-options
