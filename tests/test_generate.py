@@ -180,7 +180,7 @@ def test_is_library_true_includes_build_system_and_py_typed(tmp_path: Path) -> N
     assert (project / "test_app" / "py.typed").is_file()
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/v/test-app" in readme
-    assert "pypi/dm/test-app" in readme
+    assert "pepy.tech/badge/test-app" in readme
 
 
 def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> None:
@@ -193,6 +193,7 @@ def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> Non
     assert not (project / "test_app" / "py.typed").exists()
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/" not in readme
+    assert "pepy.tech" not in readme
 
 
 # ─── Answers file ───
