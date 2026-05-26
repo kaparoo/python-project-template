@@ -80,6 +80,11 @@ minversion = "9.0"
 cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
 addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+{%- if not is_library %}
+# Application mode: without `[build-system]` uv doesn't editable-install
+# the project, so put the root on `sys.path` for the flat-layout package.
+pythonpath = ["."]
+{%- endif %}
 # See the following documentation for more information
 # https://docs.pytest.org/en/stable/reference/customize.html
 # https://docs.pytest.org/en/stable/reference/reference.html#configuration-options

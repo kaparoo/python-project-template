@@ -128,6 +128,8 @@ def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
+    # Library mode → editable install handles imports, no `pythonpath` needed.
+    assert "pythonpath" not in pyproject
     assert '"PT",' in pyproject
     assert "[tool.ruff.lint.per-file-ignores]" in pyproject
     assert "[tool.ruff.lint.flake8-pytest-style]" in pyproject
@@ -152,6 +154,17 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert "test-adapter" not in extensions
     settings = (project / ".vscode" / "settings.json").read_text(encoding="utf-8")
     assert "pytestEnabled" not in settings
+
+
+def test_application_with_pytest_adds_pythonpath(tmp_path: Path) -> None:
+    """Application + pytest: no editable install, so pytest needs the project
+    root on `sys.path` to import the flat-layout package from `tests/`.
+    """
+    project = _generate(tmp_path, {"is_library": False, "use_pytest": True})
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert "[build-system]" not in pyproject
+    assert "[tool.pytest.ini_options]" in pyproject
+    assert 'pythonpath = ["."]' in pyproject
 
 
 def test_minimal_application_combination(tmp_path: Path) -> None:
