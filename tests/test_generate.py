@@ -68,6 +68,7 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
         "test_app/py.typed",
         "tests/__init__.py",
         "CHANGELOG.md",
+        "TODO.md",
         ".copier-answers.yml",
     ]
     missing = [path for path in expected if not (project / path).is_file()]
@@ -274,6 +275,51 @@ def test_generated_changelog_skeleton(tmp_path: Path) -> None:
     assert "Keep a Changelog" in changelog
     assert "Semantic Versioning" in changelog
     assert "## [Unreleased]" in changelog
+
+
+def test_include_todo_true_creates_todo_md_and_readme_link(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"include_todo": True})
+    assert (project / "TODO.md").is_file()
+    todo = (project / "TODO.md").read_text(encoding="utf-8")
+    assert "# TODO" in todo
+    assert "Promote an" in todo
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert "## 📋 TODO" in readme
+    assert "[TODO.md](./TODO.md)" in readme
+
+
+def test_include_todo_false_omits_todo_md_and_readme_link(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"include_todo": False})
+    assert not (project / "TODO.md").exists()
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert "## 📋 TODO" not in readme
+    assert "TODO.md" not in readme
+
+
+def test_readme_includes_five_sections_for_library(tmp_path: Path) -> None:
+    """Default (`is_library=True`, `include_todo=True`) → all 5 sections."""
+    project = _generate(tmp_path)
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    for section in (
+        "## 📦 Installation",
+        "## 🧩 Modules",
+        "## 📋 TODO",
+        "## 📜 Changelog",
+        "## ⚖️ License",
+    ):
+        assert section in readme, f"missing {section}"
+    assert "uv add test-app" in readme
+    assert "pip install test-app" in readme
+
+
+def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"is_library": False})
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert "## 📦 Development setup" in readme
+    assert "## 📦 Installation" not in readme
+    assert "## 🧩 Modules" not in readme   # library-only section
+    assert "uv add test-app" not in readme
+    assert "uv sync --group dev" in readme
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:

@@ -13,6 +13,45 @@
 
 {% if project_description %}*{{ project_description }}*{% else %}_Add a one-line description of your project._{% endif %}
 
+{% if is_library -%}
+## 📦 Installation
+
+Requires Python {{ python_version }}+.
+
+```bash
+# With uv (recommended)
+uv add {{ project_name }}
+
+# With pip
+pip install {{ project_name }}
+```
+
+## 🧩 Modules
+
+_Document your modules here._
+
+{% else -%}
+## 📦 Development setup
+
+Requires Python {{ python_version }}+.
+
+```bash
+git clone https://github.com/{{ github_username }}/{{ repo_name }}.git
+cd {{ repo_name }}
+uv sync --group dev
+```
+
+{% endif -%}
+{% if include_todo -%}
+## 📋 TODO
+
+See [TODO.md](./TODO.md) for tracked open items.
+
+{% endif -%}
+## 📜 Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the version history.
+
 ## ⚖️ License
 
 This project is distributed under the terms of the [MIT](./LICENSE) license.
