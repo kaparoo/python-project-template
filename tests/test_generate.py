@@ -67,6 +67,7 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
         "test_app/__init__.py",
         "test_app/py.typed",
         "tests/__init__.py",
+        "CHANGELOG.md",
         ".copier-answers.yml",
     ]
     missing = [path for path in expected if not (project / path).is_file()]
@@ -243,6 +244,20 @@ def test_agents_md_documents_commit_convention(tmp_path: Path) -> None:
     assert "## Commit convention" in agents
     assert "Gitmoji" in agents
     assert "Co-Authored-By" in agents
+    # Gitmoji palette table is present with a representative spread of prefixes.
+    assert "Common prefixes used in this project" in agents
+    for prefix in ("✨", "🐛", "♻️", "📝", "🔖", "🔧"):
+        assert prefix in agents, f"missing {prefix} in gitmoji palette"
+
+
+def test_generated_changelog_skeleton(tmp_path: Path) -> None:
+    """Every generated project ships a Keep-a-Changelog skeleton."""
+    project = _generate(tmp_path)
+    changelog = (project / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "# Changelog" in changelog
+    assert "Keep a Changelog" in changelog
+    assert "Semantic Versioning" in changelog
+    assert "## [Unreleased]" in changelog
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:

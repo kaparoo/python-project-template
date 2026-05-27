@@ -89,6 +89,28 @@ package/tool names in backticks:
 <Optional body explaining *why*>
 ```
 
+Common prefixes used in this project:
+
+| Prefix | Use for                                       |
+| ------ | --------------------------------------------- |
+| ✨     | New feature                                   |
+| ♻️     | Refactor (no user-visible behavior change)    |
+| 🔥     | Remove dead / vestigial code                  |
+| 🐛     | Bug fix                                       |
+| 📝     | Docstrings, README, CHANGELOG                 |
+| ✏️     | Typo or other small text fix                  |
+| 💄     | Style (no behavior change)                    |
+| ✅     | Tests added or updated                        |
+| ⚡     | Performance optimization                      |
+| 🏷️     | Type-hint-only change                         |
+| 💬     | Code comment                                  |
+| 🗑️     | Deprecation signal                            |
+| 📦     | Re-export / packaging structure               |
+| 🚚     | Move / rename files                           |
+| ⬆️     | Bump a dependency or tool version             |
+| 🔧     | Config (`pyproject.toml`, `ruff`, `ty`, ...)  |
+| 🔖     | Release a version (commit + matching tag)     |
+
 Keep commits single-purpose; don't rewrite published history; don't
 skip git hooks. AI assistants append a `Co-Authored-By` trailer with
 their own published identity (e.g. `Claude <noreply@anthropic.com>`).
