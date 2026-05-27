@@ -16,6 +16,44 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-05-27
+
+### Added
+
+- Generated projects now ship a Keep-a-Changelog `CHANGELOG.md`
+  skeleton (empty `[Unreleased]`) so the documented release workflow
+  has a target from the first commit.
+- New `include_todo` copier question (default `true`) generates a
+  `TODO.md` skeleton at the project root and links to it from the
+  `README.md` 📋 TODO section. Disable to skip both.
+- `template/AGENTS.md.jinja` gains a 17-row Gitmoji palette table
+  under "Commit convention" so generated projects ship a uniform
+  commit vocabulary distilled from the `kaparoo-python` v0.2.0 cycle.
+- **Library mode only**: two named `[[tool.uv.index]]` entries in
+  `pyproject.toml` (`pypi` as default, `testpypi` as `explicit = true`)
+  configured with `publish-url` so `uv publish --index {testpypi,pypi}`
+  Just Works against OS keyring tokens. For `pytorch` variant projects
+  in library mode, these coexist with the existing PyTorch wheel index.
+- **Library mode only**: new `## Releases` section in `AGENTS.md`
+  documenting the 7-step procedure (CHANGELOG trim → version bump →
+  `uv build` + `uvx twine check` → isolated install smoke test →
+  TestPyPI → PyPI → annotated tag).
+
+### Changed
+
+- `template/README.md.jinja` replaces the bare badges + License body
+  with a 5-section structure: 📦 Installation / 🧩 Modules / 📋 TODO
+  / 📜 Changelog / ⚖️ License. Library mode shows `uv add` / `pip install`
+  plus a Modules placeholder; application mode swaps to a 📦 Development
+  setup section (clone + `uv sync`) and drops Modules.
+
+### Fixed
+
+- `copier.yml` `_exclude` no longer lists `CHANGELOG.md`. The entry
+  was a leftover from before `_subdirectory: template` and was
+  silently discarding the new `template/CHANGELOG.md.jinja` from
+  every generation.
+
 ## [1.0.2] - 2026-05-27
 
 ### Removed
@@ -98,7 +136,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.2...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.1.0...pytorch
+[1.1.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.2...pytorch-v1.1.0
 [1.0.2]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.1...pytorch-v1.0.2
 [1.0.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.0...pytorch-v1.0.1
 [1.0.0]: https://github.com/kaparoo/python-project-template/releases/tag/pytorch-v1.0.0
