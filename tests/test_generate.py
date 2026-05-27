@@ -206,6 +206,16 @@ def test_is_library_true_includes_build_system_and_py_typed(tmp_path: Path) -> N
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/v/test-app" in readme
     assert "pepy.tech/badge/test-app" in readme
+    # Library mode ships named publish indexes for `uv publish`.
+    assert 'name = "pypi"' in pyproject
+    assert 'name = "testpypi"' in pyproject
+    assert 'publish-url = "https://upload.pypi.org/legacy/"' in pyproject
+    assert 'publish-url = "https://test.pypi.org/legacy/"' in pyproject
+    # ...and an AGENTS.md `## Releases` workflow that references them.
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Releases" in agents
+    assert "uv publish --index testpypi" in agents
+    assert "uvx twine check dist/*" in agents
 
 
 def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> None:
@@ -219,6 +229,12 @@ def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> Non
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/" not in readme
     assert "pepy.tech" not in readme
+    # Application mode has nothing to publish — no named indexes / Releases.
+    assert 'name = "testpypi"' not in pyproject
+    assert "upload.pypi.org" not in pyproject
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Releases" not in agents
+    assert "uv publish" not in agents
 
 
 # ─── Answers file ───

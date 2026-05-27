@@ -61,6 +61,22 @@ module-root = ""
 # See the following documentation for more information
 # https://docs.astral.sh/uv/concepts/build-backend/
 
+# Named publish indexes — `uv publish --index testpypi` for the staging
+# upload, then `--index pypi` for the real release. Tokens live in the
+# OS keyring under the `publish-url` keys; `testpypi` is `explicit = true`
+# so it stays out of dependency resolution.
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple/"
+publish-url = "https://upload.pypi.org/legacy/"
+default = true
+
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
 {% endif -%}
 [tool.ty.environment]
 python-version = "{{ python_version }}"
