@@ -119,12 +119,23 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     assert "Python :: 3.13" in pyproject
 
 
+def test_pyproject_uses_pep639_license_metadata(tmp_path: Path) -> None:
+    """PEP 639: explicit `license-files` key, no deprecated classifier."""
+    project = _generate(tmp_path)
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'license = "MIT"' in pyproject
+    assert 'license-files = ["LICENSE"]' in pyproject
+    assert "License :: OSI Approved" not in pyproject
+
+
 # ─── Conditional features (use_pytest) ───
 
 
 def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
-    project = _generate(tmp_path, {"use_pytest": True})
-    assert (project / "tests" / "conftest.py").is_file()
+    project = _generate(tmp_path, {"use_pytest": True})  # default false on this branch
+    assert (project / "tests" / "__init__.py").is_file()
+    # No placeholder `conftest.py` — create one when a real fixture lands.
+    assert not (project / "tests" / "conftest.py").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
@@ -255,10 +266,9 @@ def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
     # Empty package marker stays empty — no future import.
     init = (project / "fut_app" / "__init__.py").read_text(encoding="utf-8")
     assert init.strip() == ""
-
-    # conftest.py is a real module — it carries the future import.
-    conftest = (project / "tests" / "conftest.py").read_text(encoding="utf-8")
-    assert "from __future__ import annotations" in conftest
+    # `tests/__init__.py` is also a package marker and stays empty too.
+    tests_init = (project / "tests" / "__init__.py").read_text(encoding="utf-8")
+    assert tests_init.strip() == ""
 
 
 # ─── PyTorch ───

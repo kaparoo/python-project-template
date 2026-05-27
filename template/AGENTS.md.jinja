@@ -46,9 +46,20 @@ uv run pytest            # run tests
 {%- if use_pytest %}
 - Tests live in `tests/` and may use bare `assert` (ruff `S101` is
   waived there).
+- Mirror the package layout under `tests/`: `{{ package_name }}/sub/mod.py`
+  is tested by `tests/sub/test_mod.py`. Keep `__init__.py` markers in
+  test subpackages (matches the `INP` ruff rule).
+- Fixtures live in `tests/conftest.py` when you need them — modern
+  default, applies to `tests/` only. Use a root `conftest.py` only for
+  `pytest_plugins` declarations, doctest fixtures shared with source
+  files, or project-wide collection hooks.
 {%- endif %}
 - `ty` has no plugin system; rely on standard typing (PEP 681
   `dataclass_transform`, `.pyi` stubs), not type-checker plugins.
+- Suppress `ty` errors with `# ty: ignore[<error-name>]` using `ty`'s
+  own error names (e.g. `invalid-argument-type`), not mypy/pyright
+  codes. Always include the specific code rather than bare
+  `# ty: ignore` — bare suppressions can mask future regressions.
 
 ## Python style
 

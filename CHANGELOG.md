@@ -16,6 +16,32 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Removed
+
+- Empty placeholder `tests/conftest.py` from generated projects.
+  Real-world author experience (`kaparoo-python` commit `f446b26`)
+  showed the file as friction without value — create it when a real
+  fixture lands. The `tests/__init__.py` package marker remains (it
+  satisfies ruff's `INP` rule and keeps the directory as a proper
+  package).
+
+### Changed
+
+- The generated `AGENTS.md` "Conventions" section gains three bullets:
+  where to put `conftest.py` (default `tests/conftest.py`; root only
+  for `pytest_plugins` declarations, doctest fixtures shared with
+  source files, or project-wide collection hooks); mirroring the
+  package layout under `tests/`; and using `ty`'s own error names
+  in `# ty: ignore[<error-name>]` suppressions rather than mypy /
+  pyright codes.
+
+### Fixed
+
+- Adopted PEP 639 license metadata in the generated `pyproject.toml`:
+  added `license-files = ["LICENSE"]` and dropped the deprecated
+  `"License :: OSI Approved :: MIT License"` classifier (it emitted
+  a `uv build` deprecation warning).
+
 ## [1.0.1] - 2026-05-21
 
 ### Fixed
