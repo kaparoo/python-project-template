@@ -133,6 +133,18 @@ AI coding assistants working on this repository additionally follow
 [`AGENTS.md`](./AGENTS.md) for workflow rules and the toolchain
 rationale they must respect.
 
+## 📋 TODO
+
+See [TODO.md](./TODO.md) for tracked open items on the workspace
+itself (CI workflow, coverage measurement, etc.). Generated projects
+get their own opt-in `TODO.md`.
+
+## 📜 Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the template's version history.
+The `pytorch` branch keeps an independent variant changelog with its
+own `pytorch-v*` tag line.
+
 ## ⚖️ License
 
 This project is distributed under the terms of the [MIT](./LICENSE) license.

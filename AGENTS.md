@@ -22,6 +22,27 @@ and the Astral toolchain (`uv`, `ruff`, `ty`) pre-configured.
 - **Audience of generated projects**: also the author
 - **Public consumption**: not expected — design for the author's workflow first
 
+## Variants
+
+Two branches, two independent version lines — never confuse them:
+
+| Branch | Tag form | `copier` resolution | Default `use_pytest` |
+|--------|----------|----------------------|----------------------|
+| `main` | `vX.Y.Z` (PEP 440) | Latest `v*` tag — used when no `--vcs-ref` | `true` |
+| `pytorch` | `pytorch-vX.Y.Z` (not PEP 440 → ignored by copier auto-resolve) | Requires explicit `--vcs-ref pytorch` (or `--vcs-ref pytorch-vX.Y.Z`) | `false` (DL workflows are non-deterministic) |
+
+The `pytorch-v*` tags are **deliberately** not PEP 440 so they never
+shadow the base template's `copier copy` / `copier update` resolution —
+otherwise a default `copier copy gh:kaparoo/python-project-template`
+would hijack to the highest tag regardless of branch.
+
+**Variant policy**: shared changes land on `main` first, then are
+merged forward into `pytorch`. The reverse direction is never used —
+`pytorch`-only features (torch dependencies, compute-backend questions,
+PyTorch wheel index) stay on `pytorch`. See
+[Merging `main` into `pytorch`](#merging-main-into-pytorch) below for
+the recurring `CHANGELOG.md` resolution pattern.
+
 ## Layout — two distinct concerns
 
 ```
@@ -49,8 +70,10 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest` → all 18
-tests should pass in ~50–60 seconds.
+**Workflow**: commit (or stash) all changes → run `uv run pytest`. On
+`main` the suite is currently **22 cases (~60–90 s)**; on `pytorch` it
+is **25 cases (~80–100 s)** because of the extra `torch` / index
+assertions and the `uv lock` integration test.
 
 ### 2. Both branches of every `copier.yml` option must be tested
 
@@ -60,8 +83,9 @@ minimum bar.
 
 ### 3. Verify after every `template/` change
 
-`uv run pytest` runs copier in-process for ~18 scenarios. If even one
-file in `template/` changes, run the suite before committing.
+`uv run pytest` runs copier in-process for every scenario in
+`tests/test_generate.py`. If even one file in `template/` changes,
+run the suite before committing.
 
 ### 4. The integration test resolves real PyTorch dependencies
 
@@ -89,6 +113,66 @@ Co-Authored-By: <agent-name> <agent-email>
 Examples:
 - Claude Code → `Co-Authored-By: Claude <noreply@anthropic.com>`
 - GitHub Copilot → `Co-Authored-By: Copilot <198982749+Copilot@users.noreply.github.com>`
+
+## Releases
+
+This workspace itself is versioned with SemVer (see
+[`CHANGELOG.md`](./CHANGELOG.md)):
+
+- `MAJOR` — changes that need a `_migrations` entry in `copier.yml`
+  (so existing generated projects can update across them).
+- `MINOR` — new copier options, new generated files, new sections in
+  generated docs.
+- `PATCH` — fixes, doc tweaks, behavior-preserving cleanup.
+
+### Cutting a release
+
+For both branches the procedure is the same shape; only the tag form
+differs (`vX.Y.Z` on `main`, `pytorch-vX.Y.Z` on `pytorch`).
+
+1. Land all changes in `[Unreleased]` first. Verify with
+   `uv run pytest` on a clean tree.
+2. Promote: rename `## [Unreleased]` content to a dated
+   `## [X.Y.Z] - YYYY-MM-DD` heading, add a fresh empty
+   `## [Unreleased]` above, append the new comparison link at the
+   bottom of the file.
+3. Commit: `📝 Cut release \`vX.Y.Z\`` (body summarizes the bundle).
+4. Tag: `git tag -a vX.Y.Z -m "vX.Y.Z"`.
+5. Push: `git push origin <branch>` then `git push origin vX.Y.Z`.
+
+For shared work, the order is **main first, then `pytorch`**:
+release `vX.Y.Z` on `main`, merge `main` into `pytorch` (resolving
+the CHANGELOG conflict per below), then promote pytorch's own
+`[Unreleased]` to `[X.Y.Z]` and tag `pytorch-vX.Y.Z`. The two
+version sequences are **independent** — `pytorch-v1.1.0` is not
+required to mirror `v1.1.0` numerically once they diverge.
+
+### Merging `main` into `pytorch`
+
+After every `main` change cycle, merge forward:
+
+```bash
+git switch pytorch
+git merge main --no-ff -m "🔀 Merge \`main\` into \`pytorch\`"
+```
+
+**Recurring `CHANGELOG.md` conflict** — pytorch keeps a variant-only
+changelog (it does NOT mirror `main`'s release history). Resolution
+principle:
+
+- **Take** main's new `[Unreleased]` bullets (Added / Changed / Fixed) —
+  the underlying template change applies to both branches.
+- **Drop** main's `## [X.Y.Z]` heading and any base `v*` comparison
+  links — pytorch has its own release line.
+- **Keep** pytorch's existing `## [X.Y.Z]` headings (the variant's
+  prior releases) and the `pytorch-v*` comparison links at the
+  bottom.
+
+`tests/test_generate.py` may also conflict when the default values
+diverge (notably `use_pytest`): keep pytorch's `{"use_pytest": True}`
+override in tests that assume the pytest layer; keep pytorch's
+expected-files list (no `tests/__init__.py` when use_pytest is
+default-false there).
 
 ## Toolchain choices (don't second-guess without cause)
 
@@ -136,6 +220,22 @@ uv run pytest    # may exit 5 = no tests collected, that's expected
 uv build
 ```
 
+`--vcs-ref HEAD` renders the current working commit; without it copier
+falls back to the latest tag and silently misses post-tag changes.
+
+### Applying items from the template-improvement cycle
+
+Periodic review of projects generated from this template (notably
+`kaparoo-python`) produces a list of patterns worth back-porting.
+The current in-flight cycle is tracked in
+`../template-improvements.md` (out-of-tree, not committed). Apply
+items as small focused commits accumulating in `[Unreleased]`, then
+cut a `MINOR` (or `PATCH`) release per the procedure above.
+
+Workspace-level follow-ups (CI workflow, coverage measurement, etc.)
+that do NOT change generated output are tracked in
+[`TODO.md`](./TODO.md) and don't trigger a template release.
+
 ## Things to avoid
 
 - Editing `template/.vscode/extensions.json` (no extension) — the active
@@ -145,7 +245,12 @@ uv build
   to generated projects — `ty` deliberately has no plugin system. Use
   PEP 681 `dataclass_transform` or direct stubs instead.
 - Committing `dist/`, `.venv/`, `.cache/`, `_gen_*/` test artifacts.
-- Force-pushing to `main` or `pytorch` without explicit user authorization.
+- Force-pushing to `main` or `pytorch` without explicit user
+  authorization. Tags (`v*`, `pytorch-v*`) are equally off-limits to
+  rewrites once pushed.
+- Cherry-picking `pytorch`-only commits back onto `main`. The variant
+  flow is one-directional (`main` → `pytorch`); back-porting would
+  put torch dependencies on the base template.
 - Switching the PyTorch install to `uv pip install --torch-backend=auto` —
   that flag only works with `uv pip`, not `uv lock` / `uv sync`. The
   template pins a dedicated `[[tool.uv.index]]` driven by the
