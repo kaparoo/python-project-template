@@ -266,10 +266,9 @@ def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
     # Empty package marker stays empty — no future import.
     init = (project / "fut_app" / "__init__.py").read_text(encoding="utf-8")
     assert init.strip() == ""
-
-    # conftest.py is a real module — it carries the future import.
-    conftest = (project / "tests" / "conftest.py").read_text(encoding="utf-8")
-    assert "from __future__ import annotations" in conftest
+    # `tests/__init__.py` is also a package marker and stays empty too.
+    tests_init = (project / "tests" / "__init__.py").read_text(encoding="utf-8")
+    assert tests_init.strip() == ""
 
 
 # ─── Integration: full pipeline with _tasks ───
