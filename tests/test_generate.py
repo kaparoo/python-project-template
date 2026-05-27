@@ -66,7 +66,7 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
         "CLAUDE.md",
         "test_app/__init__.py",
         "test_app/py.typed",
-        "tests/conftest.py",
+        "tests/__init__.py",
         ".copier-answers.yml",
     ]
     missing = [path for path in expected if not (project / path).is_file()]
@@ -119,12 +119,23 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     assert "Python :: 3.13" in pyproject
 
 
+def test_pyproject_uses_pep639_license_metadata(tmp_path: Path) -> None:
+    """PEP 639: explicit `license-files` key, no deprecated classifier."""
+    project = _generate(tmp_path)
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'license = "MIT"' in pyproject
+    assert 'license-files = ["LICENSE"]' in pyproject
+    assert "License :: OSI Approved" not in pyproject
+
+
 # ─── Conditional features (use_pytest) ───
 
 
 def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     project = _generate(tmp_path)  # default true
-    assert (project / "tests" / "conftest.py").is_file()
+    assert (project / "tests" / "__init__.py").is_file()
+    # No placeholder `conftest.py` — create one when a real fixture lands.
+    assert not (project / "tests" / "conftest.py").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
