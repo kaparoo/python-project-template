@@ -9,7 +9,6 @@ _answers_file: .copier-answers.yml
 
 _exclude:
   - "copier.yml"
-  - "CHANGELOG.md"
   - ".git"
   - "__pycache__"
   - "*.pyc"
@@ -158,6 +157,17 @@ cuda_version:
     - "13.0"
   default: "12.8"
   when: "{{ compute_backend == 'cuda' }}"
+
+include_todo:
+  type: bool
+  help: |
+    Generate a `TODO.md` skeleton at the project root for tracking
+    open items that aren't yet captured in code or tests. The
+    generated `README.md` links to it from a 📋 TODO section.
+
+    Disable for tiny projects where a TODO file is overkill — the
+    `README.md` section is omitted in sync.
+  default: true
 
 
 # =================================================================== #
