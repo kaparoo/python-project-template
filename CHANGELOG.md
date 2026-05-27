@@ -9,6 +9,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-05-27
+
 ### Removed
 
 - Empty placeholder `tests/conftest.py` from generated projects.
@@ -99,7 +101,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/kaparoo/python-project-template/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/kaparoo/python-project-template/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/kaparoo/python-project-template/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/kaparoo/python-project-template/releases/tag/v1.0.0
