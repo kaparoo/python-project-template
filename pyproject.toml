@@ -14,7 +14,7 @@ requires-python = ">=3.14"
 dev = [
     "copier>=9.15.1",
     "pytest>=9.0.3",
-    "ruff>=0.15.13",
+    "ruff>=0.15.14",
 ]
 
 [tool.pytest.ini_options]
@@ -23,7 +23,7 @@ testpaths = ["tests"]
 addopts = ["-ra", "--import-mode=importlib"]
 
 [tool.ruff]
-required-version = ">=0.15.13"
+required-version = ">=0.15.14"
 cache-dir = "./.cache/ruff"
 line-length = 88
 extend-exclude = [".cache", "__pycache__", "*.pyc"]

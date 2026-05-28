@@ -4,7 +4,7 @@
 # ========================== #
 
 [build-system]
-requires = ["uv_build>=0.11.15,<0.12"]
+requires = ["uv_build>=0.11.16,<0.12"]
 build-backend = "uv_build"
 
 {% endif -%}
@@ -50,8 +50,8 @@ dev = [
 {%- if use_pytest %}
     "pytest>=9.0.3",
 {%- endif %}
-    "ruff>=0.15.13",
-    "ty>=0.0.37",
+    "ruff>=0.15.14",
+    "ty>=0.0.40",
 ]
 
 {% if is_library -%}
@@ -107,7 +107,7 @@ pythonpath = ["."]
 
 {% endif -%}
 [tool.ruff]
-required-version = ">=0.15.13"
+required-version = ">=0.15.14"
 cache-dir = "./.cache/ruff"
 extend-exclude = [
     ".cache",
@@ -265,7 +265,7 @@ ignore-overlong-task-comments = true
 [tool.ruff.lint.pydoclint]
 ignore-one-line-docstrings = true
 
-# Following sections use default values and are omitted (ruff v0.15.13):
+# Following sections use default values and are omitted (ruff v0.15.14):
 # - tool.ruff.analyze
 # - tool.ruff.lint.flake8-boolean-trap
 # - tool.ruff.lint.flake8-bugbear
