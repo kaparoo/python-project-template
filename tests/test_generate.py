@@ -330,6 +330,9 @@ def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     assert "from __future__ import annotations" in agents
     assert "Google style" in agents
     assert "PEP 723" in agents
+    # Docstring philosophy (intent/contracts, not just format).
+    assert "intent and contracts" in agents
+    assert "Type Parameters:" in agents
 
 
 # ─── Python file conventions ───
