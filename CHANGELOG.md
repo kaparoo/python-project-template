@@ -9,6 +9,39 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-28
+
+Real-world feedback batch from `kaparoo-python` (generated from
+`v1.0.2`): CI, coverage, docstrings, line endings, dependency bumps.
+
+### Added
+
+- `.github/workflows/ci.yml` — a CI workflow running on push to
+  `main`, PRs, and `workflow_call`. A 3-OS matrix
+  (ubuntu/windows/macos) runs `uv sync`, `ruff format --check`,
+  `ruff check`, `ty check`, and (only when `use_pytest`) `pytest`.
+  Action majors pinned to the Node.js-24 natives current as of
+  2026-05 (`actions/checkout@v6`, `astral-sh/setup-uv@v8.1.0`).
+- `pytest-cov` integration: `pytest-cov>=7.1.0` dev dependency,
+  `--cov` / `--cov-report=term-missing` in `addopts`, and
+  `[tool.coverage.*]` config (branch coverage, data under
+  `.cache/coverage/`). New `coverage_fail_under` copier question
+  (default `0` = measure-only so a fresh project doesn't fail
+  `pytest`; raise it once a baseline exists). All `use_pytest`-gated.
+- `.gitattributes` normalizing line endings (`* text=auto` plus
+  `eol=lf` for yml/yaml/toml/lock/py/md) — removes the Windows
+  `LF will be replaced by CRLF` warnings.
+
+### Changed
+
+- Bumped generated dev-dependency minimums to the current latest:
+  `ruff>=0.15.14`, `ty>=0.0.40`, `uv_build>=0.11.16` (`<0.12` kept).
+  `pytest` stays `>=9.0.3`.
+- Expanded the generated `AGENTS.md` docstring guidance from format-only
+  to the intent/contracts philosophy (one-line summary shape, surface
+  what the signature can't, Google sections incl. `Yields:` /
+  `Type Parameters:`, backtick identifiers).
+
 ## [1.1.0] - 2026-05-27
 
 ### Added
@@ -138,7 +171,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/kaparoo/python-project-template/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/kaparoo/python-project-template/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/kaparoo/python-project-template/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/kaparoo/python-project-template/compare/v1.0.1...v1.0.2
