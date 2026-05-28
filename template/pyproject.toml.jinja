@@ -49,6 +49,7 @@ GitHub = "https://www.github.com/{{ github_username }}/{{ repo_name }}"
 dev = [
 {%- if use_pytest %}
     "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
 {%- endif %}
     "ruff>=0.15.14",
     "ty>=0.0.40",
@@ -95,7 +96,14 @@ error-on-warning = true
 minversion = "9.0"
 cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
-addopts = ["-ra", "--strict-markers", "--strict-config", "--import-mode=importlib"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--import-mode=importlib",
+    "--cov",
+    "--cov-report=term-missing",
+]
 {%- if not is_library %}
 # Application mode has no editable install — put the project root on
 # `sys.path` so tests can import the flat-layout package.
@@ -104,6 +112,30 @@ pythonpath = ["."]
 # See the following documentation for more information
 # https://docs.pytest.org/en/stable/reference/customize.html
 # https://docs.pytest.org/en/stable/reference/reference.html#configuration-options
+
+[tool.coverage.run]
+source = ["{{ package_name }}"]
+branch = true
+data_file = ".cache/coverage/.coverage"
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+# 0 = measure only, no gate. Raise after establishing a baseline; keep
+# it a few points below the measured coverage to absorb variation.
+fail_under = {{ coverage_fail_under }}
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",
+    "@overload",
+]
+# omit = ["{{ package_name }}/types.py"]  # e.g. type-alias-only modules
+
+[tool.coverage.html]
+directory = ".cache/coverage/htmlcov"
 
 {% endif -%}
 [tool.ruff]

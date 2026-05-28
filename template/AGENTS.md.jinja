@@ -18,6 +18,7 @@ The Astral toolchain — keep it unless there is a clear reason to change:
 - `ty`   — type checking
 {%- if use_pytest %}
 - `pytest` — testing
+- `pytest-cov` — coverage measurement and threshold gate
 {%- endif %}
 
 ## Commands
@@ -28,9 +29,15 @@ uv run ruff check .      # lint
 uv run ruff format .     # format
 uv run ty check          # type-check
 {%- if use_pytest %}
-uv run pytest            # run tests
+uv run pytest            # run tests (coverage included by default)
+uv run pytest --no-cov   # skip coverage for quick iteration
 {%- endif %}
 ```
+{% if use_pytest %}
+Coverage is measured by `pytest-cov` against `{{ package_name }}/` with
+branch tracking; the `fail_under` gate lives in `pyproject.toml`
+(`0` = measure only — raise it once you have a baseline).
+{% endif %}
 
 ## Conventions
 

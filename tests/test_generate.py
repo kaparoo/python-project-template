@@ -141,7 +141,12 @@ def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     assert not (project / "tests" / "conftest.py").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
+    assert '"pytest-cov>=7.1.0"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
+    # Coverage is wired with a default-off gate.
+    assert "--cov" in pyproject
+    assert "[tool.coverage.run]" in pyproject
+    assert "fail_under = 0" in pyproject
     # Library mode → editable install handles imports, no `pythonpath` needed.
     assert "pythonpath" not in pyproject
     assert '"PT",' in pyproject
@@ -158,7 +163,10 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert not (project / "tests").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=' not in pyproject
+    assert '"pytest-cov>=' not in pyproject
     assert "[tool.pytest.ini_options]" not in pyproject
+    assert "[tool.coverage.run]" not in pyproject
+    assert "--cov" not in pyproject
     assert '"PT",' not in pyproject
     # per-file-ignores table still exists (for `__init__.py`), but the
     # pytest-specific `tests/**` entry is gone.
@@ -168,6 +176,14 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert "test-adapter" not in extensions
     settings = (project / ".vscode" / "settings.json").read_text(encoding="utf-8")
     assert "pytestEnabled" not in settings
+
+
+def test_coverage_fail_under_question(tmp_path: Path) -> None:
+    """`coverage_fail_under` flows into the gate; default is 0 (off)."""
+    default = _generate(tmp_path / "d")
+    assert "fail_under = 0" in (default / "pyproject.toml").read_text(encoding="utf-8")
+    custom = _generate(tmp_path / "c", {"coverage_fail_under": 85})
+    assert "fail_under = 85" in (custom / "pyproject.toml").read_text(encoding="utf-8")
 
 
 def test_application_with_pytest_adds_pythonpath(tmp_path: Path) -> None:
