@@ -343,10 +343,33 @@ def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> No
     assert "uv sync --group dev" in readme
 
 
-# Note: the base template ships a `.github/workflows/ci.yml`, but the
-# `pytorch` variant does NOT — a torch-install-avoidance CI strategy is
-# deferred to its own design. So the CI-workflow tests live on `main`
-# only and are intentionally absent here.
+# ─── CI workflow ───
+
+
+def test_ci_workflow_present_with_cpu_override(tmp_path: Path) -> None:
+    """The variant ships a CI workflow that forces the CPU PyTorch build."""
+    project = _generate(tmp_path)  # use_pytest defaults false on this branch
+    ci_path = project / ".github" / "workflows" / "ci.yml"
+    assert ci_path.is_file()
+    ci = ci_path.read_text(encoding="utf-8")
+    assert "name: CI" in ci
+    assert "actions/checkout@v6" in ci
+    assert "astral-sh/setup-uv@v8.1.0" in ci
+    # GitHub Actions expression survived Jinja rendering verbatim.
+    assert "${{ matrix.os }}" in ci
+    assert "raw" not in ci  # {% raw %} wrappers fully consumed
+    # CPU override so CI never pulls the multi-GB CUDA wheel (and so the
+    # macOS matrix leg resolves — CUDA wheels aren't published for macOS).
+    assert "UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu" in ci
+    # use_pytest defaults false here → no Tests step, but lint/type-check stay.
+    assert "uv run pytest" not in ci
+    assert "uv run ty check" in ci
+
+
+def test_ci_workflow_adds_test_step_with_pytest(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"use_pytest": True})
+    ci = (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "uv run pytest" in ci
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:

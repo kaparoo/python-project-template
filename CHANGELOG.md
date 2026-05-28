@@ -16,6 +16,20 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- `.github/workflows/ci.yml` — the variant's own CI workflow, resolving
+  the item deferred at `1.2.0`. Runs on push to `main`, PRs, and
+  `workflow_call` across a 3-OS matrix (ubuntu/windows/macos). A
+  workflow-level `UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu`
+  forces the CPU PyTorch build for every `uv` command, so CI never
+  downloads the multi-gigabyte CUDA wheel and the macOS leg resolves
+  (CUDA wheels aren't published for macOS). `uv` re-resolves against
+  that index, ignoring the committed CUDA `uv.lock` for the CI run.
+  Steps: `uv sync`, `ruff format --check`, `ruff check`, `ty check`,
+  and — only when `use_pytest` — `pytest`. Action majors pinned to the
+  Node.js-24 natives (`actions/checkout@v6`, `astral-sh/setup-uv@v8.1.0`).
+
 ## [1.2.0] - 2026-05-28
 
 Real-world feedback batch from `kaparoo-python` (generated from base

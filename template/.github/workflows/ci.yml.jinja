@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+# CI runners have no GPU. Force the CPU PyTorch build for every `uv`
+# command (sync + run) regardless of the project's compute_backend:
+# CPU wheels are far smaller than CUDA wheels and — unlike CUDA wheels —
+# are published for macOS too, so the cross-OS matrix resolves cleanly.
+# `uv` re-resolves against this index and ignores the committed
+# CUDA `uv.lock` for the CI run only.
+env:
+  UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu
+
+jobs:
+  check:
+    name: Lint, type-check{% if use_pytest %}, test{% endif %} ({% raw %}${{ matrix.os }}{% endraw %})
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+
+      - name: Sync dependencies (CPU PyTorch)
+        run: uv sync --group dev
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Type check
+        run: uv run ty check
+{%- if use_pytest %}
+
+      - name: Tests
+        run: uv run pytest
+{%- endif %}
