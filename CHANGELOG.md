@@ -168,7 +168,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.1.0...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.2.0...pytorch
+[1.2.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.1.0...pytorch-v1.2.0
 [1.1.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.2...pytorch-v1.1.0
 [1.0.2]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.1...pytorch-v1.0.2
 [1.0.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.0...pytorch-v1.0.1
