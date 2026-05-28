@@ -334,7 +334,7 @@ def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> No
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "## 📦 Development setup" in readme
     assert "## 📦 Installation" not in readme
-    assert "## 🧩 Modules" not in readme   # library-only section
+    assert "## 🧩 Modules" not in readme  # library-only section
     assert "uv add test-app" not in readme
     assert "uv sync --group dev" in readme
 
