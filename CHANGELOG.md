@@ -16,6 +16,38 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-05-28
+
+Real-world feedback batch from `kaparoo-python` (generated from base
+`v1.0.2`): coverage, docstrings, line endings, dependency bumps.
+
+> The batch's `.github/workflows/ci.yml` is **not** shipped on the
+> `pytorch` variant. The base template's CI runs `uv sync` on a 3-OS
+> matrix, which would pull the multi-gigabyte `torch` wheel; a
+> torch-install-avoidance CI strategy is deferred to its own design.
+
+### Added
+
+- `pytest-cov` integration: `pytest-cov>=7.1.0` dev dependency,
+  `--cov` / `--cov-report=term-missing` in `addopts`, and
+  `[tool.coverage.*]` config (branch coverage, data under
+  `.cache/coverage/`). New `coverage_fail_under` copier question
+  (default `0` = measure-only so a fresh project doesn't fail
+  `pytest`; raise it once a baseline exists). All `use_pytest`-gated.
+- `.gitattributes` normalizing line endings (`* text=auto` plus
+  `eol=lf` for yml/yaml/toml/lock/py/md) — removes the Windows
+  `LF will be replaced by CRLF` warnings.
+
+### Changed
+
+- Bumped generated dev-dependency minimums to the current latest:
+  `ruff>=0.15.14`, `ty>=0.0.40`, `uv_build>=0.11.16` (`<0.12` kept).
+  `pytest` stays `>=9.0.3`.
+- Expanded the generated `AGENTS.md` docstring guidance from format-only
+  to the intent/contracts philosophy (one-line summary shape, surface
+  what the signature can't, Google sections incl. `Yields:` /
+  `Type Parameters:`, backtick identifiers).
+
 ## [1.1.0] - 2026-05-27
 
 ### Added

@@ -1,0 +1,12 @@
+# Normalize line endings: let Git decide for text, force LF where
+# tooling and CI expect it. Keeps Windows checkouts from emitting
+# "LF will be replaced by CRLF" on every `git add`.
+* text=auto
+
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.py   text eol=lf
+*.md   text eol=lf
+*.jinja text eol=lf

@@ -158,6 +158,22 @@ cuda_version:
   default: "12.8"
   when: "{{ compute_backend == 'cuda' }}"
 
+coverage_fail_under:
+  type: int
+  help: |
+    Minimum branch-coverage percent that `pytest` enforces via
+    `pytest-cov`'s `fail_under` gate.
+
+    0 (default) disables the gate — coverage is still measured and
+    reported (`--cov-report=term-missing`), but the run never fails on
+    a low percentage. Raise it once the project has a test baseline
+    (e.g. 80); a fresh project with no tests yet would otherwise fail
+    `pytest` immediately.
+
+    Only used when use_pytest is enabled.
+  default: 0
+  when: "{{ use_pytest }}"
+
 include_todo:
   type: bool
   help: |

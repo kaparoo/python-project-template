@@ -63,6 +63,7 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
         ".vscode/extensions.json",
         "AGENTS.md",
         "CLAUDE.md",
+        ".gitattributes",
         "test_app/__init__.py",
         "test_app/py.typed",
         "CHANGELOG.md",
@@ -140,7 +141,12 @@ def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     assert not (project / "tests" / "conftest.py").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.0.3"' in pyproject
+    assert '"pytest-cov>=7.1.0"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
+    # Coverage is wired with a default-off gate.
+    assert "--cov" in pyproject
+    assert "[tool.coverage.run]" in pyproject
+    assert "fail_under = 0" in pyproject
     # Library mode → editable install handles imports, no `pythonpath` needed.
     assert "pythonpath" not in pyproject
     assert '"PT",' in pyproject
@@ -157,7 +163,10 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert not (project / "tests").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=' not in pyproject
+    assert '"pytest-cov>=' not in pyproject
     assert "[tool.pytest.ini_options]" not in pyproject
+    assert "[tool.coverage.run]" not in pyproject
+    assert "--cov" not in pyproject
     assert '"PT",' not in pyproject
     # per-file-ignores table still exists (for `__init__.py`), but the
     # pytest-specific `tests/**` entry is gone.
@@ -167,6 +176,18 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert "test-adapter" not in extensions
     settings = (project / ".vscode" / "settings.json").read_text(encoding="utf-8")
     assert "pytestEnabled" not in settings
+
+
+def test_coverage_fail_under_question(tmp_path: Path) -> None:
+    """`coverage_fail_under` flows into the gate; default is 0 (off).
+
+    `use_pytest=True` is passed explicitly — it defaults to false on this
+    branch, and the coverage block only renders with pytest enabled.
+    """
+    default = _generate(tmp_path / "d", {"use_pytest": True})
+    assert "fail_under = 0" in (default / "pyproject.toml").read_text(encoding="utf-8")
+    custom = _generate(tmp_path / "c", {"use_pytest": True, "coverage_fail_under": 85})
+    assert "fail_under = 85" in (custom / "pyproject.toml").read_text(encoding="utf-8")
 
 
 def test_application_with_pytest_adds_pythonpath(tmp_path: Path) -> None:
@@ -317,9 +338,15 @@ def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> No
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "## 📦 Development setup" in readme
     assert "## 📦 Installation" not in readme
-    assert "## 🧩 Modules" not in readme   # library-only section
+    assert "## 🧩 Modules" not in readme  # library-only section
     assert "uv add test-app" not in readme
     assert "uv sync --group dev" in readme
+
+
+# Note: the base template ships a `.github/workflows/ci.yml`, but the
+# `pytorch` variant does NOT — a torch-install-avoidance CI strategy is
+# deferred to its own design. So the CI-workflow tests live on `main`
+# only and are intentionally absent here.
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
@@ -329,6 +356,9 @@ def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     assert "from __future__ import annotations" in agents
     assert "Google style" in agents
     assert "PEP 723" in agents
+    # Docstring philosophy (intent/contracts, not just format).
+    assert "intent and contracts" in agents
+    assert "Type Parameters:" in agents
 
 
 # ─── Python file conventions ───
