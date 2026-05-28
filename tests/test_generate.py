@@ -64,6 +64,7 @@ def test_default_generation_creates_expected_files(tmp_path: Path) -> None:
         ".vscode/extensions.json",
         "AGENTS.md",
         "CLAUDE.md",
+        ".gitattributes",
         "test_app/__init__.py",
         "test_app/py.typed",
         "tests/__init__.py",
