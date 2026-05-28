@@ -339,6 +339,34 @@ def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> No
     assert "uv sync --group dev" in readme
 
 
+# ─── CI workflow ───
+
+
+def test_ci_workflow_present_and_pinned(tmp_path: Path) -> None:
+    """Generated projects ship a CI workflow with Node-24 action majors."""
+    project = _generate(tmp_path)
+    ci_path = project / ".github" / "workflows" / "ci.yml"
+    assert ci_path.is_file()
+    ci = ci_path.read_text(encoding="utf-8")
+    assert "name: CI" in ci
+    assert "actions/checkout@v6" in ci
+    assert "astral-sh/setup-uv@v8.1.0" in ci
+    # GitHub Actions expressions survived Jinja rendering verbatim.
+    assert "${{ matrix.os }}" in ci
+    assert "raw" not in ci  # {% raw %} wrappers fully consumed
+    # use_pytest default true → a Tests step runs pytest.
+    assert "uv run pytest" in ci
+
+
+def test_ci_workflow_omits_test_step_without_pytest(tmp_path: Path) -> None:
+    project = _generate(tmp_path, {"use_pytest": False})
+    ci = (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "uv run pytest" not in ci
+    # lint + type-check steps always remain
+    assert "uv run ruff check ." in ci
+    assert "uv run ty check" in ci
+
+
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     project = _generate(tmp_path)
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
