@@ -9,6 +9,23 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-05-28
+
+### Added
+
+- Opt-in PyPI **publish automation** via a new `release_automation`
+  copier question (`manual` default / `github-oidc`), gated on
+  `is_library`. `github-oidc` ships `.github/workflows/publish.yml`:
+  a `v*` tag push reuses the CI workflow as a release gate
+  (`workflow_call`), then a `pypi` GitHub environment (manual-approval
+  reviewer) gates a build and `uv publish --trusted-publishing always`
+  — PyPI Trusted Publishing over OIDC, no stored token. The generated
+  `AGENTS.md` "Releases" section branches on the answer: automated mode
+  gets a tag-triggered procedure plus a one-time setup checklist
+  (register the PyPI Trusted Publisher, create the `pypi` environment
+  with a required reviewer); `manual` keeps the TestPyPI → PyPI keyring
+  flow. TestPyPI staging stays a documented manual step.
+
 ## [1.2.0] - 2026-05-28
 
 Real-world feedback batch from `kaparoo-python` (generated from
@@ -171,7 +188,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/kaparoo/python-project-template/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/kaparoo/python-project-template/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/kaparoo/python-project-template/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/kaparoo/python-project-template/compare/v1.0.2...v1.0.3
