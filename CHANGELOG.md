@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-05-28
+
 ### Added
 
 - Opt-in PyPI **publish automation** via a new `release_automation`
@@ -200,7 +202,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.3.0...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.4.0...pytorch
+[1.4.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.3.0...pytorch-v1.4.0
 [1.3.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.2.0...pytorch-v1.3.0
 [1.2.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.1.0...pytorch-v1.2.0
 [1.1.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.0.2...pytorch-v1.1.0
