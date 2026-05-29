@@ -133,12 +133,6 @@ AI coding assistants working on this repository additionally follow
 [`AGENTS.md`](./AGENTS.md) for workflow rules and the toolchain
 rationale they must respect.
 
-## 📋 TODO
-
-See [TODO.md](./TODO.md) for tracked open items on the workspace
-itself (CI workflow, coverage measurement, etc.). Generated projects
-get their own opt-in `TODO.md`.
-
 ## 📜 Changelog
 
 See [CHANGELOG.md](./CHANGELOG.md) for the template's version history.
