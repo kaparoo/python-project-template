@@ -9,6 +9,15 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Hardened the generated `publish.yml` (`release_automation=github-oidc`)
+  to match the proven `kaparoo-python` workflow: added a
+  `uvx twine check dist/*` metadata-verification step before upload, and
+  tightened the trigger to `v*.*.*` (X.Y.Z only — no stray `v` tags).
+  `uv publish` already uploads PEP 740 attestations by default, so no
+  change was needed there.
+
 ## [1.3.0] - 2026-05-28
 
 ### Added

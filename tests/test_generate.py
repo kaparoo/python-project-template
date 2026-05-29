@@ -386,8 +386,9 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     publish = project / ".github" / "workflows" / "publish.yml"
     assert publish.is_file()
     yml = publish.read_text(encoding="utf-8")
-    assert 'tags: ["v*"]' in yml
+    assert 'tags: ["v*.*.*"]' in yml  # X.Y.Z only — no stray v-tags
     assert "uses: ./.github/workflows/ci.yml" in yml  # CI reused as a gate
+    assert "uvx twine check dist/*" in yml  # metadata verification
     assert "environment: pypi" in yml
     assert "id-token: write" in yml
     assert "uv publish --trusted-publishing always" in yml
