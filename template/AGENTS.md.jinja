@@ -137,7 +137,42 @@ their own published identity (e.g. `Claude <noreply@anthropic.com>`).
 ## Releases
 
 `{{ project_name }}` follows SemVer; in pre-1.0, a minor bump may carry
-breaking changes. Release procedure for `X.Y.Z`:
+breaking changes.
+{% if release_automation == 'github-oidc' %}
+Releases publish automatically via GitHub Actions **Trusted Publishing**
+(OIDC — no PyPI token is stored anywhere). Procedure for `X.Y.Z`:
+
+1. Move `CHANGELOG.md`'s `[Unreleased]` content into a dated
+   `[X.Y.Z] - YYYY-MM-DD` section. Drop entries whose subject was both
+   introduced *and* renamed / removed / fixed within the same cycle —
+   upgraders never saw the intermediate state.
+2. Bump `version` in `pyproject.toml`; `uv sync --group dev` to refresh
+   `uv.lock`.
+3. Commit `🔖 Release version X.Y.Z` (body references the `[X.Y.Z]`
+   entry) and push.
+4. Tag and push:
+   `git tag -a vX.Y.Z -m "🔖 Release version X.Y.Z" && git push origin vX.Y.Z`.
+
+The `v*` tag triggers `.github/workflows/publish.yml`: it reruns CI
+across the OS matrix, then — once you approve the `pypi` environment
+gate — builds and publishes to PyPI via OIDC.
+
+### One-time setup (before the first release)
+
+1. **PyPI Trusted Publisher** — on PyPI, register a GitHub Actions
+   publisher for the project: owner `{{ github_username }}`, repo
+   `{{ repo_name }}`, workflow `publish.yml`, environment `pypi`. Use
+   PyPI's *pending publisher* form for the very first upload (before
+   the project exists on PyPI).
+2. **GitHub `pypi` environment** — create an environment named `pypi`
+   in the repo settings and add yourself as a *required reviewer*, so
+   every publish waits for explicit approval.
+
+TestPyPI staging stays manual if you want it: `uv build` then
+`uv publish --index testpypi` (register a separate TestPyPI trusted
+publisher, or use a token, first).
+{% else %}
+Release procedure for `X.Y.Z`:
 
 1. Move `CHANGELOG.md`'s `[Unreleased]` content into a dated
    `[X.Y.Z] - YYYY-MM-DD` section. Drop entries whose subject was both
@@ -164,6 +199,7 @@ Tokens live in the OS keyring at the `publish-url` key
 (`keyring set <publish-url> __token__`), scoped per-project once the
 package exists on the index. Named indexes (`pypi`, `testpypi`) are
 configured under `[[tool.uv.index]]` in `pyproject.toml`.
+{% endif %}
 {% endif %}
 ## Template
 

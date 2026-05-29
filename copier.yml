@@ -112,6 +112,26 @@ is_library:
           no py.typed; uv treats it as an application.
   default: true
 
+release_automation:
+  type: str
+  help: |
+    How releases get published to PyPI (libraries only).
+
+    manual      → no CI publish workflow; you build and `uv publish`
+                  by hand. The AGENTS.md "Releases" section documents
+                  the TestPyPI → PyPI flow with keyring tokens.
+    github-oidc → ship `.github/workflows/publish.yml`. Pushing a `v*`
+                  tag runs CI, waits for approval on a `pypi` GitHub
+                  environment, then publishes to PyPI via Trusted
+                  Publishing (OIDC — no stored token). Needs a one-time
+                  PyPI + GitHub setup, documented in the generated
+                  AGENTS.md.
+  choices:
+    - manual
+    - github-oidc
+  default: manual
+  when: "{{ is_library }}"
+
 use_pytest:
   type: bool
   help: |
