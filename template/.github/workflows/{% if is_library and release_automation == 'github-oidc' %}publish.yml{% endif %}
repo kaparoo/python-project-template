@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*.*.*"]
 
 jobs:
   # Reuse the CI workflow as a release gate — publishing only proceeds
@@ -13,7 +13,7 @@ jobs:
   publish:
     needs: ci
     runs-on: ubuntu-latest
-    # Manual-approval gate; also the environment PyPI's Trusted
+    # Manual-approval gate; also the environment the PyPI Trusted
     # Publisher is scoped to. Configure it in the repo settings.
     environment: pypi
     permissions:
@@ -28,5 +28,9 @@ jobs:
       - name: Build distributions
         run: uv build
 
+      - name: Verify metadata
+        run: uvx twine check dist/*
+
       - name: Publish to PyPI
+        # `uv publish` uploads PEP 740 attestations by default.
         run: uv publish --trusted-publishing always
