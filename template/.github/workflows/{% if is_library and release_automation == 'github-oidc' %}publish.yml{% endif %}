@@ -1,0 +1,32 @@
+name: Publish
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  # Reuse the CI workflow as a release gate — publishing only proceeds
+  # if lint / type-check / tests pass across the OS matrix.
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    needs: ci
+    runs-on: ubuntu-latest
+    # Manual-approval gate; also the environment PyPI's Trusted
+    # Publisher is scoped to. Configure it in the repo settings.
+    environment: pypi
+    permissions:
+      id-token: write  # OIDC for PyPI Trusted Publishing — no stored token
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Build distributions
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish --trusted-publishing always

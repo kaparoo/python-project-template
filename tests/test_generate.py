@@ -372,6 +372,44 @@ def test_ci_workflow_adds_test_step_with_pytest(tmp_path: Path) -> None:
     assert "uv run pytest" in ci
 
 
+# ─── Release automation (publish.yml) ───
+
+
+def test_release_automation_manual_default(tmp_path: Path) -> None:
+    """Default `manual` — no publish workflow, manual `uv publish` docs."""
+    project = _generate(tmp_path)  # is_library default true, release_automation manual
+    assert not (project / ".github" / "workflows" / "publish.yml").exists()
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Releases" in agents
+    assert "uv publish --index testpypi" in agents
+    assert "Trusted Publishing" not in agents
+
+
+def test_release_automation_github_oidc(tmp_path: Path) -> None:
+    """`github-oidc` — ship publish.yml + automated Releases docs."""
+    project = _generate(tmp_path, {"release_automation": "github-oidc"})
+    publish = project / ".github" / "workflows" / "publish.yml"
+    assert publish.is_file()
+    yml = publish.read_text(encoding="utf-8")
+    assert 'tags: ["v*"]' in yml
+    assert "uses: ./.github/workflows/ci.yml" in yml  # CI reused as a gate
+    assert "environment: pypi" in yml
+    assert "id-token: write" in yml
+    assert "uv publish --trusted-publishing always" in yml
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "Trusted Publishing" in agents
+    assert "Trusted Publisher" in agents  # one-time setup checklist
+    assert "required reviewer" in agents
+
+
+def test_application_omits_release_machinery(tmp_path: Path) -> None:
+    """is_library=False — no publish workflow, no Releases section at all."""
+    project = _generate(tmp_path, {"is_library": False})
+    assert not (project / ".github" / "workflows" / "publish.yml").exists()
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Releases" not in agents
+
+
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     project = _generate(tmp_path)
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
