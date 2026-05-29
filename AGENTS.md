@@ -221,10 +221,6 @@ The current in-flight cycle is tracked in
 items as small focused commits accumulating in `[Unreleased]`, then
 cut a `MINOR` (or `PATCH`) release per the procedure above.
 
-Workspace-level follow-ups (CI workflow, coverage measurement, etc.)
-that do NOT change generated output are tracked in
-[`TODO.md`](./TODO.md) and don't trigger a template release.
-
 ## Things to avoid
 
 - Editing `template/.vscode/extensions.json` (no extension) — the active
