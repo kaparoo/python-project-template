@@ -16,6 +16,25 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Pulled `build` out of the `publish` job so the `github-oidc`
+  `publish.yml` pipeline is always `ci → build → [testpypi →] pypi`,
+  with `testpypi` the only conditional job. Previously,
+  `use_testpypi=false` collapsed build + publish into a single job
+  to save one runner; that meant the OIDC-holding job also ran the
+  build, blurring the boundary between code that needs the Trusted
+  Publishing token and code that doesn't. Now every `pypi` job
+  downloads a pre-built artifact, so `id-token: write` is scoped
+  strictly to the publish jobs and the `build` job has no token
+  capability. Trade-off: one extra runner + ~10 s of artifact
+  upload/download on every `use_testpypi=false` release.
+- Simplified the `publish.yml` Jinja template alongside the
+  structural change — the inner conditional now wraps just the
+  optional `testpypi` job (~25 lines) and selects the `pypi` job's
+  `needs:` target. Generated `use_testpypi=true` output is
+  byte-identical to v1.5.2's.
+
 ## [1.5.2] - 2026-06-01
 
 ### Changed
