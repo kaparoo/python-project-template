@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-06-01
+
 ### Changed
 
 - Collapsed the two conditional-filename `publish.yml` variants into a
@@ -273,7 +275,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.1...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.2...pytorch
+[1.5.2]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.1...pytorch-v1.5.2
 [1.5.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.0...pytorch-v1.5.1
 [1.5.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.4.1...pytorch-v1.5.0
 [1.4.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.4.0...pytorch-v1.4.1
