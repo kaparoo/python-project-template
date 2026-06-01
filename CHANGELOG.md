@@ -16,6 +16,28 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- New `use_testpypi` copier question (default `true`, gated on
+  `is_library`) — controls whether generated projects stage releases
+  on TestPyPI before pushing to real PyPI. PyPI uploads are permanent,
+  so a TestPyPI rehearsal catches install-time issues (dependency
+  resolution, missing files in the wheel, entry points) that
+  `uvx twine check` doesn't.
+- When `release_automation = manual`: `pyproject.toml` ships both
+  `pypi` and `testpypi` named `[[tool.uv.index]]` entries with
+  `publish-url`, and the generated `AGENTS.md` "Releases" section
+  includes a `uv publish --index testpypi` rehearsal step before
+  PyPI. With `use_testpypi=false`, only the `pypi` index ships and
+  the rehearsal step is dropped.
+- When `release_automation = github-oidc`: `publish.yml` becomes a
+  4-job pipeline (`ci → build → testpypi → pypi`) that uploads
+  built distributions as an artifact, publishes them to TestPyPI
+  via Trusted Publishing, then — once the `pypi` environment is
+  approved — publishes the *same* artifacts to PyPI. The setup
+  checklist gains a "TestPyPI Trusted Publisher" item. With
+  `use_testpypi=false`, the previous 2-job pipeline ships unchanged.
+
 ## [1.4.1] - 2026-05-28
 
 ### Changed

@@ -119,7 +119,7 @@ release_automation:
 
     manual      → no CI publish workflow; you build and `uv publish`
                   by hand. The AGENTS.md "Releases" section documents
-                  the TestPyPI → PyPI flow with keyring tokens.
+                  the flow with keyring tokens.
     github-oidc → ship `.github/workflows/publish.yml`. Pushing a `v*`
                   tag runs CI, waits for approval on a `pypi` GitHub
                   environment, then publishes to PyPI via Trusted
@@ -130,6 +130,32 @@ release_automation:
     - manual
     - github-oidc
   default: manual
+  when: "{{ is_library }}"
+
+use_testpypi:
+  type: bool
+  help: |
+    Stage releases on TestPyPI before pushing to real PyPI (libraries
+    only). PyPI uploads are permanent — yank is possible, replace is
+    not — so a TestPyPI rehearsal catches install-time issues
+    (dependency resolution, missing files in the wheel, entry points)
+    that `uvx twine check` doesn't.
+
+    When `release_automation = manual`:
+      - `pyproject.toml` ships both the `pypi` and `testpypi` named
+        `[[tool.uv.index]]` entries with `publish-url`.
+      - AGENTS.md "Releases" includes a `uv publish --index testpypi`
+        step before PyPI.
+
+    When `release_automation = github-oidc`:
+      - `publish.yml` becomes a 4-job pipeline
+        (ci → build → testpypi → pypi), promoting the same artifacts.
+      - You'll need a second Trusted Publisher for TestPyPI; the
+        AGENTS.md setup checklist covers this.
+
+    Disable if PyPI-only is fine (e.g. tiny personal libraries where
+    the `environment: pypi` approval gate is enough of a checkpoint).
+  default: true
   when: "{{ is_library }}"
 
 use_pytest:
