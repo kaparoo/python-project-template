@@ -9,6 +9,26 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-06-01
+
+### Changed
+
+- Aligned the generated `publish.yml` with the proven `kaparoo-python`
+  workflow shape (both `use_testpypi` variants):
+  - Swapped `uv publish --trusted-publishing always` for
+    [`pypa/gh-action-pypi-publish@release/v1`](https://github.com/pypa/gh-action-pypi-publish)
+    — PyPA's official OIDC publisher — with `print-hash: true` and
+    `attestations: true` explicit. Functional behavior is unchanged
+    (still Trusted Publishing + PEP 740 attestations), but the action
+    is the de-facto standard and decouples the publish step from
+    `uv`'s release cadence.
+  - Each job gets a human-readable `name:` (`Verify`,
+    `Build distributions`, `Publish to TestPyPI`, `Publish to PyPI`).
+  - The build job's `setup-uv` step enables the action's cache
+    (`enable-cache: true`) for faster repeat builds.
+  - Switched the tag-pattern quotes from `"v*.*.*"` to `'v*.*.*'`
+    for consistency with `kaparoo-python`.
+
 ## [1.4.0] - 2026-06-01
 
 ### Added
@@ -223,7 +243,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/kaparoo/python-project-template/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/kaparoo/python-project-template/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/kaparoo/python-project-template/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/kaparoo/python-project-template/compare/v1.2.0...v1.3.0
