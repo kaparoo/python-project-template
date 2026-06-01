@@ -9,6 +9,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-01
+
 ### Added
 
 - New `use_testpypi` copier question (default `true`, gated on
@@ -221,7 +223,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/kaparoo/python-project-template/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/kaparoo/python-project-template/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/kaparoo/python-project-template/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/kaparoo/python-project-template/compare/v1.1.0...v1.2.0
