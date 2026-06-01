@@ -16,6 +16,24 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Aligned the generated `publish.yml` with the proven `kaparoo-python`
+  workflow shape (both `use_testpypi` variants):
+  - Swapped `uv publish --trusted-publishing always` for
+    [`pypa/gh-action-pypi-publish@release/v1`](https://github.com/pypa/gh-action-pypi-publish)
+    — PyPA's official OIDC publisher — with `print-hash: true` and
+    `attestations: true` explicit. Functional behavior is unchanged
+    (still Trusted Publishing + PEP 740 attestations), but the action
+    is the de-facto standard and decouples the publish step from
+    `uv`'s release cadence.
+  - Each job gets a human-readable `name:` (`Verify`,
+    `Build distributions`, `Publish to TestPyPI`, `Publish to PyPI`).
+  - The build job's `setup-uv` step enables the action's cache
+    (`enable-cache: true`) for faster repeat builds.
+  - Switched the tag-pattern quotes from `"v*.*.*"` to `'v*.*.*'`
+    for consistency with `kaparoo-python`.
+
 ## [1.5.0] - 2026-06-01
 
 ### Added

@@ -2,15 +2,17 @@ name: Publish
 
 on:
   push:
-    tags: ["v*.*.*"]
+    tags: ['v*.*.*']
 
 jobs:
   # Reuse the CI workflow as a release gate — publishing only proceeds
   # if lint / type-check / tests pass across the OS matrix.
   ci:
+    name: Verify
     uses: ./.github/workflows/ci.yml
 
   publish:
+    name: Publish to PyPI
     needs: ci
     runs-on: ubuntu-latest
     # Manual-approval gate; also the environment the PyPI Trusted
@@ -24,13 +26,17 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
 
-      - name: Build distributions
+      - name: Build sdist and wheel
         run: uv build
 
       - name: Verify metadata
         run: uvx twine check dist/*
 
-      - name: Publish to PyPI
-        # `uv publish` uploads PEP 740 attestations by default.
-        run: uv publish --trusted-publishing always
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
+          attestations: true

@@ -391,16 +391,19 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     publish = project / ".github" / "workflows" / "publish.yml"
     assert publish.is_file()
     yml = publish.read_text(encoding="utf-8")
-    assert 'tags: ["v*.*.*"]' in yml  # X.Y.Z only — no stray v-tags
+    assert "tags: ['v*.*.*']" in yml  # X.Y.Z only — no stray v-tags
     assert "uses: ./.github/workflows/ci.yml" in yml  # CI reused as a gate
     assert "uvx twine check dist/*" in yml  # metadata verification
     # 4-job pipeline: ci → build → testpypi → pypi.
     assert "actions/upload-artifact@v7" in yml  # build job ships artifacts
     assert "actions/download-artifact@v7" in yml  # testpypi/publish consume them
-    assert "uv publish --index testpypi --trusted-publishing always" in yml
+    # PyPA official action with explicit attestations + hash echo.
+    assert "pypa/gh-action-pypi-publish@release/v1" in yml
+    assert "repository-url: https://test.pypi.org/legacy/" in yml
+    assert "attestations: true" in yml
+    assert "print-hash: true" in yml
     assert "environment: pypi" in yml  # approval gate on the final job
     assert "id-token: write" in yml
-    assert "uv publish --trusted-publishing always" in yml
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "Trusted Publisher" in agents  # one-time setup checklist
@@ -417,11 +420,12 @@ def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None
     publish = project / ".github" / "workflows" / "publish.yml"
     assert publish.is_file()
     yml = publish.read_text(encoding="utf-8")
-    assert 'tags: ["v*.*.*"]' in yml
+    assert "tags: ['v*.*.*']" in yml
     assert "uses: ./.github/workflows/ci.yml" in yml
     assert "uvx twine check dist/*" in yml
     assert "environment: pypi" in yml
-    assert "uv publish --trusted-publishing always" in yml
+    assert "pypa/gh-action-pypi-publish@release/v1" in yml
+    assert "attestations: true" in yml
     # 2-job structure — no staging artifacts handoff.
     assert "testpypi" not in yml.lower()
     assert "upload-artifact" not in yml
