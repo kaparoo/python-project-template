@@ -13,6 +13,12 @@ _exclude:
   - "__pycache__"
   - "*.pyc"
   - "*.pyo"
+  # Drop the publish workflow when it's not needed. Jinja-templated
+  # excludes are evaluated against the destination path (post-`.jinja`
+  # strip), so this matches `template/.github/workflows/publish.yml.jinja`'s
+  # output target and lets that file stay a single source of truth
+  # with internal `{% if use_testpypi %}` branching for its two shapes.
+  - "{% if not (is_library and release_automation == 'github-oidc') %}.github/workflows/publish.yml{% endif %}"
 
 
 # =================================================================== #

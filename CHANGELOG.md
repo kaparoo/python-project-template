@@ -9,6 +9,22 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Collapsed the two conditional-filename `publish.yml` variants into a
+  single `template/.github/workflows/publish.yml.jinja` with an
+  internal `{% if use_testpypi %}` branch, gated by a Jinja-templated
+  entry in `copier.yml`'s `_exclude`. The previous two-file design
+  worked around copier's empirically verified behavior that filename
+  conditionals don't trigger `.jinja`-suffix stripping
+  (`{% if cond %}publish.yml.jinja{% endif %}` renders as a literal
+  `publish.yml.jinja` with un-templated content). `_exclude` patterns
+  are Jinja-templated and matched against destination paths
+  (post-`.jinja` strip), so the same exclusion semantics carry over
+  without splitting the source. Generated `publish.yml` output is
+  byte-identical to the previous variants for both `use_testpypi`
+  values; the change is purely internal.
+
 ## [1.4.1] - 2026-06-01
 
 ### Changed
