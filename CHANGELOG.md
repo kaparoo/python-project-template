@@ -16,6 +16,17 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Stripped boilerplate comments from the generated `publish.yml`
+  (the `# Reuse the CI workflow ...`, `# Build the artifacts ...`,
+  `# Stage on TestPyPI first ...`, `# Manual-approval gate ...`, and
+  `# OIDC for ... Trusted Publishing` annotations) and normalized
+  to single blank-line separation between jobs. Architectural
+  rationale lives in the generated `AGENTS.md` "Releases" section
+  and in this CHANGELOG; the workflow file itself now reads as a
+  clean declarative pipeline. Functional output is unchanged.
+
 ## [1.5.3] - 2026-06-01
 
 ### Changed
