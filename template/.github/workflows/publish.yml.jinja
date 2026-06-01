@@ -10,7 +10,7 @@ jobs:
   ci:
     name: Verify
     uses: ./.github/workflows/ci.yml
-
+{% if use_testpypi %}
   build:
     name: Build distributions
     needs: ci
@@ -84,3 +84,34 @@ jobs:
         with:
           print-hash: true
           attestations: true
+{% else %}
+  publish:
+    name: Publish to PyPI
+    needs: ci
+    runs-on: ubuntu-latest
+    # Manual-approval gate; also the environment the PyPI Trusted
+    # Publisher is scoped to. Configure it in the repo settings.
+    environment: pypi
+    permissions:
+      id-token: write  # OIDC for PyPI Trusted Publishing — no stored token
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Verify metadata
+        run: uvx twine check dist/*
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          print-hash: true
+          attestations: true
+{% endif %}
