@@ -9,6 +9,19 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-06-01
+
+### Changed
+
+- Stripped boilerplate comments from the generated `publish.yml`
+  (the `# Reuse the CI workflow ...`, `# Build the artifacts ...`,
+  `# Stage on TestPyPI first ...`, `# Manual-approval gate ...`, and
+  `# OIDC for ... Trusted Publishing` annotations) and normalized
+  to single blank-line separation between jobs. Architectural
+  rationale lives in the generated `AGENTS.md` "Releases" section
+  and in this CHANGELOG; the workflow file itself now reads as a
+  clean declarative pipeline. Functional output is unchanged.
+
 ## [1.4.3] - 2026-06-01
 
 ### Changed
@@ -282,7 +295,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.4.3...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.4.4...HEAD
+[1.4.4]: https://github.com/kaparoo/python-project-template/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kaparoo/python-project-template/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/kaparoo/python-project-template/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/kaparoo/python-project-template/compare/v1.4.0...v1.4.1
