@@ -1,0 +1,75 @@
+name: Publish
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+jobs:
+  # Reuse the CI workflow as a release gate — publishing only proceeds
+  # if lint / type-check / tests pass across the OS matrix.
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: ci
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v8.1.0
+
+      - name: Build distributions
+        run: uv build
+
+      - name: Verify metadata
+        run: uvx twine check dist/*
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v7
+        with:
+          name: distributions
+          path: dist/
+          retention-days: 7
+
+  # Stage on TestPyPI first — catches install-time issues
+  # (dependency resolution, missing files in the wheel, entry points)
+  # that `uvx twine check` doesn't. The same artifacts are then
+  # promoted to PyPI.
+  testpypi:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # OIDC for TestPyPI Trusted Publishing
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v7
+        with:
+          name: distributions
+          path: dist/
+
+      - name: Publish to TestPyPI
+        # `uv publish` uploads PEP 740 attestations by default.
+        run: uv publish --index testpypi --trusted-publishing always
+
+  publish:
+    needs: testpypi
+    runs-on: ubuntu-latest
+    # Manual-approval gate; also the environment the PyPI Trusted
+    # Publisher is scoped to. Configure it in the repo settings.
+    environment: pypi
+    permissions:
+      id-token: write  # OIDC for PyPI Trusted Publishing — no stored token
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@v7
+        with:
+          name: distributions
+          path: dist/
+
+      - name: Publish to PyPI
+        # `uv publish` uploads PEP 740 attestations by default.
+        run: uv publish --trusted-publishing always

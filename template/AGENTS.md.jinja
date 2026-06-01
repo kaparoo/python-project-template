@@ -153,9 +153,10 @@ Releases publish automatically via GitHub Actions **Trusted Publishing**
 4. Tag and push:
    `git tag -a vX.Y.Z -m "🔖 Release version X.Y.Z" && git push origin vX.Y.Z`.
 
-The `v*` tag triggers `.github/workflows/publish.yml`: it reruns CI
-across the OS matrix, then — once you approve the `pypi` environment
-gate — builds and publishes to PyPI via OIDC.
+The `v*.*.*` tag triggers `.github/workflows/publish.yml`: it reruns
+CI across the OS matrix, builds the distributions,{% if use_testpypi %} publishes them
+to TestPyPI as a staging rehearsal,{% endif %} then — once you approve the `pypi`
+environment gate — publishes{% if use_testpypi %} the same artifacts{% endif %} to PyPI via OIDC.
 
 ### One-time setup (before the first release)
 
@@ -164,13 +165,24 @@ gate — builds and publishes to PyPI via OIDC.
    `{{ repo_name }}`, workflow `publish.yml`, environment `pypi`. Use
    PyPI's *pending publisher* form for the very first upload (before
    the project exists on PyPI).
+{%- if use_testpypi %}
+2. **TestPyPI Trusted Publisher** — register the *same* publisher on
+   [test.pypi.org](https://test.pypi.org/manage/account/publishing/)
+   for the staging job: owner `{{ github_username }}`, repo
+   `{{ repo_name }}`, workflow `publish.yml`. The `testpypi` job has
+   no environment, so leave that field blank.
+3. **GitHub `pypi` environment** — create an environment named `pypi`
+   in the repo settings and add yourself as a *required reviewer*, so
+   every publish waits for explicit approval.
+{%- else %}
 2. **GitHub `pypi` environment** — create an environment named `pypi`
    in the repo settings and add yourself as a *required reviewer*, so
    every publish waits for explicit approval.
 
-TestPyPI staging stays manual if you want it: `uv build` then
-`uv publish --index testpypi` (register a separate TestPyPI trusted
-publisher, or use a token, first).
+If you decide you want a TestPyPI rehearsal step later, re-run
+`copier update` with `use_testpypi=true` to switch to the 4-job
+pipeline.
+{%- endif %}
 {% else %}
 Release procedure for `X.Y.Z`:
 
@@ -186,6 +198,7 @@ Release procedure for `X.Y.Z`:
 4. `uv build`. Validate with `uvx twine check dist/*` and a fresh
    install in an isolated environment
    (`uv run --isolated --no-project --with dist/*.whl python -c "..."`).
+{%- if use_testpypi %}
 5. Publish to TestPyPI first:
    `uv publish --index testpypi --username __token__ --keyring-provider subprocess`.
    Verify the project page and a fresh install from
@@ -194,10 +207,17 @@ Release procedure for `X.Y.Z`:
 7. Annotated tag `vX.Y.Z` whose message starts with
    `🔖 Release version X.Y.Z` and references the CHANGELOG; push the
    tag.
+{%- else %}
+5. Publish to PyPI:
+   `uv publish --index pypi --username __token__ --keyring-provider subprocess`.
+6. Annotated tag `vX.Y.Z` whose message starts with
+   `🔖 Release version X.Y.Z` and references the CHANGELOG; push the
+   tag.
+{%- endif %}
 
 Tokens live in the OS keyring at the `publish-url` key
 (`keyring set <publish-url> __token__`), scoped per-project once the
-package exists on the index. Named indexes (`pypi`, `testpypi`) are
+package exists on the index. {% if use_testpypi %}Named indexes (`pypi`, `testpypi`) are{% else %}The `pypi` named index is{% endif %}
 configured under `[[tool.uv.index]]` in `pyproject.toml`.
 {% endif %}
 {% endif %}

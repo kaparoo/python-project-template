@@ -381,7 +381,7 @@ def test_release_automation_manual_default(tmp_path: Path) -> None:
 
 
 def test_release_automation_github_oidc(tmp_path: Path) -> None:
-    """`github-oidc` — ship publish.yml + automated Releases docs."""
+    """`github-oidc` default — 4-job publish.yml with TestPyPI staging."""
     project = _generate(tmp_path, {"release_automation": "github-oidc"})
     publish = project / ".github" / "workflows" / "publish.yml"
     assert publish.is_file()
@@ -389,13 +389,60 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     assert 'tags: ["v*.*.*"]' in yml  # X.Y.Z only — no stray v-tags
     assert "uses: ./.github/workflows/ci.yml" in yml  # CI reused as a gate
     assert "uvx twine check dist/*" in yml  # metadata verification
-    assert "environment: pypi" in yml
+    # 4-job pipeline: ci → build → testpypi → pypi.
+    assert "actions/upload-artifact@v7" in yml  # build job ships artifacts
+    assert "actions/download-artifact@v7" in yml  # testpypi/publish consume them
+    assert "uv publish --index testpypi --trusted-publishing always" in yml
+    assert "environment: pypi" in yml  # approval gate on the final job
     assert "id-token: write" in yml
     assert "uv publish --trusted-publishing always" in yml
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "Trusted Publisher" in agents  # one-time setup checklist
+    assert "TestPyPI Trusted Publisher" in agents  # extra setup item
     assert "required reviewer" in agents
+
+
+def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None:
+    """`github-oidc` + `use_testpypi=false` — 2-job publish.yml, PyPI only."""
+    project = _generate(
+        tmp_path,
+        {"release_automation": "github-oidc", "use_testpypi": False},
+    )
+    publish = project / ".github" / "workflows" / "publish.yml"
+    assert publish.is_file()
+    yml = publish.read_text(encoding="utf-8")
+    assert 'tags: ["v*.*.*"]' in yml
+    assert "uses: ./.github/workflows/ci.yml" in yml
+    assert "uvx twine check dist/*" in yml
+    assert "environment: pypi" in yml
+    assert "uv publish --trusted-publishing always" in yml
+    # 2-job structure — no staging artifacts handoff.
+    assert "testpypi" not in yml.lower()
+    assert "upload-artifact" not in yml
+    assert "download-artifact" not in yml
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "Trusted Publishing" in agents
+    assert "TestPyPI Trusted Publisher" not in agents
+    # Escape hatch documented in the AGENTS setup checklist.
+    assert "use_testpypi=true" in agents
+    # pyproject loses the testpypi named index.
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'name = "pypi"' in pyproject
+    assert 'name = "testpypi"' not in pyproject
+
+
+def test_release_automation_manual_without_testpypi(tmp_path: Path) -> None:
+    """`manual` + `use_testpypi=false` — Releases docs drop the staging step."""
+    project = _generate(tmp_path, {"use_testpypi": False})
+    assert not (project / ".github" / "workflows" / "publish.yml").exists()
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Releases" in agents
+    assert "uv publish --index testpypi" not in agents
+    assert "uv publish --index pypi" in agents
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'name = "pypi"' in pyproject
+    assert 'name = "testpypi"' not in pyproject
 
 
 def test_application_omits_release_machinery(tmp_path: Path) -> None:
