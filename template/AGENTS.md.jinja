@@ -154,9 +154,12 @@ Releases publish automatically via GitHub Actions **Trusted Publishing**
    `git tag -a vX.Y.Z -m "🔖 Release version X.Y.Z" && git push origin vX.Y.Z`.
 
 The `v*.*.*` tag triggers `.github/workflows/publish.yml`: it reruns
-CI across the OS matrix, builds the distributions,{% if use_testpypi %} publishes them
-to TestPyPI as a staging rehearsal,{% endif %} then — once you approve the `pypi`
-environment gate — publishes{% if use_testpypi %} the same artifacts{% endif %} to PyPI via OIDC.
+CI across the OS matrix, builds the distributions once and uploads
+them as an artifact,{% if use_testpypi %} publishes them to TestPyPI as a staging
+rehearsal,{% endif %} then — once you approve the `pypi` environment gate —
+publishes the same artifacts to PyPI via OIDC. Keeping `build`
+separate from publish keeps the `id-token: write` permission scoped
+to the publish jobs only.
 
 ### One-time setup (before the first release)
 
@@ -180,8 +183,8 @@ environment gate — publishes{% if use_testpypi %} the same artifacts{% endif %
    every publish waits for explicit approval.
 
 If you decide you want a TestPyPI rehearsal step later, re-run
-`copier update` with `use_testpypi=true` to switch to the 4-job
-pipeline.
+`copier update` with `use_testpypi=true` — the pipeline gains a
+`testpypi` job between `build` and `pypi`.
 {%- endif %}
 {% else %}
 Release procedure for `X.Y.Z`:

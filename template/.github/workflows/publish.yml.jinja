@@ -10,7 +10,11 @@ jobs:
   ci:
     name: Verify
     uses: ./.github/workflows/ci.yml
-{% if use_testpypi %}
+
+  # Build the artifacts once and hand them off through the publish
+  # jobs. Keeping build separate from publish means this job runs
+  # without `id-token: write` — only the OIDC publish jobs hold the
+  # Trusted Publishing capability.
   build:
     name: Build distributions
     needs: ci
@@ -36,7 +40,7 @@ jobs:
           name: distributions
           path: dist/
           retention-days: 7
-
+{% if use_testpypi %}
   # Stage on TestPyPI first — catches install-time issues
   # (dependency resolution, missing files in the wheel, entry points)
   # that `uvx twine check` doesn't. The same artifacts are then
@@ -61,10 +65,10 @@ jobs:
           repository-url: https://test.pypi.org/legacy/
           print-hash: true
           attestations: true
-
+{% endif %}
   pypi:
     name: Publish to PyPI
-    needs: testpypi
+    needs: {% if use_testpypi %}testpypi{% else %}build{% endif %}
     runs-on: ubuntu-latest
     # Manual-approval gate; also the environment the PyPI Trusted
     # Publisher is scoped to. Configure it in the repo settings.
@@ -84,34 +88,3 @@ jobs:
         with:
           print-hash: true
           attestations: true
-{% else %}
-  publish:
-    name: Publish to PyPI
-    needs: ci
-    runs-on: ubuntu-latest
-    # Manual-approval gate; also the environment the PyPI Trusted
-    # Publisher is scoped to. Configure it in the repo settings.
-    environment: pypi
-    permissions:
-      id-token: write  # OIDC for PyPI Trusted Publishing — no stored token
-
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up uv
-        uses: astral-sh/setup-uv@v8.1.0
-        with:
-          enable-cache: true
-
-      - name: Build sdist and wheel
-        run: uv build
-
-      - name: Verify metadata
-        run: uvx twine check dist/*
-
-      - name: Publish
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          print-hash: true
-          attestations: true
-{% endif %}

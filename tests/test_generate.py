@@ -407,7 +407,7 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
 
 
 def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None:
-    """`github-oidc` + `use_testpypi=false` — 2-job publish.yml, PyPI only."""
+    """`github-oidc` + `use_testpypi=false` — 3-job publish.yml (no staging)."""
     project = _generate(
         tmp_path,
         {"release_automation": "github-oidc", "use_testpypi": False},
@@ -421,10 +421,12 @@ def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None
     assert "environment: pypi" in yml
     assert "pypa/gh-action-pypi-publish@release/v1" in yml
     assert "attestations: true" in yml
-    # 2-job structure — no staging artifacts handoff.
-    assert "testpypi" not in yml.lower()
-    assert "upload-artifact" not in yml
-    assert "download-artifact" not in yml
+    # 3-job structure: ci → build → pypi. Build still ships artifacts
+    # so OIDC publish has no build-time dependency footprint.
+    assert "actions/upload-artifact@v7" in yml
+    assert "actions/download-artifact@v7" in yml
+    assert "needs: build" in yml  # pypi job depends on build (no testpypi)
+    assert "testpypi" not in yml.lower()  # but no staging job either
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "TestPyPI Trusted Publisher" not in agents
