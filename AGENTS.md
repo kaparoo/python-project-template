@@ -70,10 +70,10 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest`. On
-`main` the suite is currently **22 cases (~60–90 s)**; on `pytorch` it
-is **25 cases (~80–100 s)** because of the extra `torch` / index
-assertions and the `uv lock` integration test.
+**Workflow**: commit (or stash) all changes → run `uv run pytest`. The
+suite takes roughly **60–90 s** on `main` and **80–100 s** on `pytorch`
+(the latter runs extra `torch` / index assertions and a real `uv lock`
+integration test).
 
 ### 2. Both branches of every `copier.yml` option must be tested
 
