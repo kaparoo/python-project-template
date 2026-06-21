@@ -9,6 +9,42 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- **CI hardening** in the generated `ci.yml`: a `concurrency` group
+  (`ci-${{ github.ref }}`, `cancel-in-progress: true`) that cancels
+  superseded runs, a `timeout-minutes: 20` cap on the matrix job, and
+  `--locked` on `uv sync` so a stale `uv.lock` fails CI instead of being
+  silently re-resolved.
+- `publish.yml` (`release_automation = github-oidc`) gains three steps:
+  the `build` job fails fast when the pushed `v*` tag does not match the
+  `pyproject.toml` version (`uv version --short`); the TestPyPI upload
+  sets `skip-existing: true` so a re-run tolerates an already-staged
+  version; and a final `github-release` job creates the GitHub Release
+  for the tag, pulling notes from the matching `CHANGELOG.md` section and
+  attaching the sdist + wheel. The generated `AGENTS.md` "Releases"
+  section documents the new pipeline shape.
+
+### Changed
+
+- Expanded the generated `AGENTS.md` conventions, distilled from a
+  downstream project's review cycle:
+  - **Docstrings** — summary-shape carve-outs (property getters and
+    boolean *methods* take a noun phrase / "Whether ..."; boolean
+    *functions* stay imperative), the self-explainable-consumed-method
+    rule vs. generic abstract-base contracts, the closed-hierarchy
+    family-map exception, and backticks on literal option values.
+  - **Tests** (`use_pytest` only) — flat `def test_*` vs. grouping-only
+    `class TestX:`, which source files legitimately need no test,
+    helper/fixture locations, and a test-*quality* bullet (assert values
+    *and* side effects, `pytest.raises(..., match=...)`, independently
+    computed numbers, deterministic timing/IO, spy-verified batching).
+  - **Error messages** — a *content* convention (name the valid set or
+    the fix, not just the failure) layered on top of the `EM` ruff rule's
+    format enforcement.
+  - **Python style** — blank-line grouping with a blank line before the
+    final `return`, and boxed comment banners in long modules.
+
 ## [1.4.4] - 2026-06-01
 
 ### Changed
