@@ -223,15 +223,6 @@ uv build
 `--vcs-ref HEAD` renders the current working commit; without it copier
 falls back to the latest tag and silently misses post-tag changes.
 
-### Applying items from the template-improvement cycle
-
-Periodic review of projects generated from this template (notably
-`kaparoo-python`) produces a list of patterns worth back-porting.
-The current in-flight cycle is tracked in
-`../template-improvements.md` (out-of-tree, not committed). Apply
-items as small focused commits accumulating in `[Unreleased]`, then
-cut a `MINOR` (or `PATCH`) release per the procedure above.
-
 ## Things to avoid
 
 - Editing `template/.vscode/extensions.json` (no extension) — the active

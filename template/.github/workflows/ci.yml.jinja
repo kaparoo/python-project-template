@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_call:
 
+concurrency:
+  group: ci-{% raw %}${{ github.ref }}{% endraw %}
+  cancel-in-progress: true
+
 # CI runners have no GPU. Force the CPU PyTorch build for every `uv`
 # command (sync + run) regardless of the project's compute_backend:
 # CPU wheels are far smaller than CUDA wheels and — unlike CUDA wheels —
@@ -19,6 +23,7 @@ jobs:
   check:
     name: Lint, type-check{% if use_pytest %}, test{% endif %} ({% raw %}${{ matrix.os }}{% endraw %})
     runs-on: {% raw %}${{ matrix.os }}{% endraw %}
+    timeout-minutes: 20
 
     strategy:
       fail-fast: false

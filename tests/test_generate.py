@@ -361,6 +361,12 @@ def test_ci_workflow_present_with_cpu_override(tmp_path: Path) -> None:
     # CPU override so CI never pulls the multi-GB CUDA wheel (and so the
     # macOS matrix leg resolves — CUDA wheels aren't published for macOS).
     assert "UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu" in ci
+    # Hardening: cancel superseded runs, cap runaway jobs. No `--locked`
+    # here — the CPU override re-resolves, ignoring the committed CUDA lock.
+    assert "concurrency:" in ci
+    assert "group: ci-${{ github.ref }}" in ci
+    assert "cancel-in-progress: true" in ci
+    assert "timeout-minutes: 20" in ci
     # use_pytest defaults false here → no Tests step, but lint/type-check stay.
     assert "uv run pytest" not in ci
     assert "uv run ty check" in ci
@@ -404,11 +410,21 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     assert "print-hash: true" in yml
     assert "environment: pypi" in yml  # approval gate on the final job
     assert "id-token: write" in yml
+    # Build job fails fast when the tag and project version disagree.
+    assert "Verify tag matches project version" in yml
+    assert "uv version --short" in yml
+    # Re-runnable TestPyPI staging tolerates an already-uploaded version.
+    assert "skip-existing: true" in yml
+    # A final job publishes a GitHub Release from the CHANGELOG + artifacts.
+    assert "github-release:" in yml
+    assert "needs: pypi" in yml
+    assert "gh release create" in yml
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "Trusted Publisher" in agents  # one-time setup checklist
     assert "TestPyPI Trusted Publisher" in agents  # extra setup item
     assert "required reviewer" in agents
+    assert "github-release" in agents  # release-automation pipeline doc synced
 
 
 def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None:
@@ -432,6 +448,12 @@ def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None
     assert "actions/download-artifact@v7" in yml
     assert "needs: build" in yml  # pypi job depends on build (no testpypi)
     assert "testpypi" not in yml.lower()  # but no staging job either
+    # Tag-version verification and the GitHub Release job still ship; the
+    # TestPyPI-only `skip-existing` does not.
+    assert "Verify tag matches project version" in yml
+    assert "github-release:" in yml
+    assert "gh release create" in yml
+    assert "skip-existing" not in yml
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "TestPyPI Trusted Publisher" not in agents
@@ -474,6 +496,34 @@ def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     # Docstring philosophy (intent/contracts, not just format).
     assert "intent and contracts" in agents
     assert "Type Parameters:" in agents
+    # Expanded docstring guidance: summary-shape carve-outs + family map.
+    assert "family map" in agents
+    assert "self-explainable" in agents
+    # Literal option values are backticked like identifiers.
+    assert "Literal option values get backticks" in agents
+    # Body-layout conventions ported from the project.
+    assert "blank line before the final" in agents
+    assert "boxed comment" in agents
+
+
+def test_agents_md_documents_error_message_content(tmp_path: Path) -> None:
+    """Beyond the EM ruff rule (format), messages must name the fix."""
+    project = _generate(tmp_path)
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "name the valid set or the fix" in agents
+
+
+def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> None:
+    """`use_pytest` projects get layout + quality guidance; omitted otherwise."""
+    project = _generate(tmp_path, {"use_pytest": True})  # default false here
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "Don't mix the two styles" in agents  # flat vs class TestX layout
+    assert "verify it with a spy" in agents  # test-quality guidance
+
+    no_pytest = _generate(tmp_path / "np", {"use_pytest": False})
+    agents_np = (no_pytest / "AGENTS.md").read_text(encoding="utf-8")
+    assert "verify it with a spy" not in agents_np
+    assert "Don't mix the two styles" not in agents_np
 
 
 # ─── Python file conventions ───
