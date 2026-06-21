@@ -9,6 +9,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-06-22
+
 ### Changed
 
 - The generated `publish.yml`'s `github-release` job
@@ -341,7 +343,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.5.1...HEAD
+[1.5.1]: https://github.com/kaparoo/python-project-template/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/kaparoo/python-project-template/compare/v1.4.4...v1.5.0
 [1.4.4]: https://github.com/kaparoo/python-project-template/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/kaparoo/python-project-template/compare/v1.4.2...v1.4.3
