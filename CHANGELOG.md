@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-06-22
+
 ### Added
 
 - **CI hardening** in the generated `ci.yml`: a `concurrency` group
@@ -345,7 +347,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.4...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.6.0...pytorch
+[1.6.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.4...pytorch-v1.6.0
 [1.5.4]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.3...pytorch-v1.5.4
 [1.5.3]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.2...pytorch-v1.5.3
 [1.5.2]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.1...pytorch-v1.5.2
