@@ -9,6 +9,14 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- The generated `publish.yml`'s `github-release` job
+  (`release_automation = github-oidc`) now fails fast when no matching
+  `CHANGELOG.md` section is found for the tag, instead of silently
+  creating a GitHub Release with an empty body. Promote `[Unreleased]`
+  to a dated `## [X.Y.Z]` heading before tagging.
+
 ## [1.5.0] - 2026-06-22
 
 ### Added

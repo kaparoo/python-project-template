@@ -107,6 +107,10 @@ jobs:
             /^## / { if (flag) exit }
             flag { print }
           ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "::error::No CHANGELOG section for $GITHUB_REF_NAME — promote [Unreleased] to a dated ## [$version] heading before tagging."
+            exit 1
+          fi
           cat release-notes.md
 
       - name: Create GitHub release
