@@ -27,6 +27,11 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Changed
 
+- The generated `publish.yml`'s `github-release` job
+  (`release_automation = github-oidc`) now fails fast when no matching
+  `CHANGELOG.md` section is found for the tag, instead of silently
+  creating a GitHub Release with an empty body. Promote `[Unreleased]`
+  to a dated `## [X.Y.Z]` heading before tagging.
 - Bumped the default PyTorch stack to the latest CUDA 13.0-compatible
   releases: `torch_version` `2.11.0` → `2.12.1`, `torchvision_version`
   `0.26.0` → `0.27.1`, and the default `cuda_version` `12.8` → `13.0`

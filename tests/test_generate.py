@@ -433,10 +433,13 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     assert "uv version --short" in yml
     # Re-runnable TestPyPI staging tolerates an already-uploaded version.
     assert "skip-existing: true" in yml
-    # A final job publishes a GitHub Release from the CHANGELOG + artifacts.
+    # A final job publishes a GitHub Release from the CHANGELOG + artifacts,
+    # failing fast if the tag has no matching CHANGELOG section (rather than
+    # creating a Release with an empty body).
     assert "github-release:" in yml
     assert "needs: pypi" in yml
     assert "gh release create" in yml
+    assert "No CHANGELOG section for" in yml
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "Trusted Publisher" in agents  # one-time setup checklist
