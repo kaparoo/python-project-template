@@ -52,7 +52,14 @@ versions without losing your customizations.
 | `python_version` | choice | `3.14` | `3.12` / `3.13` / `3.14` |
 | `license_year` | int | `2026` | Copyright year |
 | `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
+| `release_automation` | choice | `manual` | `manual` / `github-oidc` — ship `publish.yml` (libraries only) |
+| `use_testpypi` | bool | `true` | Stage on TestPyPI before PyPI (libraries only) |
 | `use_pytest` | bool | `true` | Adds `tests/` + pytest config |
+| `coverage_fail_under` | int | `0` | Branch-coverage gate; `0` = off (pytest only) |
+| `include_todo` | bool | `true` | Generates `TODO.md` + a README 📋 TODO section |
+
+`release_automation`, `use_testpypi`, and `coverage_fail_under` are only
+asked when their parent feature is enabled (a library, or pytest).
 
 - **`is_library = false`** produces an application (no build system, no
   `py.typed` marker); uv treats it as a non-distributable project.
