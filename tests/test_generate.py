@@ -378,6 +378,24 @@ def test_ci_workflow_adds_test_step_with_pytest(tmp_path: Path) -> None:
     assert "uv run pytest" in ci
 
 
+def test_ci_lock_job_validates_committed_lock(tmp_path: Path) -> None:
+    """A separate `lock` job verifies the real-backend `uv.lock`.
+
+    The matrix `check` job's CPU `UV_INDEX` override re-resolves and never
+    sees a stale committed (CUDA) lock, so a dedicated job runs
+    `uv lock --check` *without* that override.
+    """
+    project = _generate(tmp_path)
+    ci = (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    assert "uv lock --check" in ci
+    assert "Verify lockfile" in ci
+    # The CPU override is scoped to the matrix job, not workflow-level, so
+    # the `lock` job resolves against the project's own index. It appears
+    # exactly once (under `check`), never as a top-level `env:`.
+    assert ci.count("UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu") == 1
+    assert "\nenv:\n" not in ci  # no workflow-level env block
+
+
 # ─── Release automation (publish.yml) ───
 
 

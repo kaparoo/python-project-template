@@ -16,6 +16,15 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- A `lock` CI job that runs `uv lock --check` to catch a stale committed
+  `uv.lock`. The matrix `check` job's CPU `UV_INDEX` override re-resolves
+  (so it never validates the real, CUDA-backed lock); the new job runs
+  *without* that override, resolving metadata against the project's own
+  index (no GPU, no wheel download). The override is now scoped to the
+  `check` job rather than workflow-level.
+
 ### Changed
 
 - Bumped the default PyTorch stack to the latest CUDA 13.0-compatible
