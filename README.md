@@ -61,17 +61,17 @@ versions without losing your customizations.
 | `license_year` | int | `2026` | Copyright year |
 | `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
 | `use_pytest` | bool | `false` | Adds `tests/` + pytest config |
-| `torch_version` | str | `2.11.0` | Minimum `torch` version |
-| `torchvision_version` | str | `0.26.0` | Minimum `torchvision` version |
+| `torch_version` | str | `2.12.1` | Minimum `torch` version |
+| `torchvision_version` | str | `0.27.1` | Minimum `torchvision` version |
 | `compute_backend` | choice | `cuda` | `cpu` / `cuda` — selects the PyTorch index |
-| `cuda_version` | choice | `12.8` | `12.6` / `12.8` / `13.0` (asked only for `cuda`) |
+| `cuda_version` | choice | `13.0` | `12.6` / `12.8` / `13.0` (asked only for `cuda`) |
 
 - **`is_library = false`** produces an application (no build system, no
   `py.typed` marker); uv treats it as a non-distributable project.
 - **`use_pytest`** defaults to `false` here — deterministic pytest
   workflows are impractical for most deep-learning code.
 - **`compute_backend`** routes `torch` / `torchvision` through a
-  `[[tool.uv.index]]`: `cpu` works everywhere, `cuda` (default, CUDA 12.8)
+  `[[tool.uv.index]]`: `cpu` works everywhere, `cuda` (default, CUDA 13.0)
   needs an NVIDIA GPU.
 
 ## 🗂️ Layout

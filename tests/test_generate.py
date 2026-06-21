@@ -549,17 +549,17 @@ def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
 def test_torch_in_dependencies(tmp_path: Path) -> None:
     project = _generate(tmp_path)
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
-    assert '"torch>=2.11.0"' in pyproject
-    assert '"torchvision>=0.26.0"' in pyproject
+    assert '"torch>=2.12.1"' in pyproject
+    assert '"torchvision>=0.27.1"' in pyproject
     assert "Artificial Intelligence" in pyproject
 
 
 def test_cuda_backend_routes_to_cuda_index(tmp_path: Path) -> None:
-    # Default backend is cuda with cuda_version 12.8 -> cu128.
+    # Default backend is cuda with cuda_version 13.0 -> cu130.
     project = _generate(tmp_path)
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert "[[tool.uv.index]]" in pyproject
-    assert "https://download.pytorch.org/whl/cu128" in pyproject
+    assert "https://download.pytorch.org/whl/cu130" in pyproject
     assert '[tool.uv.sources]' in pyproject
     assert 'torch = { index = "pytorch" }' in pyproject
     assert 'torchvision = { index = "pytorch" }' in pyproject
@@ -569,7 +569,7 @@ def test_cpu_backend_routes_to_cpu_index(tmp_path: Path) -> None:
     project = _generate(tmp_path, {"compute_backend": "cpu"})
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert "https://download.pytorch.org/whl/cpu" in pyproject
-    assert "cu128" not in pyproject
+    assert "cu130" not in pyproject
 
 
 # ─── Integration: dependency resolution ───

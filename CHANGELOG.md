@@ -16,6 +16,15 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped the default PyTorch stack to the latest CUDA 13.0-compatible
+  releases: `torch_version` `2.11.0` → `2.12.1`, `torchvision_version`
+  `0.26.0` → `0.27.1`, and the default `cuda_version` `12.8` → `13.0`
+  (so the default wheel index becomes `cu130`). Both `2.12.1` / `0.27.1`
+  ship `cp314` wheels, so the default Python 3.14 still resolves. The
+  `12.6` / `12.8` choices remain for projects pinning an older toolkit.
+
 ## [1.6.0] - 2026-06-22
 
 ### Added
