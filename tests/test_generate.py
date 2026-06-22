@@ -570,3 +570,63 @@ def test_tasks_initialize_git_repo_with_initial_commit(tmp_path: Path) -> None:
         check=True,
     )
     assert branch.stdout.strip() == "main"
+
+
+# ─── Integration: a generated project passes its own CI gates ───
+
+
+def _run_in_project(
+    project: Path,
+    cmd: list[str],
+    *,
+    allow_codes: tuple[int, ...] = (0,),
+) -> None:
+    """Run `cmd` inside the generated project; fail with captured output.
+
+    Mirrors what the generated `ci.yml` runs, so a template change that
+    yields a project failing its own lint/type/test gates is caught here
+    rather than only in manual dogfooding.
+    """
+    result = subprocess.run(
+        cmd,
+        cwd=project,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    assert result.returncode in allow_codes, (
+        f"`{' '.join(cmd)}` exited {result.returncode}\n"
+        f"--- stdout ---\n{result.stdout}\n--- stderr ---\n{result.stderr}"
+    )
+
+
+def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
+    """Default (library + pytest): a freshly generated project passes the
+    same gates its `ci.yml` defines — `ruff format --check`, `ruff check`,
+    `ty check`, `pytest`. Exercises the pinned tool versions end-to-end
+    (ruff/ty config validity, pytest + pytest-cov plugin load), which the
+    resolve-only `_tasks` test cannot catch.
+    """
+    project = _generate(tmp_path, run_tasks=True)  # _tasks already ran `uv sync`
+    _run_in_project(project, ["uv", "run", "ruff", "format", "--check", "."])
+    _run_in_project(project, ["uv", "run", "ruff", "check", "."])
+    _run_in_project(project, ["uv", "run", "ty", "check"])
+    # A fresh project has no tests → pytest exits 5 (none collected), but the
+    # run still loads the pytest + pytest-cov plugins (the real compat check).
+    _run_in_project(project, ["uv", "run", "pytest"], allow_codes=(0, 5))
+
+
+def test_generated_minimal_application_passes_lint_and_type_check(
+    tmp_path: Path,
+) -> None:
+    """Opposite corner (application, no pytest): the lean config — no
+    build-system, no pytest layer — still lints and type-checks clean.
+    """
+    project = _generate(
+        tmp_path,
+        {"is_library": False, "use_pytest": False},
+        run_tasks=True,
+    )
+    _run_in_project(project, ["uv", "run", "ruff", "format", "--check", "."])
+    _run_in_project(project, ["uv", "run", "ruff", "check", "."])
+    _run_in_project(project, ["uv", "run", "ty", "check"])
