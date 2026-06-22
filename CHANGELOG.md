@@ -9,6 +9,12 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- The generated `PyPI version` badge (library mode) gains the PyPI logo
+  (`?logo=pypi`). The `Downloads` badge stays a logo-less `pepy.tech`
+  image — its shields equivalent was dropped in v1.0.2 for rate limiting.
+
 ## [1.5.3] - 2026-06-22
 
 ### Changed
