@@ -65,10 +65,11 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest`. The
-suite takes roughly **60–90 s** on `main` and **80–100 s** on `pytorch`
-(the latter runs extra `torch` / index assertions and a real `uv lock`
-integration test).
+**Workflow**: commit (or stash) all changes → run `uv run pytest`. Expect
+a couple of minutes: the integration tests that spin up generated
+projects dominate the runtime (more so on `pytorch`, which adds `torch` /
+index assertions and a real `uv lock` test), and a cold `uv` cache adds
+more. It's slow, not hung.
 
 ### 2. Both branches of every `copier.yml` option must be tested
 
@@ -82,10 +83,14 @@ minimum bar.
 `tests/test_generate.py`. If even one file in `template/` changes,
 run the suite before committing.
 
-### 4. The integration test runs real `_tasks`
+### 4. Some tests run the real toolchain on a generated project
 
-`test_tasks_initialize_git_repo_with_initial_commit` actually executes
-`git init`, `uv lock`, `uv sync`, `git add`, `git commit`. It needs:
+A few integration tests in `tests/test_generate.py` don't just inspect
+rendered text — they `git init` / `uv lock` / `uv sync` / commit a
+generated project and run the gates its `ci.yml` defines
+(`ruff format --check`, `ruff check`, `ty check`, and `pytest`) inside
+it, so a template or dependency change that breaks a generated project
+fails here rather than only in manual dogfooding. These need:
 - `git` and `uv` on PATH
 - A configured git identity (`user.email`, `user.name`)
 - Internet access (uv may download Python or wheels)
@@ -194,9 +199,10 @@ default-false there).
 
 ### Modifying ruff/ty/pytest config in generated projects
 
-Edit `template/pyproject.toml.jinja`. Run the test suite to confirm
-the rendered output still passes `uv build`, `ruff check`, `ty check`,
-and `pytest` in the integration test.
+Edit `template/pyproject.toml.jinja`, then run the suite: the
+integration tests confirm the rendered project passes `ruff check`,
+`ty check`, and `pytest`; `uv build` is covered by the dogfooding
+check below.
 
 ### Verifying end-to-end manually (dogfooding)
 
