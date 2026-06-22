@@ -16,6 +16,15 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- The generated `README.md` now shows `PyTorch` (and, on the CUDA
+  backend, `CUDA`) badges in the runtime group, plus a "Compute
+  environment" section documenting the `torch` / `torchvision` versions,
+  the backend index, and how to switch it.
+- `Intended Audience :: Science/Research` in the generated
+  `pyproject.toml` classifiers.
+
 ### Changed
 
 - The generated `PyPI version` badge (library mode) gains the PyPI logo
