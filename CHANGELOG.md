@@ -16,6 +16,15 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Reordered the generated `README.md` badges and gave two of them logos:
+  the `License` badge now leads (with the OSI logo via
+  `?logo=opensourceinitiative`), `Python` gains the Python logo, and the
+  `Copier` badge sits last (its documented placement). Library mode keeps
+  its `PyPI` / `Downloads` badges, now after `License`. Badge URLs only —
+  no rendered-content change beyond order and logos.
+
 ## [1.7.1] - 2026-06-22
 
 ### Changed
