@@ -140,7 +140,7 @@ def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     # No placeholder `conftest.py` — create one when a real fixture lands.
     assert not (project / "tests" / "conftest.py").exists()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
-    assert '"pytest>=9.0.3"' in pyproject
+    assert '"pytest>=9.1.1"' in pyproject
     assert '"pytest-cov>=7.1.0"' in pyproject
     assert "[tool.pytest.ini_options]" in pyproject
     # Coverage is wired with a default-off gate.
