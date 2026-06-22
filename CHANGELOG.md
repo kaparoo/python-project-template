@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.7.2] - 2026-06-22
+
 ### Changed
 
 - Reordered the generated `README.md` badges and gave two of them logos:
@@ -392,7 +394,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.1...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.2...pytorch
+[1.7.2]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.1...pytorch-v1.7.2
 [1.7.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.0...pytorch-v1.7.1
 [1.7.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.6.0...pytorch-v1.7.0
 [1.6.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.4...pytorch-v1.6.0
