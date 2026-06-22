@@ -70,10 +70,10 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest`. The
-suite takes roughly **60–90 s** on `main` and **80–100 s** on `pytorch`
-(the latter runs extra `torch` / index assertions and a real `uv lock`
-integration test).
+**Workflow**: commit (or stash) all changes → run `uv run pytest`. Expect
+a couple of minutes: the in-process renders are quick, but the
+`torch`-resolution integration test (a real `uv lock` against the PyTorch
+index) and a cold `uv` cache dominate. It's slow, not hung.
 
 ### 2. Both branches of every `copier.yml` option must be tested
 
@@ -87,9 +87,9 @@ minimum bar.
 `tests/test_generate.py`. If even one file in `template/` changes,
 run the suite before committing.
 
-### 4. The integration test resolves real PyTorch dependencies
+### 4. An integration test resolves real PyTorch dependencies
 
-`test_generated_project_resolves_with_torch` runs `uv lock` against a
+An integration test in `tests/test_generate.py` runs `uv lock` against a
 freshly generated project to confirm `torch` / `torchvision` are
 installable for the chosen Python version. It deliberately stops short of
 `uv sync` — syncing would download the multi-gigabyte torch wheel. It needs:
