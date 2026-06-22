@@ -602,10 +602,12 @@ def _run_in_project(
 
 def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     """Default (library + pytest): a freshly generated project passes the
-    same gates its `ci.yml` defines — `ruff format --check`, `ruff check`,
-    `ty check`, `pytest`. Exercises the pinned tool versions end-to-end
-    (ruff/ty config validity, pytest + pytest-cov plugin load), which the
-    resolve-only `_tasks` test cannot catch.
+    gates its `ci.yml` defines (`ruff format --check`, `ruff check`,
+    `ty check`, `pytest`) and also builds a distribution (`uv build`).
+    Exercises the pinned tool versions end-to-end — ruff/ty config
+    validity, pytest + pytest-cov plugin load, and the `uv_build` backend
+    actually producing an sdist + wheel — which the resolve-only `_tasks`
+    test cannot catch.
     """
     project = _generate(tmp_path, run_tasks=True)  # _tasks already ran `uv sync`
     _run_in_project(project, ["uv", "run", "ruff", "format", "--check", "."])
@@ -614,6 +616,12 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     # A fresh project has no tests → pytest exits 5 (none collected), but the
     # run still loads the pytest + pytest-cov plugins (the real compat check).
     _run_in_project(project, ["uv", "run", "pytest"], allow_codes=(0, 5))
+    # Beyond ci.yml: a library is published, so confirm the `uv_build`
+    # backend actually produces an sdist + wheel from the generated config.
+    _run_in_project(project, ["uv", "build"])
+    dist = project / "dist"
+    assert any(dist.glob("*.whl")), "uv build produced no wheel"
+    assert any(dist.glob("*.tar.gz")), "uv build produced no sdist"
 
 
 def test_generated_minimal_application_passes_lint_and_type_check(

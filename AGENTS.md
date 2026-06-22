@@ -87,10 +87,10 @@ run the suite before committing.
 
 A few integration tests in `tests/test_generate.py` don't just inspect
 rendered text — they `git init` / `uv lock` / `uv sync` / commit a
-generated project and run the gates its `ci.yml` defines
-(`ruff format --check`, `ruff check`, `ty check`, and `pytest`) inside
-it, so a template or dependency change that breaks a generated project
-fails here rather than only in manual dogfooding. These need:
+generated project, run the gates its `ci.yml` defines (`ruff format
+--check`, `ruff check`, `ty check`, `pytest`), and build a library with
+`uv build`, so a template or dependency change that breaks a generated
+project fails here rather than only in manual dogfooding. These need:
 - `git` and `uv` on PATH
 - A configured git identity (`user.email`, `user.name`)
 - Internet access (uv may download Python or wheels)
@@ -199,10 +199,9 @@ default-false there).
 
 ### Modifying ruff/ty/pytest config in generated projects
 
-Edit `template/pyproject.toml.jinja`, then run the suite: the
-integration tests confirm the rendered project passes `ruff check`,
-`ty check`, and `pytest`; `uv build` is covered by the dogfooding
-check below.
+Edit `template/pyproject.toml.jinja`, then run the suite — the
+integration tests render a generated project, build it (for libraries),
+and run its lint/type/test gates, so a broken config surfaces here.
 
 ### Verifying end-to-end manually (dogfooding)
 
