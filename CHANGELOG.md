@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [1.7.1] - 2026-06-22
+
 ### Changed
 
 - Bumped generated dev-dependency minimums to the current latest:
@@ -381,7 +383,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.0...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.1...pytorch
+[1.7.1]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.0...pytorch-v1.7.1
 [1.7.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.6.0...pytorch-v1.7.0
 [1.6.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.4...pytorch-v1.6.0
 [1.5.4]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.5.3...pytorch-v1.5.4
