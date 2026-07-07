@@ -4,7 +4,7 @@
 # ========================== #
 
 [build-system]
-requires = ["uv_build>=0.11.23,<0.12"]
+requires = ["uv_build>=0.11.27,<0.12"]
 build-backend = "uv_build"
 
 {% endif -%}
@@ -56,8 +56,8 @@ dev = [
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
 {%- endif %}
-    "ruff>=0.15.18",
-    "ty>=0.0.51",
+    "ruff>=0.15.20",
+    "ty>=0.0.56",
 ]
 
 {% if is_library -%}
@@ -160,7 +160,7 @@ directory = ".cache/coverage/htmlcov"
 
 {% endif -%}
 [tool.ruff]
-required-version = ">=0.15.18"
+required-version = ">=0.15.20"
 cache-dir = "./.cache/ruff"
 extend-exclude = [
     ".cache",
@@ -318,7 +318,7 @@ ignore-overlong-task-comments = true
 [tool.ruff.lint.pydoclint]
 ignore-one-line-docstrings = true
 
-# Following sections use default values and are omitted (ruff v0.15.18):
+# Following sections use default values and are omitted (ruff v0.15.20):
 # - tool.ruff.analyze
 # - tool.ruff.lint.flake8-boolean-trap
 # - tool.ruff.lint.flake8-bugbear
