@@ -9,6 +9,15 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- Bumped generated dev-dependency minimums to the current latest:
+  `ruff>=0.15.20`, `ty>=0.0.56`, and `uv_build>=0.11.27` (`<0.12` kept).
+  `pytest` stays `>=9.1.1` and `pytest-cov` stays `>=7.1.0`. The generated
+  `[tool.ruff]` `required-version` floor and the omitted-defaults note move
+  to `0.15.20` in lockstep. Workspace dev tooling bumped to match
+  (`copier>=9.16.0`, `ruff>=0.15.20`).
+
 ## [1.5.4] - 2026-06-22
 
 ### Changed
