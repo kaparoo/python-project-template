@@ -46,11 +46,12 @@ for new copier options or features, `PATCH` for fixes.
   single-purpose commits with `git stash`, and secrets kept out of the
   repository.
 - A `## Tests` section in the generated `AGENTS.md` (pytest projects),
-  gathering the test rules from Conventions and adding test data in
-  `tests/assets/`, warnings and logs, `monkeypatch` over
-  `unittest.mock`, a failing test before a bug fix, how to skip a test
-  (shared marks in `tests/marks.py`), projects whose CI cannot run the
-  tests, and when to raise `fail_under`.
+  gathering the test rules from Conventions and adding `fixtures/`
+  packages per subpackage, test data in `tests/assets/`, file I/O under
+  `tmp_path`, no docstrings or comments in tests, warnings and logs,
+  `monkeypatch` over `unittest.mock`, a failing test before a bug fix,
+  how to skip a test (shared marks in `tests/marks.py`), projects whose
+  CI cannot run the tests, and when to raise `fail_under`.
 - A registered `slow` pytest marker in generated projects, and
   `tests/assets/local/` in the generated `.gitignore` for test data too
   large or private to commit.

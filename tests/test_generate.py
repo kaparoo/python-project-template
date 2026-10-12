@@ -901,6 +901,14 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     # Data in tests/assets, the git-ignored local part opt-in.
     assert "live in `tests/assets/`" in agents
     assert "`tests/assets/local/`" in agents
+    assert "one `test_<module>.py` per\n  source module" in agents
+    assert "`tests/<sub>/fixtures/` for one subpackage" in agents
+    assert "pytest honors `pytest_plugins` in the root `conftest.py`" in agents
+    assert "Add a `conftest.py` or a `helpers.py` wherever tests need one" in agents
+    assert "If the project has a module named\n  `assets`" in agents
+    assert "does so under pytest's `tmp_path`" in agents
+    assert "Write no docstrings or comments in tests" in agents
+    assert "(tests take none; see *Tests*)" in agents
     # Warnings and logs, monkeypatch over mock, regression tests first.
     assert "`pytest.warns(Category, match=...)`" in agents
     assert "`record.getMessage()`" in agents
@@ -921,6 +929,7 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     no_pytest = _generate(tmp_path / "np", {"use_pytest": False})
     agents_np = (no_pytest / "AGENTS.md").read_text(encoding="utf-8")
     assert "## Tests" not in agents_np
+    assert "see *Tests*" not in agents_np
     assert "verify it with a spy" not in agents_np
     assert "Don't mix the two styles" not in agents_np
 

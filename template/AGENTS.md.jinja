@@ -136,10 +136,10 @@ to restore the rest, and `git stash drop` that stash.
 
 - Tests live in `tests/` and may use bare `assert` (ruff `S101` is
   waived there).
-- Mirror the package layout under `tests/`:
-  `{{ package_name }}/sub/mod.py` is tested by `tests/sub/test_mod.py`.
-  Keep `__init__.py` markers in test subpackages (matches the `INP`
-  ruff rule).
+- Mirror the package layout under `tests/`, one `test_<module>.py` per
+  source module: `{{ package_name }}/sub/mod.py` is tested by
+  `tests/sub/test_mod.py`. Keep `__init__.py` markers in test
+  subpackages (matches the `INP` ruff rule).
 - Not every source file needs a dedicated test file — types-only
   modules, re-export `__init__.py` markers, and details covered through
   a public-facing module are intentional exceptions.
@@ -147,15 +147,25 @@ to restore the rest, and `git stash drop` that stash.
   default, applies to `tests/` only. Use a root `conftest.py` only for
   `pytest_plugins` declarations, doctest fixtures shared with source
   files, or project-wide collection hooks.
-- Cross-module test helpers live in `tests/<pkg>/helpers.py`; shared
-  fixtures in `tests/fixtures/`, as modules the root `conftest.py`
-  loads through `pytest_plugins`; shared skip marks in
-  `tests/marks.py`; per-package configuration in `conftest.py`.
+- Code shared across tests lives in a `fixtures/` package: either
+  `tests/fixtures/`, whose modules the root `conftest.py` loads through
+  `pytest_plugins`, or `tests/<sub>/fixtures/` for one subpackage,
+  imported by that subpackage's `conftest.py` so it applies below it
+  only (pytest honors `pytest_plugins` in the root `conftest.py`
+  alone).
+- Add a `conftest.py` or a `helpers.py` wherever tests need one:
+  per-package configuration in `conftest.py`, plain helper functions
+  and classes in `tests/<pkg>/helpers.py`. Shared skip marks go in
+  `tests/marks.py`.
 
 ### Test data
 
 - Data files the tests read live in `tests/assets/`, which is not a
-  Python package and mirrors nothing.
+  Python package and mirrors nothing. If the project has a module named
+  `assets`, choose another name and record it below the marker.
+- A test that writes files does so under pytest's `tmp_path` (or
+  `tmp_path_factory` for data shared by a module), never in the
+  working directory or a fixed path.
 - Prefer data a test builds in `tmp_path` over a committed file. Commit
   a file only when building it would hide what the test checks: a real
   file header, a sample from a device.
@@ -172,6 +182,8 @@ to restore the rest, and `git stash drop` that stash.
   file.
 - Name a test for the behavior it checks, as a phrase:
   `test_folder_error_ends_with_the_offending_full_path`.
+- Write no docstrings or comments in tests; the name says what a test
+  checks. Document an existing test only when the user asks for it.
 - Assertions check concrete return values *and* side effects, not
   merely "no exception raised"; error paths use
   `pytest.raises(..., match=...)`; verify numbers against independently
@@ -249,14 +261,14 @@ applying it by hand.
   party, then a trailing `if TYPE_CHECKING:` block (grouped the same
   way). Within a group `import X` precedes `from X import Y`; entries
   are alphabetical.
-- Docstrings are optional — write them where they clarify intent, not
-  mechanically. "Mechanically" targets two habits to avoid: comments (or
-  docstrings) that merely restate the code, and a base class whose
-  docstring explains itself in terms of its specific subclasses — except
-  a *closed* hierarchy's base, which may name its subclasses as a
-  deliberate family map. It is *not* a licence to leave a consumed
-  method bare. When written, document *intent and contracts, not
-  mechanism*:
+- Docstrings are optional{% if use_pytest %} (tests take none; see *Tests*){% endif %} — write them
+  where they clarify intent, not mechanically. "Mechanically" targets
+  two habits to avoid: comments (or docstrings) that merely restate the
+  code, and a base class whose docstring explains itself in terms of its
+  specific subclasses — except a *closed* hierarchy's base, which may
+  name its subclasses as a deliberate family map. It is *not* a licence
+  to leave a consumed method bare. When written, document *intent and
+  contracts, not mechanism*:
   - Lead with a one-line summary — a declarative noun phrase for classes
     ("An ordered, read-only view over ..."), an imperative verb phrase
     for functions and methods ("Yield successive windows from
