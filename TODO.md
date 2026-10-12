@@ -12,10 +12,6 @@ resolves it.
   job, the stricter `ruff` settings, and the generated agent guides
   (`AGENTS.md`, `.agents/`, `tests/AGENTS.md`) with their workflow,
   code style, test, dependency, and documentation rules.
-- Run the generated CI on GitHub Actions once: render a project, push
-  it to a scratch repository, and check that Linux runs every
-  supported version while Windows and macOS fall back to
-  `.python-version`. The tests only parse the matrix.
 
 ### Merge `main` into `pytorch`
 
