@@ -104,8 +104,8 @@ project fails here rather than only in manual dogfooding. These need:
 
 ## Commit convention
 
-Follow the commit convention documented in
-[`README.md`](./README.md#commit-convention) — emoji prefix, backticked
+Follow the commit convention documented under *Commit convention* in
+[`README.md`](./README.md) — emoji prefix, backticked
 tool names, single-purpose commits, no rewriting of published history,
 no skipped hooks.
 
