@@ -335,7 +335,8 @@ def test_include_todo_true_creates_todo_md_and_readme_link(tmp_path: Path) -> No
     assert (project / "TODO.md").is_file()
     todo = (project / "TODO.md").read_text(encoding="utf-8")
     assert "# TODO" in todo
-    assert "Promote an" in todo
+    assert "Open work that is not done yet" in todo
+    assert "Promote" not in todo
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "## 📋 TODO" in readme
     assert "[TODO.md](https://github.com/kaparoo/test-app/blob/main/TODO.md)" in readme

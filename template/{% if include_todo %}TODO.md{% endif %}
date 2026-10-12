@@ -1,7 +1,7 @@
 # TODO
 
-Tracked items that are not yet captured in code or tests. Promote an
-item to a CHANGELOG entry once it lands.
+Open work that is not done yet: deferred, blocked on a decision, or a
+known limitation. Delete an item in the commit that resolves it.
 
 ## Open
 

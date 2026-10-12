@@ -39,6 +39,9 @@ for new copier options or features, `PATCH` for fixes.
 - The generated `CHANGELOG.md` ends with an `[Unreleased]` link
   reference, and the library release steps in `AGENTS.md` defer to the
   new `CHANGELOG.md` rules.
+- The generated `TODO.md` introduces itself as open work only, each
+  item deleted in the commit that resolves it, instead of asking for
+  every item to be promoted to `CHANGELOG.md`.
 - GitHub Release notes from `publish.yml`
   (`release_automation = github-oidc`) join the CHANGELOG's wrapped
   lines into one line per paragraph or list item, since GitHub renders
