@@ -14,10 +14,10 @@ jobs:
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.1.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
 
@@ -51,7 +51,7 @@ jobs:
       id-token: write
     steps:
       - name: Download distributions
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: distributions
           path: dist/
@@ -73,7 +73,7 @@ jobs:
       id-token: write
     steps:
       - name: Download distributions
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: distributions
           path: dist/
@@ -91,10 +91,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Download distributions
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: distributions
           path: dist/
@@ -105,11 +105,42 @@ jobs:
           awk -v ver="$version" '
             $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
             /^## / { if (flag) exit }
+            /^\[[^ ]+\]: / { if (flag) exit }
             flag { print }
-          ' CHANGELOG.md > release-notes.md
-          if ! grep -q '[^[:space:]]' release-notes.md; then
-            echo "::error::No CHANGELOG section for $GITHUB_REF_NAME — promote [Unreleased] to a dated ## [$version] heading before tagging."
+          ' CHANGELOG.md > section.md
+          if ! grep -q '[^[:space:]]' section.md; then
+            echo "::error::No CHANGELOG section for $GITHUB_REF_NAME. Promote [Unreleased] to a dated ## [$version] heading before tagging."
             exit 1
+          fi
+          # GitHub renders every newline in a release body as a line break,
+          # so join the CHANGELOG's hard-wrapped lines back into one line per
+          # paragraph or list item. Headings, list markers, tables, quotes,
+          # and fenced code blocks are left as they are.
+          awk '
+            function flush() { if (buf != "") print buf; buf = "" }
+            /^[[:space:]]*```/ { flush(); print; fence = !fence; next }
+            fence { print; next }
+            /^[[:space:]]*$/ { flush(); print; next }
+            {
+              text = $0
+              sub(/^[[:space:]]+/, "", text)
+              opens = text ~ /^([-*+]|[0-9]+\.)[[:space:]]/ || text ~ /^(#|\||>)/
+              if (buf != "" && !opens && buf !~ /^[[:space:]]*(#|\|)/) {
+                buf = buf " " text
+                next
+              }
+              flush()
+              buf = $0
+            }
+            END { flush() }
+          ' section.md > release-notes.md
+          # Close with the version's comparison link, taken from the link
+          # references at the bottom of the CHANGELOG.
+          compare="$(awk -v ver="$version" '$0 ~ "^\\[" ver "\\]: " { print $2; exit }' CHANGELOG.md)"
+          if [ -n "$compare" ]; then
+            printf '\n**Full Changelog**: %s\n' "$compare" >> release-notes.md
+          else
+            echo "::warning::No [$version] link reference in CHANGELOG.md, so the release notes go out without a comparison link."
           fi
           cat release-notes.md
 

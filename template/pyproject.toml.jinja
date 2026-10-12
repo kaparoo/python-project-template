@@ -4,7 +4,7 @@
 # ========================== #
 
 [build-system]
-requires = ["uv_build>=0.11.27,<0.12"]
+requires = ["uv_build>=0.13.0,<0.14"]
 build-backend = "uv_build"
 
 {% endif -%}
@@ -29,7 +29,9 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: {{ python_version }}",
+{%- for version in python_versions %}
+    "Programming Language :: Python :: {{ version }}",
+{%- endfor %}
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 {%- if is_library %}
@@ -56,8 +58,8 @@ dev = [
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
 {%- endif %}
-    "ruff>=0.15.20",
-    "ty>=0.0.56",
+    "ruff>=0.17.0",
+    "ty>=0.0.86",
 ]
 
 {% if is_library -%}
@@ -68,12 +70,12 @@ module-root = ""
 # https://docs.astral.sh/uv/concepts/build-backend/
 
 {% if use_testpypi -%}
-# Named publish indexes — `uv publish --index testpypi` for the staging
+# Named publish indexes: `uv publish --index testpypi` for the staging
 # upload, then `--index pypi` for the real release. Tokens live in the
 # OS keyring under the `publish-url` keys; `testpypi` is `explicit = true`
 # so it stays out of dependency resolution.
 {% else -%}
-# Named publish index — `uv publish --index pypi` for the release.
+# Named publish index: `uv publish --index pypi` for the release.
 # Tokens live in the OS keyring under the `publish-url` key.
 {% endif -%}
 [[tool.uv.index]]
@@ -125,8 +127,11 @@ addopts = [
     "--cov",
     "--cov-report=term-missing",
 ]
+markers = [
+    'slow: takes seconds or more; deselect with -m "not slow"',
+]
 {%- if not is_library %}
-# Application mode has no editable install — put the project root on
+# Application mode has no editable install; put the project root on
 # `sys.path` so tests can import the flat-layout package.
 pythonpath = ["."]
 {%- endif %}
@@ -160,7 +165,7 @@ directory = ".cache/coverage/htmlcov"
 
 {% endif -%}
 [tool.ruff]
-required-version = ">=0.15.20"
+required-version = ">=0.17.0"
 cache-dir = "./.cache/ruff"
 extend-exclude = [
     ".cache",
@@ -244,6 +249,7 @@ select = [
     "N",     # pep8-naming
     "YTT",   # flake8-2020
     "ERA",   # eradicate
+    "FIX",   # flake8-fixme (no TODO/FIXME/XXX/HACK comments)
     "NPY",   # NumPy-specific rules
 ]
 ignore = [
@@ -258,7 +264,6 @@ ignore = [
     # Exception handling
     "TRY003",   # raise-vanilla-args
     # Formatter conflicts (handled by ruff format)
-    "E501",     # line-too-long
     "W191",     # tab-indentation
     "E111",     # indentation-not-multiple-of-four
     "E114",     # indentation-not-multiple-of-four-comment
@@ -267,7 +272,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# Package markers may stay empty — exempt them from the required import.
+# Package markers may stay empty; exempt them from the required import.
 "__init__.py" = ["I002"]
 {% if use_pytest -%}
 "tests/**" = [
@@ -302,6 +307,10 @@ multiline-quotes = "double"
 docstring-quotes = "double"
 avoid-escape = true
 
+[tool.ruff.lint.flake8-tidy-imports]
+# Absolute imports only; a relative one needs a `noqa` with its reason.
+ban-relative-imports = "all"
+
 [tool.ruff.lint.flake8-type-checking]
 exempt-modules = ["typing", "typing_extensions"]
 
@@ -318,7 +327,7 @@ ignore-overlong-task-comments = true
 [tool.ruff.lint.pydoclint]
 ignore-one-line-docstrings = true
 
-# Following sections use default values and are omitted (ruff v0.15.20):
+# Following sections use default values and are omitted (ruff v0.17.0):
 # - tool.ruff.analyze
 # - tool.ruff.lint.flake8-boolean-trap
 # - tool.ruff.lint.flake8-bugbear
@@ -332,7 +341,6 @@ ignore-one-line-docstrings = true
 # - tool.ruff.lint.flake8-import-conventions
 # - tool.ruff.lint.flake8-no-pep420
 # - tool.ruff.lint.flake8-self
-# - tool.ruff.lint.flake8-tidy-imports
 # - tool.ruff.lint.mccabe
 # - tool.ruff.lint.pep8-naming
 # - tool.ruff.lint.pyflakes

@@ -12,18 +12,21 @@ requires-python = ">=3.14"
 
 [dependency-groups]
 dev = [
-    "copier>=9.16.0",
+    "copier>=9.18.2",
     "pytest>=9.1.1",
-    "ruff>=0.15.20",
+    "ruff>=0.17.0",
 ]
 
 [tool.pytest.ini_options]
 cache_dir = "./.cache/pytest"
 testpaths = ["tests"]
-addopts = ["-ra", "--import-mode=importlib"]
+addopts = ["-ra", "--strict-markers", "--import-mode=importlib"]
+markers = [
+    'slow: runs the real toolchain on a generated project; deselect with -m "not slow"',
+]
 
 [tool.ruff]
-required-version = ">=0.15.20"
+required-version = ">=0.17.0"
 cache-dir = "./.cache/ruff"
 line-length = 88
 extend-exclude = [".cache", "__pycache__", "*.pyc"]

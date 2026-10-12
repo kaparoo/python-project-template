@@ -86,12 +86,23 @@ repo_name:
 
 python_version:
   type: str
-  help: Target Python version (major.minor)
+  help: |
+    Oldest supported Python version (major.minor). The project supports
+    and CI tests every version from this one up to the newest choice.
   choices:
-    - "3.14"
-    - "3.13"
-    - "3.12"
+    "3.15": "3.15"
+    "3.14": "3.14"
+    "3.13": "3.13"
   default: "3.14"
+
+# Computed, never asked or recorded: every offered version from
+# `python_version` up. It is the supported range a generated project
+# declares (classifiers, README badge) and tests (the CI matrix), so
+# keep the list in step with `python_version`'s choices.
+python_versions:
+  type: yaml
+  default: "{{ ['3.13', '3.14', '3.15'] | select('ge', python_version) | list }}"
+  when: false
 
 
 # ─── License ───
@@ -124,14 +135,14 @@ release_automation:
     How releases get published to PyPI (libraries only).
 
     manual      → no CI publish workflow; you build and `uv publish`
-                  by hand. The AGENTS.md "Releases" section documents
-                  the flow with keyring tokens.
+                  by hand. The generated `.agents/releases.md`
+                  documents the flow with keyring tokens.
     github-oidc → ship `.github/workflows/publish.yml`. Pushing a `v*`
                   tag runs CI, waits for approval on a `pypi` GitHub
                   environment, then publishes to PyPI via Trusted
-                  Publishing (OIDC — no stored token). Needs a one-time
+                  Publishing (OIDC, no stored token). Needs a one-time
                   PyPI + GitHub setup, documented in the generated
-                  AGENTS.md.
+                  `.agents/releases.md`.
   choices:
     - manual
     - github-oidc
@@ -142,22 +153,22 @@ use_testpypi:
   type: bool
   help: |
     Stage releases on TestPyPI before pushing to real PyPI (libraries
-    only). PyPI uploads are permanent — yank is possible, replace is
-    not — so a TestPyPI rehearsal catches install-time issues
+    only). PyPI uploads are permanent (yank is possible, replace is
+    not), so a TestPyPI rehearsal catches install-time issues
     (dependency resolution, missing files in the wheel, entry points)
     that `uvx twine check` doesn't.
 
     When `release_automation = manual`:
       - `pyproject.toml` ships both the `pypi` and `testpypi` named
         `[[tool.uv.index]]` entries with `publish-url`.
-      - AGENTS.md "Releases" includes a `uv publish --index testpypi`
-        step before PyPI.
+      - `.agents/releases.md` includes a
+        `uv publish --index testpypi` step before PyPI.
 
     When `release_automation = github-oidc`:
       - `publish.yml` becomes a 4-job pipeline
         (ci → build → testpypi → pypi), promoting the same artifacts.
       - You'll need a second Trusted Publisher for TestPyPI; the
-        AGENTS.md setup checklist covers this.
+        `.agents/releases.md` setup checklist covers this.
 
     Disable if PyPI-only is fine (e.g. tiny personal libraries where
     the `environment: pypi` approval gate is enough of a checkpoint).
@@ -167,7 +178,7 @@ use_testpypi:
 use_pytest:
   type: bool
   help: |
-    Configure a pytest test suite — `tests/` directory, the `pytest` dev
+    Configure a pytest test suite: `tests/` directory, the `pytest` dev
     dependency, `[tool.pytest.ini_options]`, the ruff `PT` rule with
     `[tool.ruff.lint.flake8-pytest-style]`, per-file-ignores for tests,
     and the test-adapter VSCode extension.
@@ -216,7 +227,7 @@ coverage_fail_under:
     Minimum branch-coverage percent that `pytest` enforces via
     `pytest-cov`'s `fail_under` gate.
 
-    0 (default) disables the gate — coverage is still measured and
+    0 (default) disables the gate: coverage is still measured and
     reported (`--cov-report=term-missing`), but the run never fails on
     a low percentage. Raise it once the project has a test baseline
     (e.g. 80); a fresh project with no tests yet would otherwise fail
@@ -233,7 +244,7 @@ include_todo:
     open items that aren't yet captured in code or tests. The
     generated `README.md` links to it from a 📋 TODO section.
 
-    Disable for tiny projects where a TODO file is overkill — the
+    Disable for tiny projects where a TODO file is overkill; the
     `README.md` section is omitted in sync.
   default: true
 

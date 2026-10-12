@@ -16,6 +16,159 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
+  The default stays `3.14`.
+- **Task guides in generated projects**: `AGENTS.md` keeps the rules
+  every task needs and indexes one guide per task, which an agent reads
+  only when that task comes up. The guides live in `.agents/`
+  (`commits.md`, `dependencies.md`, `changelog.md`, `readme.md`,
+  `todo.md` with `include_todo`, `decisions.md`, and `releases.md`),
+  plus `tests/AGENTS.md` in pytest projects, which a `tests/CLAUDE.md`
+  loads. The commit convention and the release steps move there from
+  `AGENTS.md`.
+- **Documentation rules for agents**: the generated `AGENTS.md` says
+  which document a change updates, and the guides say how to write
+  each one:
+  - `CHANGELOG.md`: the six Keep a Changelog categories, external
+    behavior only, phrasing, `**Breaking:**`, deprecations, and link
+    references.
+  - `TODO.md`: open work only, read before a task starts, as one-line
+    items or a short body that ends with a `Revisit when ...`
+    condition; without one, deferred work is reported to the user.
+  - `README.md`: a fixed top-to-bottom layout for the root (lead
+    sections, project-specific ones such as a library's `⌨️ CLI`, then
+    TODO / Changelog / License) with no hand-made table of contents,
+    runnable examples, valid links (absolute for PyPI in a library),
+    and free-form sub-READMEs the root links to as a hub.
+  - Design decisions: one MADR-style record per decision under
+    `docs/decisions/`, superseded rather than rewritten.
+  - One wrap width, 72 columns, for every document, English for a new
+    one, and no em dashes.
+  - `AGENTS.md` itself.
+- Release steps for applications (`is_library = false`) in the
+  generated `.agents/releases.md`: versions are promoted and tagged,
+  not published.
+- Dependency rules in the generated `.agents/dependencies.md`: changes
+  go through `uv add` / `uv remove` with `uv.lock` committed alongside,
+  a `ruff` bump moves `required-version` with it, and the supported
+  Python versions change together in every place that states them.
+- `➕` and `➖` among the generated commit prefixes, for adding and
+  removing a dependency.
+- **A `## Code style` section in the generated `AGENTS.md`**,
+  replacing Conventions and Python style; it no longer asks for a blank
+  line before a function's final `return`:
+  - All Python code: module layout and blank lines, absolute imports,
+    private helpers above their first caller, 88 columns on every line,
+    one argument per line in a broken call, PEP 604 and PEP 695 typing,
+    boxed banners, no em dashes, and single backticks.
+  - Source code: no module docstrings, `Final` constants, class member
+    order, `@override`, frozen slotted dataclasses, one-line lower-case
+    messages without a period, and the form of docstrings and comments,
+    filled to 88 columns.
+  - Rules `ruff` already enforces are named, not spelled out.
+- A `## Workflow` section in the generated `AGENTS.md`: the gates a
+  change passes before it counts as done, commits and pushes only on
+  request on the current branch, accumulated changes split into
+  single-purpose commits with `git stash`, and secrets kept out of the
+  repository.
+- **A generated `tests/AGENTS.md`** (pytest projects), taking over
+  the test rules from Conventions:
+  - Layout: `fixtures/` packages at the top or per subpackage, test
+    data in `tests/assets/`, how tests import, and optional
+    annotations.
+  - Writing tests: no new docstrings or comments on tests (shared
+    helpers and fixtures may take a short docstring), file I/O under
+    `tmp_path`, named parametrized cases, isolation, seeded randomness
+    and explicit float tolerances, warnings and logs, `monkeypatch`
+    over `unittest.mock`, the public API, no network, and a failing
+    test before a bug fix.
+  - Skipped tests: shared marks in `tests/marks.py`, and projects whose
+    CI cannot run the tests.
+  - Coverage and speed: when to raise `fail_under`, and the `slow`
+    marker.
+- A `tests/test_<package>.py` smoke test in pytest projects that
+  imports the package, so the generated CI passes on the first push;
+  until now `pytest` collected nothing and failed it, which also
+  blocked `publish.yml`.
+- A registered `slow` pytest marker in generated projects, and
+  `tests/assets/local/` in the generated `.gitignore` for test data too
+  large or private to commit.
+- A `build` job in a library's generated CI: on every push it builds
+  the sdist and wheel, runs `twine check`, and installs the wheel alone
+  to import the package and find its `py.typed`, so a packaging break
+  surfaces before a release tag.
+- A `🚀 Quick start` placeholder section in a library's generated
+  `README.md`, between `📦 Installation` and `🧩 Modules`, and a
+  `🚀 Usage` placeholder in an application's, after its setup section.
+
+### Changed
+
+- Generated projects require `ruff>=0.17.0`, `ty>=0.0.86`, and
+  `uv_build>=0.13.0,<0.14`; the `[tool.ruff]` `required-version` floor
+  follows to `0.17.0`.
+- The generated workflows use `actions/checkout@v7`,
+  `astral-sh/setup-uv@v10.3.0`, and `actions/download-artifact@v8`.
+- **The generated CI tests every supported Python version**:
+  - Linux runs each version from `python_version` up to the newest one
+    the template offers; Windows and macOS run `.python-version`.
+  - Job names gain the Python version, so a branch protection rule that
+    requires the old check names needs the new ones.
+  - Without `use_pytest`, each job checks that the package imports.
+- `python_version` is the oldest supported version: the generated
+  `pyproject.toml` lists a classifier for every supported version, and
+  the README badge names them all instead of `X.Y+`.
+- The generated `CHANGELOG.md` ends with an `[Unreleased]` link
+  reference, and the library release steps defer to the new
+  `CHANGELOG.md` rules.
+- The generated `TODO.md` introduces itself as open work only, each
+  item deleted in the commit that resolves it, instead of asking for
+  every item to be promoted to `CHANGELOG.md`.
+- The generated `AGENTS.md`, the generated `pyproject.toml` comments
+  and `publish.yml` messages, and the question help no longer use em
+  dashes; the sentences are recast with colons, commas, or
+  parentheses.
+- Generated projects check line length (`E501`, 88 columns) on every
+  line, docstrings, comments, and strings included, which `ruff format`
+  cannot wrap; and they reject relative imports
+  (`ban-relative-imports = "all"`). Shorten or rewrap a line that runs
+  over, and import by absolute path.
+- The generated commit convention fixes the subject's form
+  (a Gitmoji, a concrete imperative verb, and the name of what changed,
+  within 72 characters), says when a body is written, gives fixed forms
+  for upgrades, releases, and reverts, and draws its emoji table from
+  Gitmoji's own definitions, so 💄 and 💬 no longer stand for style and
+  comments.
+- Generated projects select `ruff`'s `FIX` rules, so a `TODO`,
+  `FIXME`, `XXX`, or `HACK` comment fails lint. A project that has
+  such comments moves them into `TODO.md` when it updates.
+- The generated `README.md` of an application names its setup section
+  `📦 Setup` instead of `📦 Development setup`.
+- GitHub Release notes from `publish.yml`
+  (`release_automation = github-oidc`) join the CHANGELOG's wrapped
+  lines into one line per paragraph or list item, since GitHub renders
+  every newline in a release body as a break, and end with a
+  `**Full Changelog**` link taken from the CHANGELOG's link reference.
+
+### Removed
+
+- **Breaking:** `3.12` as a `python_version` choice: generated projects
+  need Python 3.13 or newer. Update a project that recorded `3.12` with
+  `copier update -d python_version=3.13` (or later); with `--defaults`
+  alone, it silently takes the default, `3.14`.
+- `"ruff.nativeServer": "on"` from the generated
+  `.vscode/settings.json`; Ruff 0.17 ignores it.
+
+### Fixed
+
+- The generated `README.md` of a library links `LICENSE`, `TODO.md`, and
+  `CHANGELOG.md` by absolute GitHub URL, so the links no longer 404 on
+  the PyPI project page. Applications keep relative links.
+- The generated `.gitignore`, `.gitattributes`, and `TODO.md` have LF
+  line endings like every other generated file; rendered on Windows
+  with `core.autocrlf` on, they used to come out with CRLF.
+
 ## [1.7.4] - 2026-07-07
 
 ### Changed

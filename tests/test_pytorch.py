@@ -1,0 +1,59 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from tests.helpers import Render
+
+
+def test_torch_in_dependencies(render: Render) -> None:
+    project = render()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"torch>=2.12.1"' in pyproject
+    assert '"torchvision>=0.27.1"' in pyproject
+    assert "Artificial Intelligence" in pyproject
+
+
+def test_cuda_backend_routes_to_cuda_index(render: Render) -> None:
+    project = render()
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert "[[tool.uv.index]]" in pyproject
+    assert "https://download.pytorch.org/whl/cu130" in pyproject
+    assert "[tool.uv.sources]" in pyproject
+    assert 'torch = { index = "pytorch" }' in pyproject
+    assert 'torchvision = { index = "pytorch" }' in pyproject
+
+
+def test_cpu_backend_routes_to_cpu_index(render: Render) -> None:
+    project = render({"compute_backend": "cpu"})
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert "https://download.pytorch.org/whl/cpu" in pyproject
+    assert "cu130" not in pyproject
+
+
+def test_readme_documents_compute_environment(render: Render) -> None:
+    project = render()
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert "## 🖥️ Compute environment" in readme
+    assert "badge/PyTorch-2.12.1" in readme
+    assert "badge/CUDA-13.0" in readme
+    assert "https://download.pytorch.org/whl/cu130" in readme
+    assert (
+        "[`pyproject.toml`](https://github.com/kaparoo/test-app/blob/main/pyproject.toml)"
+        in readme
+    )
+
+    cpu_app = render({"compute_backend": "cpu", "is_library": False})
+    readme = (cpu_app / "README.md").read_text(encoding="utf-8")
+    assert "badge/CUDA" not in readme
+    assert "https://download.pytorch.org/whl/cpu" in readme
+    assert "[`pyproject.toml`](./pyproject.toml)" in readme
+
+
+def test_agents_md_names_the_pytorch_variant(render: Render) -> None:
+    project = render()
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "- `torch` / `torchvision`: deep learning runtime" in agents
+    assert "`copier update --UNSAFE --vcs-ref pytorch`" in agents
+    answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
+    assert "copier update --vcs-ref pytorch" in answers

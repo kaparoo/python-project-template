@@ -1,0 +1,105 @@
+# Releasing `{{ project_name }}`
+
+{% if is_library -%}
+`{{ project_name }}` follows SemVer; in pre-1.0, a minor bump may carry
+breaking changes.
+{% if release_automation == 'github-oidc' %}
+Releases publish automatically via GitHub Actions **Trusted Publishing**
+(OIDC: no PyPI token is stored anywhere). Procedure for `X.Y.Z`:
+
+1. Promote `CHANGELOG.md`'s `[Unreleased]` section to `[X.Y.Z]` (see
+   `.agents/changelog.md`).
+2. Bump `version` in `pyproject.toml`; `uv sync --group dev` to refresh
+   `uv.lock`.
+3. Commit `🔖 Release version X.Y.Z` (body references the `[X.Y.Z]`
+   entry) and push.
+4. Tag and push:
+   `git tag -a vX.Y.Z -m "🔖 Release version X.Y.Z" && git push origin vX.Y.Z`.
+
+The `v*.*.*` tag triggers `.github/workflows/publish.yml`: it reruns
+CI across the OS matrix, builds the distributions once (failing fast
+if the tag does not match the `pyproject.toml` version) and uploads
+them as an artifact,{% if use_testpypi %} publishes them to TestPyPI as a staging
+rehearsal,{% endif %} then, once you approve the `pypi` environment gate,
+publishes the same artifacts to PyPI via OIDC. A final `github-release`
+job then creates the GitHub Release for the tag automatically, with
+the sdist + wheel attached; there is no manual release step. Its notes
+are the matching `CHANGELOG.md` section with each wrapped paragraph or
+list item joined onto one line (GitHub renders every newline in a
+release body as a line break), closed by a `**Full Changelog**` line
+taken from the section's link reference. Keeping `build`
+separate from publish keeps the `id-token: write` permission scoped
+to the publish jobs only.
+
+## One-time setup (before the first release)
+
+1. **PyPI Trusted Publisher**: on PyPI, register a GitHub Actions
+   publisher for the project: owner `{{ github_username }}`, repo
+   `{{ repo_name }}`, workflow `publish.yml`, environment `pypi`. Use
+   PyPI's *pending publisher* form for the very first upload (before
+   the project exists on PyPI).
+{%- if use_testpypi %}
+2. **TestPyPI Trusted Publisher**: register the *same* publisher on
+   [test.pypi.org](https://test.pypi.org/manage/account/publishing/)
+   for the staging job: owner `{{ github_username }}`, repo
+   `{{ repo_name }}`, workflow `publish.yml`. The `testpypi` job has
+   no environment, so leave that field blank.
+3. **GitHub `pypi` environment**: create an environment named `pypi`
+   in the repo settings and add yourself as a *required reviewer*, so
+   every publish waits for explicit approval.
+{%- else %}
+2. **GitHub `pypi` environment**: create an environment named `pypi`
+   in the repo settings and add yourself as a *required reviewer*, so
+   every publish waits for explicit approval.
+
+If you decide you want a TestPyPI rehearsal step later, re-run
+`copier update` with `use_testpypi=true`: the pipeline gains a
+`testpypi` job between `build` and `pypi`.
+{%- endif %}
+{%- else %}
+Release procedure for `X.Y.Z`:
+
+1. Promote `CHANGELOG.md`'s `[Unreleased]` section to `[X.Y.Z]` (see
+   `.agents/changelog.md`).
+2. Bump `version` in `pyproject.toml`; `uv sync --group dev` to
+   refresh `uv.lock`.
+3. Commit: `🔖 Release version X.Y.Z`, body referencing the new
+   `[X.Y.Z]` CHANGELOG entry.
+4. `uv build`. Validate with `uvx twine check dist/*` and a fresh
+   install in an isolated environment
+   (`uv run --isolated --no-project --with dist/*.whl python -c "..."`).
+{%- if use_testpypi %}
+5. Publish to TestPyPI first:
+   `uv publish --index testpypi --username __token__ --keyring-provider subprocess`.
+   Verify the project page and a fresh install from
+   `test.pypi.org/simple/`.
+6. Publish to PyPI with the same command using `--index pypi`.
+7. Annotated tag `vX.Y.Z` whose message starts with
+   `🔖 Release version X.Y.Z` and references the CHANGELOG; push the
+   tag.
+{%- else %}
+5. Publish to PyPI:
+   `uv publish --index pypi --username __token__ --keyring-provider subprocess`.
+6. Annotated tag `vX.Y.Z` whose message starts with
+   `🔖 Release version X.Y.Z` and references the CHANGELOG; push the
+   tag.
+{%- endif %}
+
+Tokens live in the OS keyring at the `publish-url` key
+(`keyring set <publish-url> __token__`), scoped per-project once the
+package exists on the index. {% if use_testpypi %}Named indexes (`pypi`, `testpypi`) are{% else %}The `pypi` named index is{% endif %}
+configured under `[[tool.uv.index]]` in `pyproject.toml`.
+{%- endif %}
+{%- else -%}
+`{{ project_name }}` is an application and is not published; a version
+marks a notable state of the project. Procedure for `X.Y.Z`:
+
+1. Promote `CHANGELOG.md`'s `[Unreleased]` section to `[X.Y.Z]` (see
+   `.agents/changelog.md`).
+2. Bump `version` in `pyproject.toml`; `uv sync --group dev` to refresh
+   `uv.lock`.
+3. Commit `🔖 Release version X.Y.Z` (body references the `[X.Y.Z]`
+   entry).
+4. Tag and push:
+   `git tag -a vX.Y.Z -m "🔖 Release version X.Y.Z" && git push origin vX.Y.Z`.
+{%- endif %}

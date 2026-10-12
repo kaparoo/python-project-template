@@ -19,11 +19,14 @@ private/
 temps/
 temp/
 
-# Claude Code settings
+# Claude Code settings (kept out of the repository on purpose)
 .claude/
 
 # Tool caches (consolidated location for mypy, pytest, ruff)
 .cache/
+
+# Test data too large or private to commit (see AGENTS.md -> Tests)
+tests/assets/local/
 
 
 # ========================== #

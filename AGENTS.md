@@ -1,56 +1,63 @@
-# Agent guide — `python-project-template` (`pytorch` branch)
+# Agent guide: `python-project-template` (`pytorch` branch)
 
-This file is for AI coding assistants (Claude Code, Copilot, etc.) working
-**on this repository itself** — the copier template source.
+This file is for AI coding assistants (Claude Code, Copilot, etc.)
+working **on this repository itself**, the copier template source.
 
-> 🔥 This is the **`pytorch` branch** — the PyTorch variant of the template.
-> The plain base template lives on `main`. Changes shared by both branches
-> should land on `main` first and then be merged forward into `pytorch`.
+> 🔥 This is the **`pytorch` branch**, the PyTorch variant of the
+> template. The plain base template lives on `main`. Changes shared by
+> both branches land on `main` first and are merged forward into
+> `pytorch`.
 
-> ⚠️ Do not confuse with [`template/AGENTS.md`](./template/AGENTS.md), which
-> is the (empty) AGENTS.md that ships **inside** generated projects.
+> ⚠️ Do not confuse it with
+> [`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja), which
+> renders the `AGENTS.md` that ships **inside** generated projects.
 
 ---
 
 ## What this repo is
 
-The **PyTorch variant** of a personal [copier](https://copier.readthedocs.io/)
-template — bootstraps deep-learning projects with `torch` / `torchvision`
-and the Astral toolchain (`uv`, `ruff`, `ty`) pre-configured.
+The **PyTorch variant** of a personal
+[copier](https://copier.readthedocs.io/) template: it bootstraps
+deep-learning projects with `torch` / `torchvision` and the Astral
+toolchain (`uv`, `ruff`, `ty`) pre-configured.
 
 - **Author / sole user**: Jaewoo Park (`kaparoo`)
 - **Audience of generated projects**: also the author
-- **Public consumption**: not expected — design for the author's workflow first
+- **Public consumption**: not expected; design for the author's
+  workflow first
 
 ## Variants
 
-Two branches, two independent version lines — never confuse them:
+Two branches, two independent version lines. Never confuse them:
 
 | Branch | Tag form | `copier` resolution | Default `use_pytest` |
 |--------|----------|----------------------|----------------------|
-| `main` | `vX.Y.Z` (PEP 440) | Latest `v*` tag — used when no `--vcs-ref` | `true` |
+| `main` | `vX.Y.Z` (PEP 440) | Latest `v*` tag, used when no `--vcs-ref` | `true` |
 | `pytorch` | `pytorch-vX.Y.Z` (not PEP 440 → ignored by copier auto-resolve) | Requires explicit `--vcs-ref pytorch` (or `--vcs-ref pytorch-vX.Y.Z`) | `false` (DL workflows are non-deterministic) |
 
 The `pytorch-v*` tags are **deliberately** not PEP 440 so they never
-shadow the base template's `copier copy` / `copier update` resolution —
+shadow the base template's `copier copy` / `copier update` resolution;
 otherwise a default `copier copy gh:kaparoo/python-project-template`
 would hijack to the highest tag regardless of branch.
 
 **Variant policy**: shared changes land on `main` first, then are
-merged forward into `pytorch`. The reverse direction is never used —
+merged forward into `pytorch`. The reverse direction is never used:
 `pytorch`-only features (torch dependencies, compute-backend questions,
 PyTorch wheel index) stay on `pytorch`. See
-[Merging `main` into `pytorch`](#merging-main-into-pytorch) below for
-the recurring `CHANGELOG.md` resolution pattern.
+[`.agents/releases.md`](./.agents/releases.md#merging-main-into-pytorch)
+for the recurring `CHANGELOG.md` resolution pattern.
 
-## Layout — two distinct concerns
+## Layout: two distinct concerns
 
 ```
 .
+├── .agents/                   ← task guides for this repo (not shipped)
+├── .github/workflows/ci.yml   ← CI for this repo (not shipped)
 ├── copier.yml                 ← template configuration (questions, tasks, etc.)
 ├── pyproject.toml             ← WORKSPACE tooling only (copier + pytest + ruff)
 ├── tests/                     ← tests for the template itself
-├── template/                  ← THE TEMPLATE — every file here ships to users
+├── TODO.md                    ← open work on the template itself
+├── template/                  ← THE TEMPLATE: every file here ships to users
 │   ├── pyproject.toml.jinja   ← rendered into generated projects
 │   ├── ...
 │   └── {{ package_name }}/    ← directory name is a Jinja variable
@@ -60,119 +67,6 @@ the recurring `CHANGELOG.md` resolution pattern.
 **Never confuse `pyproject.toml` (workspace dev tooling) with
 `template/pyproject.toml.jinja` (what generated projects receive).**
 Changes meant for downstream projects belong in `template/`.
-
-## Critical workflow rules
-
-### 1. Working tree must be clean when running `pytest`
-
-Copier's "dirty changes" handling has a known issue: untracked files at
-the workspace root can cause `.vscode/extensions.json` to be silently
-dropped during rendering. Tests will fail with confusing
-`FileNotFoundError`s.
-
-**Workflow**: commit (or stash) all changes → run `uv run pytest`. Expect
-a couple of minutes: the in-process renders are quick, but the
-`torch`-resolution integration test (a real `uv lock` against the PyTorch
-index) and a cold `uv` cache dominate. It's slow, not hung.
-
-### 2. Both branches of every `copier.yml` option must be tested
-
-When adding a new option (e.g., `use_xyz`), add at least one test per
-branch in `tests/test_generate.py`. Default-vs-enabled coverage is the
-minimum bar.
-
-### 3. Verify after every `template/` change
-
-`uv run pytest` runs copier in-process for every scenario in
-`tests/test_generate.py`. If even one file in `template/` changes,
-run the suite before committing.
-
-### 4. An integration test resolves real PyTorch dependencies
-
-An integration test in `tests/test_generate.py` runs `uv lock` against a
-freshly generated project to confirm `torch` / `torchvision` are
-installable for the chosen Python version. It deliberately stops short of
-`uv sync` — syncing would download the multi-gigabyte torch wheel. It needs:
-- `uv` on PATH
-- Internet access (uv reaches the PyTorch index for resolution metadata)
-
-## Commit convention
-
-Follow the commit convention documented in
-[`README.md`](./README.md#commit-convention) — emoji prefix, backticked
-tool names, single-purpose commits, no rewriting of published history,
-no skipped hooks.
-
-**AI-specific requirement**: append a `Co-Authored-By` trailer with the
-acting assistant's own published identity — do not hardcode one vendor.
-
-```
-Co-Authored-By: <agent-name> <agent-email>
-```
-
-Examples:
-- Claude Code → `Co-Authored-By: Claude <noreply@anthropic.com>`
-- GitHub Copilot → `Co-Authored-By: Copilot <198982749+Copilot@users.noreply.github.com>`
-
-## Releases
-
-This workspace itself is versioned with SemVer (see
-[`CHANGELOG.md`](./CHANGELOG.md)):
-
-- `MAJOR` — changes that need a `_migrations` entry in `copier.yml`
-  (so existing generated projects can update across them).
-- `MINOR` — new copier options, new generated files, new sections in
-  generated docs.
-- `PATCH` — fixes, doc tweaks, behavior-preserving cleanup.
-
-### Cutting a release
-
-For both branches the procedure is the same shape; only the tag form
-differs (`vX.Y.Z` on `main`, `pytorch-vX.Y.Z` on `pytorch`).
-
-1. Land all changes in `[Unreleased]` first. Verify with
-   `uv run pytest` on a clean tree.
-2. Promote: rename `## [Unreleased]` content to a dated
-   `## [X.Y.Z] - YYYY-MM-DD` heading, add a fresh empty
-   `## [Unreleased]` above, append the new comparison link at the
-   bottom of the file.
-3. Commit: `📝 Cut release \`vX.Y.Z\`` (body summarizes the bundle).
-4. Tag: `git tag -a vX.Y.Z -m "vX.Y.Z"`.
-5. Push: `git push origin <branch>` then `git push origin vX.Y.Z`.
-
-For shared work, the order is **main first, then `pytorch`**:
-release `vX.Y.Z` on `main`, merge `main` into `pytorch` (resolving
-the CHANGELOG conflict per below), then promote pytorch's own
-`[Unreleased]` to `[X.Y.Z]` and tag `pytorch-vX.Y.Z`. The two
-version sequences are **independent** — `pytorch-v1.1.0` is not
-required to mirror `v1.1.0` numerically once they diverge.
-
-### Merging `main` into `pytorch`
-
-After every `main` change cycle, merge forward:
-
-```bash
-git switch pytorch
-git merge main --no-ff -m "🔀 Merge \`main\` into \`pytorch\`"
-```
-
-**Recurring `CHANGELOG.md` conflict** — pytorch keeps a variant-only
-changelog (it does NOT mirror `main`'s release history). Resolution
-principle:
-
-- **Take** main's new `[Unreleased]` bullets (Added / Changed / Fixed) —
-  the underlying template change applies to both branches.
-- **Drop** main's `## [X.Y.Z]` heading and any base `v*` comparison
-  links — pytorch has its own release line.
-- **Keep** pytorch's existing `## [X.Y.Z]` headings (the variant's
-  prior releases) and the `pytorch-v*` comparison links at the
-  bottom.
-
-`tests/test_generate.py` may also conflict when the default values
-diverge (notably `use_pytest`): keep pytorch's `{"use_pytest": True}`
-override in tests that assume the pytest layer; keep pytorch's
-expected-files list (no `tests/__init__.py` when use_pytest is
-default-false there).
 
 ## Toolchain choices (don't second-guess without cause)
 
@@ -184,52 +78,142 @@ default-false there).
 | Type checker | `ty` (beta) | Astral, plugin-free; Ruff `ANN` rules cover annotation enforcement |
 | Test runner | `pytest` | Standard |
 | Deep-learning runtime | `torch` / `torchvision` | Project domain; installed via a dedicated `[[tool.uv.index]]` matching the compute backend |
-| Template engine | `copier` (>=9.15.1) | Update-friendly via `.copier-answers.yml` |
+| Template engine | `copier` (>=9.18.2) | Update-friendly via `.copier-answers.yml` |
 | AI agent config | `AGENTS.md` + `CLAUDE.md` (just `@AGENTS.md`) | Editor-agnostic with Claude Code shim |
 
-## Common workflows
+## Critical workflow rules
 
-### Adding a new copier option
+### 1. Working tree must be clean when running `pytest`
 
-1. Append the question to `copier.yml` under the appropriate
-   `# ─── ... ───` section (e.g. `# ─── Project nature ───`).
-2. Add conditional Jinja blocks in `template/pyproject.toml.jinja`,
-   `template/.vscode/extensions.json.jinja`, etc., as needed.
-3. Add tests in `tests/test_generate.py` covering both branches.
-4. Commit changes, then run `uv run pytest` (clean tree required).
-5. Update [`README.md`](./README.md) options table if applicable.
+Copier's "dirty changes" handling has a known issue: untracked files at
+the workspace root can cause `.vscode/extensions.json` to be silently
+dropped during rendering. Tests will fail with confusing
+`FileNotFoundError`s.
 
-### Modifying ruff/ty/pytest config in generated projects
+**Workflow**: commit (or stash) all changes, then run `uv run pytest`.
+Expect about a minute: the in-process renders are quick, but the
+`torch` resolution test (a real `uv lock` against the PyTorch index)
+and a cold `uv` cache dominate. It is slow, not hung.
 
-Edit `template/pyproject.toml.jinja`. Run the test suite to confirm
-the rendered output still passes `uv build`, `ruff check`, `ty check`,
-and `pytest` in the integration test.
+### 2. Both branches of every `copier.yml` option must be tested
 
-### Verifying end-to-end manually (dogfooding)
+When adding a new option (e.g., `use_xyz`), add at least one test per
+branch, usually in `tests/test_project.py`. Default-vs-enabled
+coverage is the minimum bar.
 
-`--vcs-ref HEAD` renders the current working commit; without it copier
-falls back to the latest Git tag and would miss the `pytorch` branch
-work.
+### 3. Verify after every `template/` change
 
-```bash
-copier copy --vcs-ref HEAD --UNSAFE . ~/tmp/dogfood-$(date +%s) -d project_name=dogfood
-cd ~/tmp/dogfood-*
-uv run ruff check .
-uv run ty check
-uv run pytest    # may exit 5 = no tests collected, that's expected
-uv build
-```
+`uv run pytest` runs copier in-process for every scenario in
+`tests/`. If even one file in `template/` changes, run the suite
+before committing; `uv run pytest -m "not slow"` skips the
+real-toolchain tests for quick iteration, but not before a commit.
 
-`--vcs-ref HEAD` renders the current working commit; without it copier
-falls back to the latest tag and silently misses post-tag changes.
+The suite has one module per concern: `test_project.py` (questions,
+generated files, `pyproject.toml`), `test_docs.py` (README, CHANGELOG,
+TODO, and the width and dash checks over every generated document),
+`test_agents_md.py`, `test_workflows.py` (CI and `publish.yml`), and
+`test_integration.py` (`torch` resolution, marked `slow`). Shared code
+lives in `tests/helpers.py`; `tests/conftest.py` holds a session
+`render` fixture that renders each set of answers once for the tests
+that only read. A test that writes into the project or runs `_tasks`
+calls `generate` on its own `tmp_path`. Tests follow the test rules
+generated projects get: no docstrings or comments, and `prose()` for
+phrases that a rewrap could split.
+
+[`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs the same
+suite, with `ruff format --check` and `ruff check`, on Ubuntu and
+Windows for every push to `main` or `pytorch` and every pull request.
+It catches what slipped through; it does not replace the local run.
+
+### 4. An integration test resolves real PyTorch dependencies
+
+`tests/test_integration.py` runs `uv lock` on a freshly generated
+project to confirm `torch` / `torchvision` are installable for the
+chosen Python version. Unlike `main`, it stops short of `uv sync` and
+the generated project's own gates: syncing would download the
+multi-gigabyte `torch` wheel. It needs:
+- `uv` on PATH
+- Internet access (uv reaches the PyTorch index for resolution
+  metadata)
+
+## Task guides
+
+Rules for one kind of task live in their own file. Read the guide
+before you start that task:
+
+| Before you ...                                  | Read                      |
+| ----------------------------------------------- | ------------------------- |
+| add or change a `copier.yml` question           | `.agents/maintenance.md`  |
+| change the `python_version` choices             | `.agents/maintenance.md`  |
+| bump tool minimums or GitHub Actions            | `.agents/maintenance.md`  |
+| change a string the agent guides quote          | `.agents/maintenance.md`  |
+| change the facts this repo's `README.md` states | `.agents/maintenance.md`  |
+| raise `license_year` in January                 | `.agents/maintenance.md`  |
+| dogfood a generated project by hand             | `.agents/maintenance.md`  |
+| cut a release (only when the user asks)         | `.agents/releases.md`     |
+| merge `main` into `pytorch`                     | `.agents/releases.md`     |
+
+## Commit convention
+
+Commits here follow the convention generated projects get: read
+[`template/.agents/commits.md.jinja`](./template/.agents/commits.md.jinja)
+(subject form, emoji table, body, trailers, fixed forms). Only these
+differ:
+
+- Commit each completed step as you go, without waiting to be asked;
+  the user reviews the history step by step. Generated projects
+  instead accumulate changes and commit only on request, split with
+  `git stash`. Pushing still waits for the user.
+- A release commit is `🔖 Release version X.Y.Z` on `main` and
+  `` 🔖 Release `pytorch` version X.Y.Z `` on `pytorch`.
+- Merging `main` forward is `` 🔀 Merge `main` into `pytorch` ``.
+- The object of a subject names the file or area of this repository:
+  `copier.yml`, `template/README.md.jinja`, the generated `AGENTS.md`,
+  or the workspace `pyproject.toml`.
+
+## Changelog
+
+`CHANGELOG.md` follows the same rules generated projects get; read
+[`template/.agents/changelog.md.jinja`](./template/.agents/changelog.md.jinja)
+(skip the Jinja tags; the library wording applies). In short: the six
+Keep a Changelog categories only, in order; noun phrases under
+`Added` / `Removed`, subject + present tense elsewhere; short entries,
+with `**Breaking:**`, `Deprecated`, and `Removed` spelling out the
+upgrade; link references at the bottom.
+
+What counts as **external behavior** here is what a template user meets
+through `copier copy` / `copier update`:
+
+- the questions (names, help, choices, defaults, validators, `when`);
+- the generated files and their content, including
+  `.copier-answers.yml`;
+- `_tasks`, the after-copy / after-update messages, and `_migrations`.
+
+Everything that stays in this repository is internal and stays out:
+`pyproject.toml` / `uv.lock` / `.python-version` / `.vscode/` of the
+workspace, `tests/`, and this repo's own `README.md` and `AGENTS.md`.
+
+The `pytorch` branch keeps its variant changelog under the same rules.
+
+## TODO
+
+[`TODO.md`](./TODO.md) holds open work on this template: releases, the
+`pytorch` variant, and rule or infrastructure changes put off for
+later. What the generated projects must change after an update is
+theirs, not the template's, and stays out of it: the user keeps that
+list in `../python-project-template-downstream.md`, next to the
+repositories. `TODO.md` follows the rules generated projects get,
+in the template's `.agents/` TODO guide (its file name is a Jinja
+conditional). Read it before starting a change, and delete an item in
+the commit that resolves it.
 
 ## Things to avoid
 
-- Editing `template/.vscode/extensions.json` (no extension) — the active
+- Editing `template/.vscode/extensions.json` (no extension): the active
   file is `template/.vscode/extensions.json.jinja`. The same applies to
   every `.jinja` file.
 - Adding Python plugin-based tools (`mypy plugins`, `django-stubs`)
-  to generated projects — `ty` deliberately has no plugin system. Use
+  to generated projects: `ty` deliberately has no plugin system. Use
   PEP 681 `dataclass_transform` or direct stubs instead.
 - Committing `dist/`, `.venv/`, `.cache/`, `_gen_*/` test artifacts.
 - Force-pushing to `main` or `pytorch` without explicit user
@@ -238,7 +222,8 @@ falls back to the latest tag and silently misses post-tag changes.
 - Cherry-picking `pytorch`-only commits back onto `main`. The variant
   flow is one-directional (`main` → `pytorch`); back-porting would
   put torch dependencies on the base template.
-- Switching the PyTorch install to `uv pip install --torch-backend=auto` —
+- Switching the PyTorch install to `uv pip install --torch-backend=auto`:
   that flag only works with `uv pip`, not `uv lock` / `uv sync`. The
   template pins a dedicated `[[tool.uv.index]]` driven by the
-  `compute_backend` / `cuda_version` answers instead; keep that approach.
+  `compute_backend` / `cuda_version` answers instead; keep that
+  approach.

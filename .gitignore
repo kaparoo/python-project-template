@@ -11,7 +11,7 @@
 # AI agent working files
 .claude/
 
-# Generated test outputs (from tests/test_generate.py in Phase 5)
+# Generated test outputs
 tests/_generated/
 
 

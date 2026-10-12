@@ -1,11 +1,13 @@
+{#- A library's README is also its PyPI page, where a relative link 404s. -#}
+{%- set repo_file = ("https://github.com/" ~ github_username ~ "/" ~ repo_name ~ "/blob/main/") if is_library else "./" -%}
 # {{ project_name }}
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg?logo=opensourceinitiative&logoColor=white)](./LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg?logo=opensourceinitiative&logoColor=white)]({{ repo_file }}LICENSE)
 {% if is_library -%}
 [![PyPI version](https://img.shields.io/pypi/v/{{ project_name }}.svg?logo=pypi&logoColor=white)](https://pypi.org/project/{{ project_name }}/)
 [![Downloads](https://pepy.tech/badge/{{ project_name }})](https://pypi.org/project/{{ project_name }}/)
 {% endif -%}
-[![Python](https://img.shields.io/badge/python-{{ python_version }}+-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-{{ python_versions | join('%20%7C%20') }}-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-{{ torch_version }}-EE4C2C.svg?logo=pytorch&logoColor=white)](https://pytorch.org/)
 {% if compute_backend == 'cuda' -%}
 [![CUDA](https://img.shields.io/badge/CUDA-{{ cuda_version }}-76B900.svg?logo=nvidia&logoColor=white)](https://developer.nvidia.com/cuda-toolkit)
@@ -30,12 +32,16 @@ uv add {{ project_name }}
 pip install {{ project_name }}
 ```
 
+## 🚀 Quick start
+
+_Show the main use case in one short, runnable example._
+
 ## 🧩 Modules
 
 _Document your modules here._
 
 {% else -%}
-## 📦 Development setup
+## 📦 Setup
 
 Requires Python {{ python_version }}+.
 
@@ -45,6 +51,10 @@ cd {{ repo_name }}
 uv sync --group dev
 ```
 
+## 🚀 Usage
+
+_Show how to run the project: its commands, scripts, or entry points._
+
 {% endif -%}
 ## 🖥️ Compute environment
 
@@ -52,26 +62,31 @@ This project targets **PyTorch**{% if compute_backend == 'cuda' %} on **NVIDIA G
 
 - **Python** {{ python_version }}+
 - **PyTorch** `{{ torch_version }}` / **torchvision** `{{ torchvision_version }}`
-- **Compute backend**: {% if compute_backend == 'cuda' %}CUDA **{{ cuda_version }}** — wheels come from the dedicated PyTorch index (`https://download.pytorch.org/whl/cu{{ cuda_version | replace('.', '') }}`){% else %}CPU — wheels come from the CPU PyTorch index (`https://download.pytorch.org/whl/cpu`){% endif %} configured in [`pyproject.toml`](./pyproject.toml); `uv sync` installs them.
+- **Compute backend**: {% if compute_backend == 'cuda' %}CUDA **{{ cuda_version }}**, with wheels from the PyTorch
+  index for that version
+  (`https://download.pytorch.org/whl/cu{{ cuda_version | replace('.', '') }}`){% else %}CPU, with wheels from the PyTorch CPU
+  index (`https://download.pytorch.org/whl/cpu`){% endif %}, configured in
+  [`pyproject.toml`]({{ repo_file }}pyproject.toml); `uv sync` installs them.
 
 ### Switching the compute backend
 
-The backend is the `[[tool.uv.index]]` named `pytorch` in `pyproject.toml`
-(`cu126` / `cu128` / `cu130`, or `.../whl/cpu`). After changing it,
-re-resolve with `uv lock && uv sync` — or re-run
-`copier update --UNSAFE --vcs-ref pytorch` and re-answer
-`compute_backend` / `cuda_version`.
+The backend is the `[[tool.uv.index]]` named `pytorch` in
+`pyproject.toml` (`cu126` / `cu128` / `cu130`, or `.../whl/cpu`).
+After changing it, re-resolve with `uv lock && uv sync`, or re-run
+`copier update --UNSAFE --vcs-ref pytorch` and answer
+`compute_backend` / `cuda_version` again.
 
 {% if include_todo -%}
 ## 📋 TODO
 
-See [TODO.md](./TODO.md) for tracked open items.
+See [TODO.md]({{ repo_file }}TODO.md) for tracked open items.
 
 {% endif -%}
 ## 📜 Changelog
 
-See [CHANGELOG.md](./CHANGELOG.md) for the version history.
+See [CHANGELOG.md]({{ repo_file }}CHANGELOG.md) for the version history.
 
 ## ⚖️ License
 
-This project is distributed under the terms of the [MIT](./LICENSE) license.
+This project is distributed under the terms of the
+[MIT]({{ repo_file }}LICENSE) license.
