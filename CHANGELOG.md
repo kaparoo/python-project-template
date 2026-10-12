@@ -20,14 +20,14 @@ for new copier options or features, `PATCH` for fixes.
     references.
   - `TODO.md`: open work only, as one-line items or a short body that
     ends with a `Revisit when ...` condition.
-  - `README.md`: a landing page laid out top to bottom (lead sections,
-    then project-specific ones, then TODO / Changelog / License) with
-    runnable examples, absolute links for PyPI in a library, no
-    hand-made contents or "back to top" links in the root, and
-    free-form sub-READMEs the root links to as a hub, each with a
-    `## Contents` list kept in step with its headings once long.
+  - `README.md`: a fixed top-to-bottom layout for the root (lead
+    sections, project-specific ones such as a library's `⌨️ CLI`, then
+    TODO / Changelog / License) with no hand-made table of contents,
+    runnable examples, valid links (absolute for PyPI in a library),
+    and free-form sub-READMEs the root links to as a hub.
   - Design decisions: one MADR-style record per decision under
     `docs/decisions/`, superseded rather than rewritten.
+  - One wrap width, 72 columns, for every document.
   - `AGENTS.md` itself.
 - A `## Releases` section in the generated `AGENTS.md` for applications
   (`is_library = false`): versions are promoted and tagged, not

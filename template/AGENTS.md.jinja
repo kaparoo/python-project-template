@@ -68,10 +68,10 @@ branch tracking; the `fail_under` gate lives in `pyproject.toml`
   effects, not merely "no exception raised"; error paths use
   `pytest.raises(..., match=...)`; verify numbers against independently
   computed values, not the implementation's own output; make timing/IO
-  deterministic (an injected clock, fault injection) rather than flaky. A
-  good test fails on *subtle* breakage, not just obvious breakage. When a
-  contract is "one batched call per source", verify it with a spy, not
-  only by the result.
+  deterministic (an injected clock, fault injection) rather than flaky.
+  A good test fails on *subtle* breakage, not just obvious breakage.
+  When a contract is "one batched call per source",
+  verify it with a spy, not only by the result.
 {%- endif %}
 - `ty` has no plugin system; rely on standard typing (PEP 681
   `dataclass_transform`, `.pyi` stubs), not type-checker plugins.
@@ -93,25 +93,27 @@ applying it by hand.
   isort `required-imports`). Empty `__init__.py` package markers are
   exempt.
 - Use builtin generics — `list`, `dict`, `tuple`, `type` — never
-  `typing.List`, `typing.Dict`, `typing.Tuple`, `typing.Type` (ruff `UP`).
+  `typing.List`, `typing.Dict`, `typing.Tuple`, `typing.Type` (ruff
+  `UP`).
 - Imports are grouped and sorted: standard library, third party, first
   party, then a trailing `if TYPE_CHECKING:` block (grouped the same
-  way). Within a group `import X` precedes `from X import Y`; entries are
-  alphabetical.
+  way). Within a group `import X` precedes `from X import Y`; entries
+  are alphabetical.
 - Docstrings are optional — write them where they clarify intent, not
   mechanically. "Mechanically" targets two habits to avoid: comments (or
   docstrings) that merely restate the code, and a base class whose
-  docstring explains itself in terms of its specific subclasses — except a
-  *closed* hierarchy's base, which may name its subclasses as a deliberate
-  family map. It is *not* a licence to leave a consumed method bare. When
-  written, document *intent and contracts, not mechanism*:
+  docstring explains itself in terms of its specific subclasses — except
+  a *closed* hierarchy's base, which may name its subclasses as a
+  deliberate family map. It is *not* a licence to leave a consumed
+  method bare. When written, document *intent and contracts, not
+  mechanism*:
   - Lead with a one-line summary — a declarative noun phrase for classes
-    ("An ordered, read-only view over ..."), an imperative verb phrase for
-    functions and methods ("Yield successive windows from `items`."). Two
-    kinds take a noun phrase instead: a property getter ("The reporting
-    unit ...") and a boolean-returning *method*, which leads with
-    "Whether ..." ("Whether `path` exists."). A boolean *function* stays
-    imperative ("Test whether a path exists.").
+    ("An ordered, read-only view over ..."), an imperative verb phrase
+    for functions and methods ("Yield successive windows from
+    `items`."). Two kinds take a noun phrase instead: a property getter
+    ("The reporting unit ...") and a boolean-returning *method*, which
+    leads with "Whether ..." ("Whether `path` exists."). A boolean
+    *function* stays imperative ("Test whether a path exists.").
   - A concrete public method a caller consumes must be self-explainable
     from its own docstring and signature — never lean on an inherited
     parent docstring. Abstract base methods document only the generic
@@ -122,24 +124,25 @@ applying it by hand.
   - Use [Google style](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
     sections (`Args:`, `Returns:`, `Yields:`, `Raises:`,
     `Type Parameters:`); omit types from `Args:` since the signature
-    already carries them. Custom sections (`Example:`, `Truth table:`, and
-    ad-hoc labels) are welcome when they clarify a real pitfall or pattern.
+    already carries them. Custom sections (`Example:`, `Truth table:`,
+    and ad-hoc labels) are welcome when they clarify a real pitfall or
+    pattern.
   - Add an `Args:` / `Returns:` block only for what the summary and
-    signature cannot already convey. When they make the behaviour obvious
-    (a no-arg getter, a self-evident one-liner), the summary *is* the whole
-    docstring. Document an edge case shared across a family once on the
-    class.
+    signature cannot already convey. When they make the behaviour
+    obvious (a no-arg getter, a self-evident one-liner), the summary
+    *is* the whole docstring. Document an edge case shared across a
+    family once on the class.
   - Reference identifiers in backticks (`my_method`, `param`,
-    `MyClass.method`). Literal option values get backticks too (`"merge"`,
-    `"error"`), as identifiers do.
+    `MyClass.method`). Literal option values get backticks too
+    (`"merge"`, `"error"`), as identifiers do.
 - Within a function body, separate logical groups with a single blank
   line and put a blank line before the final `return`; leave a tightly
   coupled one- or two-line body unbroken.
 - In a long module, group related definitions under a boxed comment
   banner — a centred title between two `#`-bordered rules.
 - Standalone runnable scripts carry PEP 723 inline metadata (the
-  `# /// script` block). `uv` manages it (`uv add --script`); add or edit
-  it by hand only when explicitly asked.
+  `# /// script` block). `uv` manages it (`uv add --script`); add or
+  edit it by hand only when explicitly asked.
 
 ## Dependencies
 
@@ -181,22 +184,23 @@ with `copier update -d python_version=X.Y`, which re-renders all of the
 above and the *Project* line of this file; then add back by hand any
 newer versions the project also supports. CI runs `.python-version`
 only, so check the oldest version locally before changing it:
-{% if use_pytest %}`uv run --isolated --python X.Y pytest`{% else %}`uv run --isolated --python X.Y python -c "import {{ package_name }}"`{% endif %}. Dropping a version is a
-`**Breaking:**` `Changed` entry in `CHANGELOG.md`; supporting a new one
-is an `Added` entry.
+{% if use_pytest %}`uv run --isolated --python X.Y pytest`{% else %}`uv run --isolated --python X.Y python -c "import {{ package_name }}"`{% endif %}.
+Dropping a version is a `**Breaking:**` `Changed` entry in
+`CHANGELOG.md`; supporting a new one is an `Added` entry.
 
 ## Documentation
 
-`README.md`, `CHANGELOG.md`,{% if include_todo %} `TODO.md`,{% endif %} and this file are kept current by
-whoever changes the code — update them in the same commit as the change
-they describe, not as a follow-up. A docs-only fix (wording, a stale
-example) is its own `📝` commit.
+`README.md`, `CHANGELOG.md`,{% if include_todo %} `TODO.md`,{% endif %} and this
+file are kept current by whoever changes the code — update them in the
+same commit as the change they describe, not as a follow-up. A
+docs-only fix (wording, a stale example) is its own `📝` commit.
 
 | When a change ...                                         | Update                                   |
 | --------------------------------------------------------- | ---------------------------------------- |
 | alters user-visible behavior, requirements, or dependencies | `CHANGELOG.md` → `[Unreleased]`        |
 {%- if is_library %}
 | adds, removes, or renames a public module                 | `README.md` → 🧩 Modules                 |
+| adds, removes, or changes a command in `[project.scripts]` | `README.md` → ⌨️ CLI                     |
 | changes how the package is installed                      | `README.md` → 📦 Installation            |
 {%- else %}
 | changes how the project is set up                         | `README.md` → 📦 Setup                   |
@@ -204,6 +208,7 @@ example) is its own `📝` commit.
 | adds, moves, or removes a top-level directory             | `README.md` → 🗂️ Layout, if present      |
 {%- endif %}
 | changes code that a README example uses                   | that README → the example                |
+| moves, renames, or deletes a file a README links to       | that README → the link                   |
 | adds, removes, renames, or reorders a sub-README section  | that README → `## Contents`, if present  |
 {%- if include_todo %}
 | defers work, or uncovers a problem it does not fix        | `TODO.md` → add an item                  |
@@ -224,6 +229,9 @@ Each document has one audience and one tense:
 - `docs/decisions/` records **why** the code is shaped as it is — one
   decision per file, written once.
 - `AGENTS.md` holds rules for whoever works on the code next.
+
+All of them wrap prose at 72 columns. Tables, code blocks, headings,
+and a line holding a long URL or command are exempt.
 
 ### `CHANGELOG.md`
 
@@ -411,7 +419,9 @@ Top to bottom, it holds:
    The first entry in a section replaces its placeholder.
 5. Project-specific sections, as the project needs them — a key
    concept, platform notes, acknowledgements — in the order a reader
-   needs them, acknowledgements last.
+   needs them, acknowledgements last.{% if is_library %} A command-line tool the
+   library ships (`[project.scripts]`) comes first among them, as
+   ⌨️ CLI: each command with one example.{% endif %}
 6. The closing sections, always last and in this order:
    {% if include_todo %}📋 TODO, {% endif %}📜 Changelog, ⚖️ License.
 
@@ -428,9 +438,16 @@ Top to bottom, it holds:
   (`#️-license`){% if is_library %}, on GitHub and PyPI alike{% endif %}.
 - Keep the Python requirement in the badge and in {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}
   in step with `requires-python` in `pyproject.toml`.
+- A badge for a dependency — a framework, a CUDA version — goes right
+  after the Python badge and shows the minimum in `pyproject.toml`; it
+  moves with that minimum.
 - Every code example runs against the current code: a change that breaks
   one updates it in the same commit. Show the result when it is the
   point, as a trailing `# -> ...` comment.
+- Links stay valid: a commit that moves, renames, or deletes a file or
+  directory fixes every README link to it — the root's hub links and
+  the sub-READMEs' relative ones. `git grep -n '<old path>' -- '*.md'`
+  finds them.
 {%- if is_library %}
 - The root README is also the PyPI project page, which has none of the
   repository's other files. Link a repository file by absolute URL —

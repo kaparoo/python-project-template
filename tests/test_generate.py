@@ -8,6 +8,7 @@ full pipeline to confirm tasks behave end-to-end.
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -672,6 +673,68 @@ def test_agents_md_dependency_rules_follow_options(tmp_path: Path) -> None:
     assert "the requirement line in\n  📦 Setup" in agents
     assert '`uv run --isolated --python X.Y python -c "import test_app"`' in agents
     assert "--python X.Y pytest" not in agents
+
+
+def test_agents_md_documents_readme_upkeep_details(tmp_path: Path) -> None:
+    """Default library: the CLI section, dependency badges, link upkeep,
+    and one wrap width for every document."""
+    project = _generate(tmp_path)
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "All of them wrap prose at 72 columns" in agents
+    assert "(`[project.scripts]`) comes first among them" in agents
+    assert "`[project.scripts]` | `README.md` → ⌨️ CLI" in agents
+    assert "A badge for a dependency" in agents
+    assert "Links stay valid" in agents
+    assert "| that README → the link" in agents
+
+
+def test_agents_md_readme_upkeep_details_follow_options(tmp_path: Path) -> None:
+    """Application: commands live in 🚀 Usage, so no ⌨️ CLI section."""
+    project = _generate(tmp_path, {"is_library": False})
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "[project.scripts]" not in agents
+    assert "Links stay valid" in agents
+    assert "All of them wrap prose at 72 columns" in agents
+
+
+@pytest.mark.parametrize(
+    "answers",
+    (
+        {},
+        {"release_automation": "github-oidc"},
+        {"use_testpypi": False},
+        {"is_library": False, "use_pytest": False, "include_todo": False},
+    ),
+)
+def test_generated_markdown_wraps_prose_at_72_columns(
+    tmp_path: Path, answers: dict[str, object]
+) -> None:
+    """The generated docs keep the wrap rule their own `AGENTS.md` sets.
+
+    Exempt, as that rule says: tables, code blocks, headings, and lines
+    holding a URL or consisting of a single command in backticks.
+    """
+    project = _generate(tmp_path, answers)
+    too_wide = []
+    for name in ("AGENTS.md", "README.md", "CHANGELOG.md", "TODO.md"):
+        path = project / name
+        if not path.exists():
+            continue
+        in_code = False
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            stripped = line.strip()
+            if stripped.startswith("```"):
+                in_code = not in_code
+                continue
+            exempt = (
+                in_code
+                or stripped.startswith(("|", "#"))
+                or "://" in line
+                or re.fullmatch(r"`[^`]+`[.,]?", stripped) is not None
+            )
+            if not exempt and len(line) > 72:
+                too_wide.append(f"{name}:{number}: {line}")
+    assert not too_wide, "\n".join(too_wide)
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
