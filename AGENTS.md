@@ -227,6 +227,110 @@ Edit `template/pyproject.toml.jinja`, then run the suite — the
 integration tests render a generated project, build it (for libraries),
 and run its lint/type/test gates, so a broken config surfaces here.
 
+### Changing an existing `copier.yml` question
+
+A question's default, choices, help, validator, or `when` is external
+behavior (see [Changelog](#changelog)), so a change to one touches:
+
+1. `copier.yml` — the question itself.
+2. [`README.md`](./README.md) options table — its row (type, default,
+   notes) and the prose under the table that describes it.
+3. `tests/test_generate.py` — the new value and, where it matters, the
+   old one.
+4. `CHANGELOG.md` → `[Unreleased]`.
+
+Removing a choice or a question breaks `copier update` for projects
+that recorded it, which makes it `MAJOR` (see [Releases](#releases)).
+Within a major, deprecate instead, as `python_version` does for
+`3.12`: keep the value working under a `(deprecated)` label, say when
+it goes in its `help`, and warn in `_message_after_copy` /
+`_message_after_update`.
+
+### Changing the `python_version` choices
+
+The list of offered versions lives in `copier.yml`; everything else
+reads the `python_version` answer. A change touches:
+
+1. `copier.yml` — `choices`, `default`, `help`, and the deprecation
+   warnings in the after-copy / after-update messages.
+2. [`README.md`](./README.md) — the Python badge lists every version
+   still offered (deprecated ones included), and the options table row
+   and its notes.
+3. `tests/test_generate.py` — the default, a round-trip of each new
+   choice, rejection of a version outside the list, and the warning for
+   a deprecated choice and its absence on the default.
+4. `CHANGELOG.md` — `Added` for a new choice, `Changed` for a new
+   default, `Deprecated` / `Removed` for a choice on its way out.
+
+Inside `template/`, `python_version` is rendered into
+`.python-version`, `requires-python`, the version classifier,
+`[tool.ty.environment] python-version`, the README badge and
+requirement line, and the generated `AGENTS.md`. A new place that
+needs the version reads the variable, never a literal. The generated
+workflows name no Python version — `uv` follows `.python-version`.
+
+The workspace's own Python (`.python-version`, `requires-python` in
+[`pyproject.toml`](./pyproject.toml)) moves independently: only when
+the dev tooling needs it.
+
+### Bumping tool minimums
+
+Raise generated-project and workspace minimums to the current PyPI
+release together, in one `⬆️` commit:
+
+1. `template/pyproject.toml.jinja` — the `dev` dependency group
+   (`ruff`, `ty`, `pytest`, `pytest-cov`), `[build-system] requires`
+   (`uv_build>=X.Y.Z,<X.(Y+1)`), `[tool.ruff] required-version`, and the
+   "omitted (ruff vX.Y.Z)" note at the end of the file — re-check that
+   the sections it lists still use only defaults.
+2. [`pyproject.toml`](./pyproject.toml) — the workspace `dev` group
+   (`copier`, `pytest`, `ruff`) and its `[tool.ruff] required-version`,
+   then `uv lock --upgrade` for `uv.lock`.
+3. This file — `copier (>=X.Y.Z)` in
+   [Toolchain choices](#toolchain-choices-dont-second-guess-without-cause).
+4. Run the full suite: the integration tests run the new versions on a
+   generated project, so an incompatible release fails here.
+5. `CHANGELOG.md` → `Changed` for the generated projects' new
+   minimums. A workspace-only bump stays out.
+
+### Bumping GitHub Actions
+
+1. Every `uses:` in `template/.github/workflows/ci.yml.jinja` and
+   `publish.yml.jinja` — one action, one version across both files.
+   `pypa/gh-action-pypi-publish` stays on `release/v1`, the ref PyPA
+   documents.
+2. The version assertions in `tests/test_generate.py`
+   (`test_ci_workflow_present_and_pinned` and the
+   `test_release_automation_*` tests).
+3. `CHANGELOG.md` → `Changed`.
+
+### Keeping template files in step
+
+`template/AGENTS.md.jinja` quotes the other template files: the README
+section names (📦 Installation, 🚀 Quick start, 🧩 Modules, 📦 Setup,
+🚀 Usage, 🗂️ Layout, 📋 TODO, 📜 Changelog, ⚖️ License), the
+`CHANGELOG.md` and `TODO.md` skeletons (`## [Unreleased]`, `## Open`,
+`_No entries yet._`, the `[Unreleased]` link reference), what
+`publish.yml` does, and `pyproject.toml` settings (`error-on-warning`,
+`fail_under`, `required-imports`). Change both sides in the same
+commit, and assert the shared strings on both sides in
+`tests/test_generate.py`.
+
+### Keeping this repo's `README.md` current
+
+This repo's own [`README.md`](./README.md) is internal and does not
+follow the generated-project README rules, but it states facts that
+live elsewhere:
+
+- the Python badge ↔ the `python_version` choices in `copier.yml`;
+- the ⚙️ Options table ↔ every question in `copier.yml` (name, type,
+  default, choices, `when`);
+- the 🗂️ Layout tree ↔ the repository's top-level files and
+  directories;
+- the commit-convention table ↔ the prefixes this repo uses.
+
+A change to the source updates the README in the same commit.
+
 ### Verifying end-to-end manually (dogfooding)
 
 ```bash
