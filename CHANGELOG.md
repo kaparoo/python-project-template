@@ -1,4 +1,4 @@
-# Changelog — PyTorch variant
+# Changelog: PyTorch variant
 
 All notable changes to the **PyTorch variant** of this copier template
 (the `pytorch` branch) are recorded here.
