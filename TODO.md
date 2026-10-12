@@ -102,3 +102,11 @@ style and test rules land.
 
 Revisit when the code style and test rules are in the generated
 `AGENTS.md`.
+
+## This repository
+
+- `tests/test_generate.py`: refactor it to the test rules generated
+  projects now get, for consistency. Its tests carry docstrings and
+  explanatory comments, which those rules leave out unless the user
+  asks; the file is also one 1,100-line module where the rules would
+  split it by concern.
