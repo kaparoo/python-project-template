@@ -55,7 +55,7 @@ def test_ci_matrix_tests_every_version_on_linux_and_one_elsewhere(
     assert job["strategy"]["fail-fast"] is False
     assert job["strategy"]["matrix"] == {
         "os": ["ubuntu-latest"],
-        "python-version": ["3.13", "3.14", "3.15"],
+        "python-version": ["3.13", "3.14"],
         "include": [{"os": "windows-latest"}, {"os": "macos-latest"}],
     }
     setup_uv = next(s for s in job["steps"] if s.get("name") == "Set up uv")

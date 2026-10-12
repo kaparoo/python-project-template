@@ -89,8 +89,8 @@ python_version:
   help: |
     Oldest supported Python version (major.minor). The project supports
     and CI tests every version from this one up to the newest choice.
+    The newest is the newest Python that `torch` ships wheels for.
   choices:
-    "3.15": "3.15"
     "3.14": "3.14"
     "3.13": "3.13"
   default: "3.14"
@@ -101,7 +101,7 @@ python_version:
 # keep the list in step with `python_version`'s choices.
 python_versions:
   type: yaml
-  default: "{{ ['3.13', '3.14', '3.15'] | select('ge', python_version) | list }}"
+  default: "{{ ['3.13', '3.14'] | select('ge', python_version) | list }}"
   when: false
 
 

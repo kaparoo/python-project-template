@@ -18,8 +18,6 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Added
 
-- `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
-  The default stays `3.14`.
 - **Task guides in generated projects**: `AGENTS.md` keeps the rules
   every task needs and indexes one guide per task, which an agent reads
   only when that task comes up. The guides live in `.agents/`

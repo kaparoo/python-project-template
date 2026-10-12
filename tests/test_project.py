@@ -96,14 +96,15 @@ def test_python_version_rejects_versions_outside_the_supported_range(
 ) -> None:
     with pytest.raises(ValueError, match="Invalid choice for 'python_version'"):
         render({"python_version": "3.12"})
+    with pytest.raises(ValueError, match="Invalid choice for 'python_version'"):
+        render({"python_version": "3.15"})
 
 
 @pytest.mark.parametrize(
     ("python_version", "supported"),
     (
-        ("3.13", ["3.13", "3.14", "3.15"]),
-        ("3.14", ["3.14", "3.15"]),
-        ("3.15", ["3.15"]),
+        ("3.13", ["3.13", "3.14"]),
+        ("3.14", ["3.14"]),
     ),
 )
 def test_supported_python_versions_span_from_the_oldest(
@@ -244,11 +245,11 @@ def test_is_library_false_omits_build_system_and_py_typed(render: Render) -> Non
 
 def test_answers_file_records_all_inputs(render: Render) -> None:
     project = render(
-        {"project_name": "answers-test", "python_version": "3.15"},
+        {"project_name": "answers-test", "python_version": "3.13"},
     )
     answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
     assert "project_name: answers-test" in answers
-    assert "python_version: '3.15'" in answers
+    assert "python_version: '3.13'" in answers
 
 
 def test_future_import_required_with_init_exempt(render: Render) -> None:
