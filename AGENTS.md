@@ -182,7 +182,7 @@ default-false there).
 | Linter / formatter | `ruff` | Single binary, comprehensive ruleset |
 | Type checker | `ty` (beta) | Astral, plugin-free; Ruff `ANN` rules cover annotation enforcement |
 | Test runner | `pytest` | Standard |
-| Template engine | `copier` (>=9.15.1) | Update-friendly via `.copier-answers.yml` |
+| Template engine | `copier` (>=9.18.2) | Update-friendly via `.copier-answers.yml` |
 | AI agent config | `AGENTS.md` + `CLAUDE.md` (just `@AGENTS.md`) | Editor-agnostic with Claude Code shim |
 
 ## Common workflows
