@@ -1,10 +1,11 @@
 # Agent guide: `python-project-template`
 
-This file is for AI coding assistants (Claude Code, Copilot, etc.) working
-**on this repository itself**, the copier template source.
+This file is for AI coding assistants (Claude Code, Copilot, etc.)
+working **on this repository itself**, the copier template source.
 
-> ⚠️ Do not confuse with [`template/AGENTS.md`](./template/AGENTS.md), which
-> is the (empty) AGENTS.md that ships **inside** generated projects.
+> ⚠️ Do not confuse it with
+> [`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja), which
+> renders the `AGENTS.md` that ships **inside** generated projects.
 
 ---
 
@@ -15,7 +16,8 @@ Python projects with `uv`, `ruff`, `ty`, and `pytest` pre-configured.
 
 - **Author / sole user**: Jaewoo Park (`kaparoo`)
 - **Audience of generated projects**: also the author
-- **Public consumption**: not expected; design for the author's workflow first
+- **Public consumption**: not expected; design for the author's
+  workflow first
 
 ## Variants
 
@@ -58,6 +60,18 @@ the recurring `CHANGELOG.md` resolution pattern.
 `template/pyproject.toml.jinja` (what generated projects receive).**
 Changes meant for downstream projects belong in `template/`.
 
+## Toolchain choices (don't second-guess without cause)
+
+| Concern | Choice | Why |
+|---------|--------|-----|
+| Package manager / lock | `uv` | Fast, single tool for env + lock + run |
+| Build backend | `uv_build` | Astral consistency, 10–35× faster than alternatives |
+| Linter / formatter | `ruff` | Single binary, comprehensive ruleset |
+| Type checker | `ty` (beta) | Astral, plugin-free; Ruff `ANN` rules cover annotation enforcement |
+| Test runner | `pytest` | Standard |
+| Template engine | `copier` (>=9.18.2) | Update-friendly via `.copier-answers.yml` |
+| AI agent config | `AGENTS.md` + `CLAUDE.md` (just `@AGENTS.md`) | Editor-agnostic with Claude Code shim |
+
 ## Critical workflow rules
 
 ### 1. Working tree must be clean when running `pytest`
@@ -67,11 +81,11 @@ the workspace root can cause `.vscode/extensions.json` to be silently
 dropped during rendering. Tests will fail with confusing
 `FileNotFoundError`s.
 
-**Workflow**: commit (or stash) all changes → run `uv run pytest`. Expect
-a couple of minutes: the integration tests that spin up generated
-projects dominate the runtime (more so on `pytorch`, which adds `torch` /
-index assertions and a real `uv lock` test), and a cold `uv` cache adds
-more. It's slow, not hung.
+**Workflow**: commit (or stash) all changes, then run `uv run pytest`.
+Expect about a minute: the integration tests that spin up generated
+projects dominate the runtime (more so on `pytorch`, which adds
+`torch` and index assertions and a real `uv lock` test), and a cold
+`uv` cache adds more. It is slow, not hung.
 
 ### 2. Both branches of every `copier.yml` option must be tested
 
@@ -148,7 +162,8 @@ What counts as **external behavior** here is what a template user meets
 through `copier copy` / `copier update`:
 
 - the questions (names, help, choices, defaults, validators, `when`);
-- the generated files and their content, including `.copier-answers.yml`;
+- the generated files and their content, including
+  `.copier-answers.yml`;
 - `_tasks`, the after-copy / after-update messages, and `_migrations`.
 
 Everything that stays in this repository is internal and stays out:
@@ -231,18 +246,6 @@ override in tests that assume the pytest layer; keep pytorch's
 expected-files list (no `tests/__init__.py` when use_pytest is
 default-false there).
 
-## Toolchain choices (don't second-guess without cause)
-
-| Concern | Choice | Why |
-|---------|--------|-----|
-| Package manager / lock | `uv` | Fast, single tool for env + lock + run |
-| Build backend | `uv_build` | Astral consistency, 10–35× faster than alternatives |
-| Linter / formatter | `ruff` | Single binary, comprehensive ruleset |
-| Type checker | `ty` (beta) | Astral, plugin-free; Ruff `ANN` rules cover annotation enforcement |
-| Test runner | `pytest` | Standard |
-| Template engine | `copier` (>=9.18.2) | Update-friendly via `.copier-answers.yml` |
-| AI agent config | `AGENTS.md` + `CLAUDE.md` (just `@AGENTS.md`) | Editor-agnostic with Claude Code shim |
-
 ## Common workflows
 
 ### Adding a new copier option
@@ -322,8 +325,7 @@ release together, in one `⬆️` commit:
 2. [`pyproject.toml`](./pyproject.toml): the workspace `dev` group
    (`copier`, `pytest`, `ruff`) and its `[tool.ruff] required-version`,
    then `uv lock --upgrade` for `uv.lock`.
-3. This file: `copier (>=X.Y.Z)` in
-   [Toolchain choices](#toolchain-choices-dont-second-guess-without-cause).
+3. This file: `copier (>=X.Y.Z)` in *Toolchain choices*.
 4. Run the full suite: the integration tests run the new versions on a
    generated project, so an incompatible release fails here.
 5. `CHANGELOG.md` → `Changed` for the generated projects' new
