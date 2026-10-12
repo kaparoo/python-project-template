@@ -18,8 +18,9 @@ for new copier options or features, `PATCH` for fixes.
   - `CHANGELOG.md`: the six Keep a Changelog categories, external
     behavior only, phrasing, `**Breaking:**`, deprecations, and link
     references.
-  - `TODO.md`: open work only, as one-line items or a short body that
-    ends with a `Revisit when ...` condition.
+  - `TODO.md`: open work only, read before a task starts, as one-line
+    items or a short body that ends with a `Revisit when ...`
+    condition; without one, deferred work is reported to the user.
   - `README.md`: a fixed top-to-bottom layout for the root (lead
     sections, project-specific ones such as a library's `⌨️ CLI`, then
     TODO / Changelog / License) with no hand-made table of contents,
@@ -27,7 +28,8 @@ for new copier options or features, `PATCH` for fixes.
     and free-form sub-READMEs the root links to as a hub.
   - Design decisions: one MADR-style record per decision under
     `docs/decisions/`, superseded rather than rewritten.
-  - One wrap width, 72 columns, for every document.
+  - One wrap width, 72 columns, for every document, and English for a
+    new one.
   - `AGENTS.md` itself.
 - A `## Releases` section in the generated `AGENTS.md` for applications
   (`is_library = false`): versions are promoted and tagged, not

@@ -237,7 +237,14 @@ Each document has one audience and one tense:
 - `AGENTS.md` holds rules for whoever works on the code next.
 
 All of them wrap prose at 72 columns. Tables, code blocks, headings,
-and a line holding a long URL or command are exempt.
+and a line holding a long URL or command are exempt. Write a new
+document in English; a document already written in another language
+keeps that language.
+{%- if not include_todo %}
+
+This project keeps no `TODO.md`: report work you defer to the user
+rather than leaving it in a `# TODO` comment.
+{%- endif %}
 
 ### `CHANGELOG.md`
 
@@ -361,6 +368,9 @@ found along the way. It is not a design document, a progress log, or a
 record of what is done: decisions go to `docs/decisions/`, finished
 work to git history and `CHANGELOG.md`.
 
+- Before starting a task, read the items that touch the code it
+  changes: one may already describe the problem, or be resolved by the
+  change.
 - An item is one bullet by default: what needs doing and why, led by
   the relevant path in backticks when there is one — "`io/reader.py`:
   stream large files instead of reading them whole (memory spikes above
@@ -374,7 +384,8 @@ work to git history and `CHANGELOG.md`.
   `docs/decisions/` record and keep only the remaining work here.
 - Items sit under `## Open`, most important first. Once the list
   outgrows a screen, replace `## Open` with `##` headings by area (a
-  package or a topic), most important first within each.
+  package or a topic), most important first within each. Headings
+  carry no emoji, so their anchors stay plain.
 - No owners, dates, status markers, checkboxes, or "last updated"
   lines — git history records who and when.
 - Add an item only for work the current change does not finish, and
@@ -385,6 +396,9 @@ work to git history and `CHANGELOG.md`.
   result. An item dropped without being done is deleted the same way,
   with the reason in the commit message. Restore `_No entries yet._`
   when the list becomes empty.
+- A `TODO.md` written before these rules is brought in line once: move
+  settled decisions to `docs/decisions/`, delete finished and
+  struck-through items, and keep the remaining work as items.
 {%- endif %}
 
 ### `README.md`

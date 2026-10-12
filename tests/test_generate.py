@@ -640,6 +640,10 @@ def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
     assert "holds **open work only**" in agents
     assert "`Revisit when ...`" in agents
     assert 'no "Done" section' in agents
+    assert "Before starting a task, read the items" in agents
+    assert "brought in line once" in agents
+    assert "document already written in another language" in agents
+    assert "This project keeps no `TODO.md`" not in agents
     # README: the root's layout top to bottom, then sub-READMEs as spokes.
     assert "### `README.md`" in agents
     assert "The root `README.md` is the landing page" in agents
@@ -675,7 +679,8 @@ def test_agents_md_doc_upkeep_rules_follow_options(tmp_path: Path) -> None:
     assert "runs the application" in agents
     assert "a command, an option, or a configuration" in agents
     assert "DeprecationWarning" not in agents
-    assert "TODO.md" not in agents
+    assert "This project keeps no `TODO.md`" in agents
+    assert "### `TODO.md`" not in agents
     assert "📋 TODO" not in agents
     assert "🧩 Modules" not in agents
     assert "PyPI" not in agents
