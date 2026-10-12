@@ -71,6 +71,7 @@ asked when their parent feature is enabled (a library, or pytest).
 
 ```
 .
+├── .github/workflows/  ← CI for this repo (not shipped)
 ├── copier.yml          ← questions, tasks, after-action messages
 ├── pyproject.toml      ← workspace dev tooling (copier + pytest + ruff)
 ├── template/           ← files rendered into generated projects
@@ -90,6 +91,10 @@ cd python-project-template
 uv sync --group dev
 uv run pytest          # generation-scenario tests
 ```
+
+[CI](./.github/workflows/ci.yml) runs `ruff` and the same tests on
+Ubuntu and Windows for every push to `main` or `pytorch` and every
+pull request.
 
 ### ✍️ Commit convention
 

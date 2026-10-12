@@ -101,10 +101,6 @@ Revisit when the `pytorch-v*` release after `v1.6.0` is out.
 
 ## Infrastructure
 
-- `.github/workflows/`: CI for this repository, running
-  `uv run pytest` on push. The suite needs `git`, `uv`, and a git
-  identity.
-
 ### Dependabot and a library build check
 
 Two additions to generated projects, postponed by the user until the

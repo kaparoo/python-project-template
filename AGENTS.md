@@ -42,6 +42,7 @@ the recurring `CHANGELOG.md` resolution pattern.
 
 ```
 .
+├── .github/workflows/ci.yml   ← CI for this repo (not shipped)
 ├── copier.yml                 ← template configuration (questions, tasks, etc.)
 ├── pyproject.toml             ← WORKSPACE tooling only (copier + pytest + ruff)
 ├── tests/                     ← tests for the template itself
@@ -83,6 +84,11 @@ minimum bar.
 `uv run pytest` runs copier in-process for every scenario in
 `tests/test_generate.py`. If even one file in `template/` changes,
 run the suite before committing.
+
+[`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs the same
+suite, with `ruff format --check` and `ruff check`, on Ubuntu and
+Windows for every push to `main` or `pytorch` and every pull request.
+It catches what slipped through; it does not replace the local run.
 
 ### 4. Some tests run the real toolchain on a generated project
 
@@ -310,7 +316,9 @@ release together, in one `⬆️` commit:
 ### Bumping GitHub Actions
 
 1. Every `uses:` in `template/.github/workflows/ci.yml.jinja` and
-   `publish.yml.jinja` — one action, one version across both files.
+   `publish.yml.jinja`, and in this repo's own
+   `.github/workflows/ci.yml` — one action, one version across all
+   three files.
    `pypa/gh-action-pypi-publish` stays on `release/v1`, the ref PyPA
    documents.
 2. The version assertions in `tests/test_generate.py`

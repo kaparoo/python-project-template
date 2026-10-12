@@ -1,0 +1,55 @@
+# CI for the template repository itself — not shipped to generated
+# projects (theirs is template/.github/workflows/ci.yml.jinja).
+name: CI
+
+on:
+  push:
+    branches: [main, pytorch]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint and test the template (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Linux, plus Windows, where the template is developed and
+        # where Copier's path handling differs most.
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The tests render `--vcs-ref HEAD`, which Copier describes
+          # from the tags; a shallow clone has none.
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+
+      # The integration tests `git commit` inside generated projects.
+      - name: Configure a git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Sync dependencies
+        run: uv sync --group dev --locked
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Tests
+        run: uv run pytest
