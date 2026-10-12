@@ -32,6 +32,11 @@ for new copier options or features, `PATCH` for fixes.
 - The generated `CHANGELOG.md` ends with an `[Unreleased]` link
   reference, and the library release steps in `AGENTS.md` defer to the
   new `CHANGELOG.md` rules.
+- GitHub Release notes from `publish.yml`
+  (`release_automation = github-oidc`) join the CHANGELOG's wrapped lines
+  into one line per paragraph or list item, since GitHub renders every
+  newline in a release body as a break, and end with a
+  `**Full Changelog**` link taken from the CHANGELOG's link reference.
 
 ### Deprecated
 

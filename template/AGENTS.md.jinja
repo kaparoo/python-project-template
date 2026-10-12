@@ -390,8 +390,11 @@ them as an artifact,{% if use_testpypi %} publishes them to TestPyPI as a stagin
 rehearsal,{% endif %} then — once you approve the `pypi` environment gate —
 publishes the same artifacts to PyPI via OIDC. A final `github-release`
 job then creates the GitHub Release for the tag automatically, with
-notes pulled from the matching `CHANGELOG.md` section and the sdist +
-wheel attached — there is no manual release step. Keeping `build`
+the sdist + wheel attached — there is no manual release step. Its notes
+are the matching `CHANGELOG.md` section with each wrapped paragraph or
+list item joined onto one line (GitHub renders every newline in a
+release body as a line break), closed by a `**Full Changelog**` line
+taken from the section's link reference. Keeping `build`
 separate from publish keeps the `id-token: write` permission scoped
 to the publish jobs only.
 

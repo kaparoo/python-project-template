@@ -454,6 +454,11 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     assert "needs: pypi" in yml
     assert "gh release create" in yml
     assert "No CHANGELOG section for" in yml
+    # Release notes join hard-wrapped CHANGELOG lines (GitHub would render
+    # each newline as a break) and close with the version's compare link.
+    assert "join the CHANGELOG's hard-wrapped lines" in yml
+    assert "**Full Changelog**" in yml
+    assert "No [$version] link reference in CHANGELOG.md" in yml
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "Trusted Publishing" in agents
     assert "Trusted Publisher" in agents  # one-time setup checklist
