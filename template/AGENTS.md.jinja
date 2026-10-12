@@ -847,42 +847,121 @@ Use the [MADR](https://adr.github.io/madr/) shape, kept short:
 
 ## Commit convention
 
-Commit messages use a [Gitmoji](https://gitmoji.dev/) prefix and wrap
-package/tool names in backticks:
+Commit messages are written in English. A message is one subject line,
+then optionally a blank line and a body, then the trailers:
 
 ```
-<emoji> <Imperative summary; tool names in `backticks`>
+<gitmoji> <Verb> <object> [<preposition> <target>]
 
-<Optional body explaining *why*>
+<Optional body: why, wrapped at 72 columns>
+
+Co-Authored-By: <agent name> <agent email>
 ```
 
-Common prefixes used in this project:
+A commit holds one change together with the tests, docs, and
+`CHANGELOG.md` entry that come with it. Those take the change's emoji,
+not one of their own.
 
-| Prefix | Use for                                       |
-| ------ | --------------------------------------------- |
-| ✨     | New feature                                   |
-| ♻️     | Refactor (no user-visible behavior change)    |
-| 🔥     | Remove dead / vestigial code                  |
-| 🐛     | Bug fix                                       |
-| 📝     | Docstrings, README, CHANGELOG                 |
-| ✏️     | Typo or other small text fix                  |
-| 💄     | Style (no behavior change)                    |
-| ✅     | Tests added or updated                        |
-| ⚡     | Performance optimization                      |
-| 🏷️     | Type-hint-only change                         |
-| 💬     | Code comment                                  |
-| 🗑️     | Deprecation signal                            |
-| 📦     | Re-export / packaging structure               |
-| 🚚     | Move / rename files                           |
-| ⬆️     | Bump a dependency or tool version             |
-| ➕     | Add a dependency                              |
-| ➖     | Remove a dependency                           |
-| 🔧     | Config (`pyproject.toml`, `ruff`, `ty`, ...)  |
-| 🔖     | Release a version (commit + matching tag)     |
+### Subject
 
-Keep commits single-purpose; don't rewrite published history; don't
-skip git hooks. AI assistants append a `Co-Authored-By` trailer with
-their own published identity (e.g. `Claude <noreply@anthropic.com>`).
+- **Emoji**: one from the table below, written exactly as it appears
+  there. Some carry an invisible variation selector, and a different
+  byte form slips past `git log --grep`. Look one up on
+  [gitmoji.dev](https://gitmoji.dev/) only when none here fits, and
+  never use an emoji that is not a Gitmoji. 💥 takes precedence over
+  any other emoji when the change breaks something users rely on.
+- **Verb**: a capitalized imperative, preferably the one the table
+  pairs with the emoji. Refactor, Update, Change, and Improve only
+  repeat the emoji, so use them only when no concrete verb fits. Never
+  a figurative verb (Say, Give, Let, Keep).
+- **Object**: the name of what changed, in backticks: a file, a module
+  path, a package, or an identifier (`filesystem.utils`,
+  `pyproject.toml`, `ruff`, `StagedFile.commit`). Leave out the
+  top-level package (`filesystem.utils`, not
+  `{{ package_name }}.filesystem.utils`). Names that changed together
+  share a subject (`a`, `b`, and `c`); beyond a few, name their common
+  module. Add a kind word (class, function) only when the name alone is
+  ambiguous, and write no `()` after a function name.
+- **Versions** are plain (0.17.0); a **tag** takes backticks
+  (`v2.0.0`).
+- **Length**: aim for about 50 characters and never pass 72. No
+  trailing period.
+- **One change**: two unrelated changes joined by "and" are two
+  commits. Names listed with "and" are fine.
+
+### Body
+
+Optional, but written for a 💥 commit, where it gives the migration,
+and whenever another rule sends something to the commit message: the
+cause of a bug, or a measurement and the conditions it was taken
+under.{% if include_todo %} The same goes for why a `TODO.md` item was
+dropped.{% endif %} The body says why, since the diff already shows
+what. Wrap it at 72 columns and list several points as `-` bullets.
+
+### Trailers
+
+AI assistants end the message with `Co-Authored-By:` and their own
+published identity, e.g. `Claude <noreply@anthropic.com>`.
+
+### Emoji
+
+| Emoji | For | Verbs |
+| ----- | --- | ----- |
+| ✨ | a new feature | Add |
+| 🐛 | a bug fix, urgent or not | Fix |
+| 🔒️ | a security or privacy fix | Fix |
+| 💥 | a breaking change | any verb in this table |
+| ♻️ | restructuring without a behavior change | Split, Extract, Inline, Combine, Rename, Simplify |
+| ⚡️ | performance | Speed up, Cache |
+| 🎨 | formatting or code layout | Format, Reorder |
+| 🔥 | removing code or files, dead code included | Remove |
+| 🗑️ | a deprecation | Deprecate |
+| 🏷️ | type annotations | Annotate |
+| 💬 | text and literals: messages, strings | Reword |
+| 💡 | source comments | Add, Reword |
+| 📝 | documentation | Document, Add, Correct |
+| ✏️ | a typo | Fix |
+| ✅ | tests | Add tests for, Fix tests for |
+| 🚚 | moving or renaming files and modules | Move, Rename |
+| 🔧 | configuration | Configure, Enable, Disable, Set |
+| 👷 | CI | Add, Configure |
+| ⬆️ | upgrading a dependency or the template | Upgrade, Update |
+| ➕ | adding a dependency | Add |
+| ➖ | removing a dependency | Remove |
+| 🙈 | `.gitignore` | Ignore |
+| 📄 | the license | Update |
+| 🚧 | unfinished work the user asked to commit | any |
+| 🔖 | a release | Release |
+| ⏪️ | a revert | Revert |
+| 🎉 | the first commit | a fixed form |
+🚧 is only for unfinished work the user asks to commit; never commit
+work in progress on your own.
+
+### Fixed forms
+
+```
+⬆️ Upgrade `ruff` to 0.17.0
+⬆️ Upgrade `ruff`, `ty`, and `uv_build`
+➕ Add `pytest-order` 1.2.0 to dev dependencies
+➖ Remove `pytest-order`
+⬆️ Update the copier template to `v2.0.0`
+🔖 Release version 2.0.0
+⏪️ Revert "<original subject>"
+🎉 Initial commit from copier template
+```
+
+An upgrade of several packages lists their versions in the body; a
+revert's body is `This reverts commit <hash>.`, as `git revert` writes
+it.
+
+### Examples
+
+| Instead of | Write |
+| ---------- | ----- |
+| `✨ Add filesystem utility functions` | `` ✨ Add `ensure_dir` and `make_dirs` to `filesystem.utils` `` |
+| `` ♻️ Refactor `filesystem.directory` `` | `` ♻️ Split `existence` out of `filesystem.directory` `` |
+| `⚡️ Let an estimator make its algorithm on the first flow asked of it` | `⚡️ Build the estimator's algorithm on its first flow` |
+| `✏️ Say what a writer wrote, and take a measurement out of a docstring` | Two commits: `` 💬 Reword `FrameWriter.report` `` and `` 📝 Remove a measurement from `identity_ssim` `` |
 {% if is_library %}
 ## Releases
 

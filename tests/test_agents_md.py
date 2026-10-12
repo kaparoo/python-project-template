@@ -15,7 +15,19 @@ def test_agents_md_documents_commit_convention(render: Render) -> None:
     assert "## Commit convention" in agents
     assert "Gitmoji" in agents
     assert "Co-Authored-By" in agents
-    assert "Common prefixes used in this project" in agents
+    assert "Common prefixes used in this project" not in agents
+    assert "Commit messages are written in English." in agents
+    assert "<gitmoji> <Verb> <object> [<preposition> <target>]" in agents
+    assert "Those take the change's emoji, not one of their own." in prose(agents)
+    assert "(`filesystem.utils`, not `agent_app.filesystem.utils`)" in prose(agents)
+    assert "aim for about 50 characters and never pass 72" in agents
+    assert "never commit work in progress on your own" in prose(agents)
+    assert (
+        "\N{UPWARDS BLACK ARROW}\N{VARIATION SELECTOR-16} Upgrade `ruff` to 0.17.0"
+        in agents
+    )
+    assert "\N{PARTY POPPER} Initial commit from copier template" in agents
+    assert "\N{BOOKMARK} Release version 2.0.0" in agents
     for prefix in ("✨", "🐛", "♻️", "📝", "🔖", "🔧"):
         assert prefix in agents, f"missing {prefix} in gitmoji palette"
 
@@ -175,8 +187,8 @@ def test_agents_md_documents_dependency_rules(render: Render) -> None:
     assert "`copier update -d python_version=X.Y`" in agents
     assert "the `python-version` list in `.github/workflows/ci.yml`" in agents
     assert "drop it from the classifiers, the CI list, and the badge" in prose(agents)
-    assert "| \N{HEAVY PLUS SIGN}     | Add a dependency" in agents
-    assert "| \N{HEAVY MINUS SIGN}     | Remove a dependency" in agents
+    assert "| \N{HEAVY PLUS SIGN} | adding a dependency | Add |" in agents
+    assert "| \N{HEAVY MINUS SIGN} | removing a dependency | Remove |" in agents
 
 
 def test_agents_md_dependency_rules_follow_options(render: Render) -> None:

@@ -99,39 +99,12 @@ pull request.
 
 ### ✍️ Commit convention
 
-Commit messages use an emoji prefix and wrap package/tool names in
-backticks:
-
-```
-<emoji> <Imperative summary; tool names in `backticks`>
-
-<Optional body explaining *why*>
-```
-
-| Emoji | When |
-|-------|------|
-| 🔧 | Configuration / settings (catch-all) |
-| ✨ | New feature |
-| 🔄 | Migration (e.g. `mypy → ty`) |
-| 📝 | Documentation |
-| ♻️ | Restructure without behavior change |
-| 🐛 | Bug fix |
-| 🔥 | Remove code or files |
-| 🧹 | Cleanup (remove redundancy) |
-| 🎨 | Cosmetic (whitespace, alignment) |
-| 🙈 | `.gitignore` change |
-| 📄 | License / legal text |
-| ✅ | Tests added or fixed |
-| ⬆️ / ➕ / ➖ | Dependency bump / add / remove |
-| 💥 | Breaking change |
-| 🎉 | Initial commit |
-
-Keep commits single-purpose, don't rewrite published history, and
-don't skip git hooks.
-
-AI coding assistants working on this repository additionally follow
-[`AGENTS.md`](./AGENTS.md) for workflow rules and the toolchain
-rationale they must respect.
+Commits use a Gitmoji, a concrete imperative verb, and the name of what
+changed (`` ✨ Add `ensure_dir` to `filesystem.utils` ``). The full rules,
+with the emoji table and fixed forms, are *Commit convention* in
+[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja); this
+repository follows them too, with the few differences listed in
+[`AGENTS.md`](./AGENTS.md).
 
 ## 📋 TODO
 

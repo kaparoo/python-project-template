@@ -113,6 +113,12 @@ for new copier options or features, `PATCH` for fixes.
   cannot wrap; and they reject relative imports
   (`ban-relative-imports = "all"`). Shorten or rewrap a line that runs
   over, and import by absolute path.
+- The generated `AGENTS.md` commit convention fixes the subject's form
+  (a Gitmoji, a concrete imperative verb, and the name of what changed,
+  within 72 characters), says when a body is written, gives fixed forms
+  for upgrades, releases, and reverts, and draws its emoji table from
+  Gitmoji's own definitions, so 💄 and 💬 no longer stand for style and
+  comments.
 - Generated projects select `ruff`'s `FIX` rules, so a `TODO`,
   `FIXME`, `XXX`, or `HACK` comment fails lint. A project that has
   such comments moves them into `TODO.md` when it updates.

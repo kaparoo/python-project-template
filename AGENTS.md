@@ -117,27 +117,21 @@ project fails here rather than only in manual dogfooding. These need:
 
 ## Commit convention
 
-Follow the commit convention documented under *Commit convention* in
-[`README.md`](./README.md): emoji prefix, backticked
-tool names, single-purpose commits, no rewriting of published history,
-no skipped hooks.
+Commits here follow the convention generated projects get: read
+*Commit convention* in
+[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja) (subject form,
+emoji table, body, trailers, fixed forms). Only these differ:
 
-In this repository, commit each completed step as you go, without
-waiting to be asked; the user reviews the history step by step. This
-differs on purpose from generated projects, whose `AGENTS.md` has
-agents accumulate changes and commit only on request, split with
-`git stash`. Pushing still waits for the user.
-
-**AI-specific requirement**: append a `Co-Authored-By` trailer with the
-acting assistant's own published identity; do not hardcode one vendor.
-
-```
-Co-Authored-By: <agent-name> <agent-email>
-```
-
-Examples:
-- Claude Code → `Co-Authored-By: Claude <noreply@anthropic.com>`
-- GitHub Copilot → `Co-Authored-By: Copilot <198982749+Copilot@users.noreply.github.com>`
+- Commit each completed step as you go, without waiting to be asked;
+  the user reviews the history step by step. Generated projects
+  instead accumulate changes and commit only on request, split with
+  `git stash`. Pushing still waits for the user.
+- A release commit is `🔖 Release version X.Y.Z` on `main` and
+  `` 🔖 Release `pytorch` version X.Y.Z `` on `pytorch`.
+- Merging `main` forward is `` 🔀 Merge `main` into `pytorch` ``.
+- The object of a subject names the file or area of this repository:
+  `copier.yml`, `template/README.md.jinja`, the generated `AGENTS.md`,
+  or the workspace `pyproject.toml`.
 
 ## Changelog
 
@@ -199,7 +193,7 @@ differs (`vX.Y.Z` on `main`, `pytorch-vX.Y.Z` on `pytorch`).
    `## [X.Y.Z] - YYYY-MM-DD` heading, add a fresh empty
    `## [Unreleased]` above, append the new comparison link at the
    bottom of the file.
-3. Commit: `📝 Cut release \`vX.Y.Z\`` (body summarizes the bundle).
+3. Commit: `🔖 Release version X.Y.Z` (body summarizes the bundle).
 4. Tag: `git tag -a vX.Y.Z -m "vX.Y.Z"`.
 5. Push: `git push origin <branch>` then `git push origin vX.Y.Z`.
 
