@@ -13,6 +13,14 @@ for new copier options or features, `PATCH` for fixes.
 
 - `python_version` gains a `3.15` choice now that Python 3.15.0 is out.
   The default stays `3.14`.
+- A `## Documentation` section in the generated `AGENTS.md`: which
+  document a change updates, and how to write `CHANGELOG.md` (the six
+  Keep a Changelog categories, external behavior only, phrasing,
+  `**Breaking:**`, deprecations, link references), `TODO.md`,
+  `README.md`, and `AGENTS.md` itself.
+- A `## Releases` section in the generated `AGENTS.md` for applications
+  (`is_library = false`): versions are promoted and tagged, not
+  published.
 
 ### Changed
 
@@ -27,6 +35,9 @@ for new copier options or features, `PATCH` for fixes.
   `actions/checkout@v7`, `astral-sh/setup-uv@v10.3.0`, and
   `actions/download-artifact@v8` (`actions/upload-artifact@v7` is already
   current). All still run on Node 24.
+- The generated `CHANGELOG.md` ends with an `[Unreleased]` link
+  reference, and the library release steps in `AGENTS.md` defer to the
+  new `CHANGELOG.md` rules.
 - The workspace pins Python `3.14` via a committed `.python-version`.
   uv 0.13 picks 3.15 for a fresh environment otherwise, and `copier`'s
   `pyyaml` dependency has no Windows cp315 wheel yet, so `uv sync` would

@@ -105,6 +105,7 @@ jobs:
           awk -v ver="$version" '
             $0 ~ "^## \\[" ver "\\]" { flag = 1; next }
             /^## / { if (flag) exit }
+            /^\[[^ ]+\]: / { if (flag) exit }
             flag { print }
           ' CHANGELOG.md > release-notes.md
           if ! grep -q '[^[:space:]]' release-notes.md; then

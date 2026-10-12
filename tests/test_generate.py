@@ -262,11 +262,11 @@ def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> Non
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "pypi/" not in readme
     assert "pepy.tech" not in readme
-    # Application mode has nothing to publish — no named indexes / Releases.
+    # Application mode has nothing to publish — no named indexes, and the
+    # Releases section only tags versions.
     assert 'name = "testpypi"' not in pyproject
     assert "upload.pypi.org" not in pyproject
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Releases" not in agents
     assert "uv publish" not in agents
 
 
@@ -307,6 +307,8 @@ def test_generated_changelog_skeleton(tmp_path: Path) -> None:
     assert "Keep a Changelog" in changelog
     assert "Semantic Versioning" in changelog
     assert "## [Unreleased]" in changelog
+    # Link reference the release procedure rewrites to a compare link.
+    assert "[Unreleased]: https://github.com/kaparoo/test-app/commits/main" in changelog
 
 
 def test_include_todo_true_creates_todo_md_and_readme_link(tmp_path: Path) -> None:
@@ -493,11 +495,51 @@ def test_release_automation_manual_without_testpypi(tmp_path: Path) -> None:
 
 
 def test_application_omits_release_machinery(tmp_path: Path) -> None:
-    """is_library=False — no publish workflow, no Releases section at all."""
+    """is_library=False — no publish workflow; Releases only tags versions."""
     project = _generate(tmp_path, {"is_library": False})
     assert not (project / ".github" / "workflows" / "publish.yml").exists()
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Releases" not in agents
+    assert "## Releases" in agents
+    assert "is an application and is not published" in agents
+    assert "git tag -a vX.Y.Z" in agents
+    assert "uv publish" not in agents
+    assert "uv build" not in agents
+    assert "Trusted Publishing" not in agents
+
+
+def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
+    """Default (library + TODO): rules for every maintained document."""
+    project = _generate(tmp_path)
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Documentation" in agents
+    # CHANGELOG: the six categories only, scope, phrasing, and upgrades.
+    assert "### `CHANGELOG.md`" in agents
+    assert "| `Deprecated` |" in agents
+    assert "never invent new ones" in agents
+    assert "imports the library" in agents
+    assert "Internal refactoring stays out" in agents
+    assert "`Added` and `Removed` lead with *what*" in agents
+    assert "**Breaking:**" in agents
+    assert "`DeprecationWarning`" in agents
+    assert "Cut a release only when the user asks" in agents
+    assert "https://github.com/kaparoo/test-app/compare/vX.Y.Z...HEAD" in agents
+    # TODO, README (Modules is library-only), and AGENTS itself.
+    assert "### `TODO.md`" in agents
+    assert "🧩 Modules has one bullet per public module" in agents
+    assert "### `AGENTS.md`" in agents
+
+
+def test_agents_md_doc_upkeep_rules_follow_options(tmp_path: Path) -> None:
+    """Application without TODO: no TODO or Modules rules, app wording."""
+    project = _generate(tmp_path, {"is_library": False, "include_todo": False})
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Documentation" in agents
+    assert "### `CHANGELOG.md`" in agents
+    assert "runs the application" in agents
+    assert "a command, an option, or a configuration" in agents
+    assert "DeprecationWarning" not in agents
+    assert "TODO.md" not in agents
+    assert "🧩 Modules" not in agents
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
