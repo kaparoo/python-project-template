@@ -43,54 +43,6 @@ such a project to `3.13`.
 
 Revisit when 2.0.0 is planned.
 
-## Downstream projects
-
-All three wait on `v1.6.0` (`cardiomyocytes` on the `pytorch-v*`
-release that follows it). After `copier update`, each needs its
-required status checks renamed, since CI job names now carry the
-Python version.
-
-### Bring `kaparoo-python` in line
-
-- `README.md`: rename 🎯 Quick example to 🚀 Quick start and move it
-  before 🧩 Modules; match the description's trailing period to
-  `pyproject.toml`.
-- `AGENTS.md`: drop the sub-README rule above the marker, which the
-  template now carries.
-- Sub-READMEs: list only `##` sections in `## Contents`.
-- `TODO.md`: drop the heading emoji and the "Last updated" footer.
-- Code: five relative imports in `tests/` and three lines over 88
-  columns now fail `ruff check`. The 42 module docstrings predate the
-  rule against them; keep or drop them as the user decides.
-
-Revisit when `v1.6.0` is out.
-
-### Bring `iivs-lib` in line
-
-- `README.md`: move 🙏 Acknowledgements before 📋 TODO; cut
-  🧩 Modules down to a hub over the sub-READMEs; add ⌨️ CLI for
-  `iivs_cli`; replace the relative `./iivs/dhm/constants.py` link.
-- Tests: move the real Koala samples from `tests/fixtures/`, which
-  now holds fixture modules, to `tests/assets/local/`.
-- Docstrings: turn the 234 double-backtick spans into single backticks.
-- Publish a release afterwards: the PyPI page keeps the broken
-  relative links until a new version is uploaded.
-
-Revisit when `v1.6.0` is out.
-
-### Bring `cardiomyocytes` in line
-
-- `README.md`: rename 🚀 Getting started to 📦 Setup, and write
-  🚀 Usage and 🗂️ Layout for `configs/` and `scripts/`.
-- `TODO.md`: move the settled decisions into `docs/decisions/`
-  records, delete implemented and struck-through items, and keep the
-  rest as items. It stays in Korean.
-- Tests: gather the `requires_cuda` marks copied into several files
-  into one `tests/marks.py`.
-- Code: eight lines over 88 columns now fail `ruff check`.
-
-Revisit when the `pytorch-v*` release after `v1.6.0` is out.
-
 ## Infrastructure
 
 ### Dependabot for generated projects

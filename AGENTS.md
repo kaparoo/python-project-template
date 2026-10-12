@@ -153,8 +153,11 @@ The `pytorch` branch keeps its variant changelog under the same rules.
 ## TODO
 
 [`TODO.md`](./TODO.md) holds open work on this template: releases, the
-`pytorch` variant, downstream updates, and rule or infrastructure
-changes put off for later. It follows the rules generated projects
+`pytorch` variant, and rule or infrastructure changes put off for
+later. What the generated projects must change after an update is
+theirs, not the template's, and stays out of it: the user keeps that
+list in `../python-project-template-downstream.md`, next to the
+repositories. `TODO.md` follows the rules generated projects
 get; read *Documentation → `TODO.md`* in
 [`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja). Read it
 before starting a change, and delete an item in the commit that
