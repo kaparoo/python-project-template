@@ -576,13 +576,21 @@ def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
     assert "holds **open work only**" in agents
     assert "`Revisit when ...`" in agents
     assert 'no "Done" section' in agents
-    # README: a landing page; PyPI-safe links and the hub are library-only.
+    # README: the root's layout top to bottom, then sub-READMEs as spokes.
     assert "### `README.md`" in agents
-    assert "`README.md` is the landing page" in agents
+    assert "The root `README.md` is the landing page" in agents
+    assert "word for word the\n   `description` in `pyproject.toml`" in agents
+    for lead in ("📦 Installation —", "🚀 Quick start —", "🧩 Modules —"):
+        assert lead in agents, f"missing lead section {lead}"
+    assert "5. Project-specific sections" in agents
+    assert "📋 TODO, 📜 Changelog, ⚖️ License." in agents
+    assert "No hand-written table of contents" in agents
     assert "https://github.com/kaparoo/test-app/blob/main/<path>" in agents
-    assert "🧩 Modules gives each public module or subpackage" in agents
-    assert "The root README then becomes a hub" in agents
-    assert "📦 Development setup lists every step" not in agents
+    assert "#### Sub-READMEs" in agents
+    assert "so it has no fixed sections" in agents
+    assert "only the root README reaches PyPI" in agents
+    assert "📦 Setup —" not in agents
+    assert "🗂️ Layout" not in agents
     # Design decisions as MADR records, and AGENTS itself.
     assert "### `docs/decisions/`" in agents
     assert "`docs/decisions/NNNN-title-with-dashes.md`" in agents
@@ -603,7 +611,12 @@ def test_agents_md_doc_upkeep_rules_follow_options(tmp_path: Path) -> None:
     assert "📋 TODO" not in agents
     assert "🧩 Modules" not in agents
     assert "PyPI" not in agents
-    assert "📦 Development setup lists every step" in agents
+    for lead in ("📦 Setup —", "🚀 Usage —", "🗂️ Layout, once"):
+        assert lead in agents, f"missing lead section {lead}"
+    assert "| `README.md` → 🚀 Usage" in agents
+    assert "   📜 Changelog, ⚖️ License." in agents
+    assert "A directory whose use outgrows its 🗂️ Layout entry" in agents
+    assert "#### Sub-READMEs" in agents
     assert "### `docs/decisions/`" in agents
 
 
