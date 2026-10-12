@@ -1,4 +1,4 @@
-# Agent guide — `{{ project_name }}`
+# Agent guide: `{{ project_name }}`
 
 Guidance for AI coding assistants working on this project.
 `CLAUDE.md` loads this file via the `@AGENTS.md` import.
@@ -7,18 +7,18 @@ Guidance for AI coding assistants working on this project.
 
 - Package: `{{ package_name }}/`
 - Python:  {{ python_version }}+
-- Kind:    {% if is_library %}distributable library (`uv_build` backend){% else %}application — not packaged for distribution{% endif %}
+- Kind:    {% if is_library %}distributable library (`uv_build` backend){% else %}application, not packaged for distribution{% endif %}
 
 ## Toolchain
 
-The Astral toolchain — keep it unless there is a clear reason to change:
+The Astral toolchain. Keep it unless there is a clear reason to change:
 
-- `uv`   — environment, locking, running
-- `ruff` — linting + formatting
-- `ty`   — type checking
+- `uv`: environment, locking, running
+- `ruff`: linting + formatting
+- `ty`: type checking
 {%- if use_pytest %}
-- `pytest` — testing
-- `pytest-cov` — coverage measurement and threshold gate
+- `pytest`: testing
+- `pytest-cov`: coverage measurement and threshold gate
 {%- endif %}
 
 ## Commands
@@ -56,15 +56,15 @@ uv run python -c "import {{ package_name }}"
 {%- endif %}
 ```
 
-If one cannot run here — a test needing hardware or a service this
-machine lacks — say which and why instead of skipping it silently. CI
+If one cannot run here (a test needing hardware or a service this
+machine lacks), say which and why instead of skipping it silently. CI
 runs the same gates, but it should confirm a change, not discover that
 it is broken.
 {%- if is_library %}
 
 CI also builds the sdist and wheel, checks their metadata, and imports
-the package from the wheel alone. When a change touches packaging —
-`pyproject.toml`, the package layout, or files the package ships — run
+the package from the wheel alone. When a change touches packaging
+(`pyproject.toml`, the package layout, or files the package ships), run
 `uv build` and `uvx twine check dist/*` locally too.
 {%- endif %}
 
@@ -103,7 +103,7 @@ to restore the rest, and `git stash drop` that stash.
 ### Secrets
 
 - No token, password, or private key in code, docs, commit messages,
-  or logs — nor a test or example value that is real somewhere.
+  or logs, nor a test or example value that is real somewhere.
 - Code reads a secret from an environment variable. `.env` holds the
   local values and is never committed (`.gitignore` covers it); the
   README's {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %} names each variable the project
@@ -114,7 +114,7 @@ to restore the rest, and `git stash drop` that stash.
 
 ## Conventions
 
-- Keep code fully typed — `ty` runs with `error-on-warning`.
+- Keep code fully typed: `ty` runs with `error-on-warning`.
 - Fix `ruff` findings rather than suppressing them, unless there is a
   clear, commented reason.
 - `ty` has no plugin system; rely on standard typing (PEP 681
@@ -122,7 +122,7 @@ to restore the rest, and `git stash drop` that stash.
 - Suppress `ty` errors with `# ty: ignore[<error-name>]` using `ty`'s
   own error names (e.g. `invalid-argument-type`), not mypy/pyright
   codes. Always include the specific code rather than bare
-  `# ty: ignore` — bare suppressions can mask future regressions.
+  `# ty: ignore`; bare suppressions can mask future regressions.
 - Error messages name the valid set or the fix, not just the failure
   ("unsupported node type 'X': expected File, Directory, ..."; "balance
   pause/resume, or use `suspend()`"). The message should tell the caller
@@ -140,11 +140,11 @@ to restore the rest, and `git stash drop` that stash.
   source module: `{{ package_name }}/sub/mod.py` is tested by
   `tests/sub/test_mod.py`. Keep `__init__.py` markers in test
   subpackages (matches the `INP` ruff rule).
-- Not every source file needs a dedicated test file — types-only
+- Not every source file needs a dedicated test file: types-only
   modules, re-export `__init__.py` markers, and details covered through
   a public-facing module are intentional exceptions.
-- Fixtures live in `tests/conftest.py` when you need them — modern
-  default, applies to `tests/` only. Use a root `conftest.py` only for
+- Fixtures live in `tests/conftest.py` when you need them (modern
+  default, applies to `tests/` only). Use a root `conftest.py` only for
   `pytest_plugins` declarations, doctest fixtures shared with source
   files, or project-wide collection hooks.
 - Code shared across tests lives in a `fixtures/` package: either
@@ -195,8 +195,8 @@ to restore the rest, and `git stash drop` that stash.
   failure reads `test_load[empty-source]` rather than
   `test_load[3-True]`.
 - Tests are independent of each other and of their order. A test that
-  changes module-level state — a registry, a cache, an environment
-  variable — restores it: `monkeypatch` for an attribute or a variable,
+  changes module-level state (a registry, a cache, an environment
+  variable) restores it: `monkeypatch` for an attribute or a variable,
   an autouse fixture in that package's `conftest.py` for state a whole
   package touches. Fixtures keep the default function scope; widen it
   only for setup that is expensive and never mutated.
@@ -220,7 +220,7 @@ to restore the rest, and `git stash drop` that stash.
   verify it with a spy, not only by the result.
 - A warning the code emits on purpose is behavior: assert it with
   `pytest.warns(Category, match=...)`. Test log output where it is the
-  product — a run's report, a message a user acts on — through
+  product (a run's report, a message a user acts on) through
   `caplog.records`: the level and `record.getMessage()`, not the
   formatted `caplog.text`.
 - Replace or observe a collaborator with `monkeypatch`, not
@@ -235,8 +235,8 @@ to restore the rest, and `git stash drop` that stash.
 
 ### Skipped tests
 
-- A test that cannot run everywhere is skipped — never deleted or left
-  failing — and its `reason` names what is missing ("needs a CUDA
+- A test that cannot run everywhere is skipped (never deleted or left
+  failing), and its `reason` names what is missing ("needs a CUDA
   device", "symlinks need privilege on Windows"). Pick the mechanism by
   what is missing:
   - an optional dependency: `pytest.importorskip("<module>")` at the
@@ -250,7 +250,7 @@ to restore the rest, and `git stash drop` that stash.
 - Parametrize over the condition rather than duplicating a test
   (`pytest.param("cuda", marks=requires_cuda)`), so a machine without
   it still runs the other cases.
-- When CI cannot run the tests — hardware its runners lack — say so
+- When CI cannot run the tests (hardware its runners lack), say so
   below the marker in this file. The local run is then the gate: run
   the full suite on a machine that has the hardware before asking for a
   commit, and report any group that skipped.
@@ -274,28 +274,28 @@ to restore the rest, and `git stash drop` that stash.
 
 ## Python style
 
-`ruff` enforces most of this — run `uv run ruff check --fix` rather than
+`ruff` enforces most of this: run `uv run ruff check --fix` rather than
 applying it by hand.
 
 - Every module starts with `from __future__ import annotations` (ruff
   isort `required-imports`). Empty `__init__.py` package markers are
   exempt.
-- Use builtin generics — `list`, `dict`, `tuple`, `type` — never
+- Use builtin generics (`list`, `dict`, `tuple`, `type`), never
   `typing.List`, `typing.Dict`, `typing.Tuple`, `typing.Type` (ruff
   `UP`).
 - Imports are grouped and sorted: standard library, third party, first
   party, then a trailing `if TYPE_CHECKING:` block (grouped the same
   way). Within a group `import X` precedes `from X import Y`; entries
   are alphabetical.
-- Docstrings are optional{% if use_pytest %} (tests take none; see *Tests*){% endif %} — write them
+- Docstrings are optional{% if use_pytest %} (tests take none; see *Tests*){% endif %}: write them
   where they clarify intent, not mechanically. "Mechanically" targets
   two habits to avoid: comments (or docstrings) that merely restate the
   code, and a base class whose docstring explains itself in terms of its
-  specific subclasses — except a *closed* hierarchy's base, which may
-  name its subclasses as a deliberate family map. It is *not* a licence
+  specific subclasses (except a *closed* hierarchy's base, which may
+  name its subclasses as a deliberate family map). It is *not* a licence
   to leave a consumed method bare. When written, document
   *intent and contracts, not mechanism*:
-  - Lead with a one-line summary — a declarative noun phrase for classes
+  - Lead with a one-line summary: a declarative noun phrase for classes
     ("An ordered, read-only view over ..."), an imperative verb phrase
     for functions and methods ("Yield successive windows from
     `items`."). Two kinds take a noun phrase instead: a property getter
@@ -303,7 +303,7 @@ applying it by hand.
     leads with "Whether ..." ("Whether `path` exists."). A boolean
     *function* stays imperative ("Test whether a path exists.").
   - A concrete public method a caller consumes must be self-explainable
-    from its own docstring and signature — never lean on an inherited
+    from its own docstring and signature; never lean on an inherited
     parent docstring. Abstract base methods document only the generic
     contract and never name a specific subclass.
   - Surface what callers cannot infer from the signature alone:
@@ -327,7 +327,7 @@ applying it by hand.
   line and put a blank line before the final `return`; leave a tightly
   coupled one- or two-line body unbroken.
 - In a long module, group related definitions under a boxed comment
-  banner — a centred title between two `#`-bordered rules.
+  banner: a centred title between two `#`-bordered rules.
 - Standalone runnable scripts carry PEP 723 inline metadata (the
   `# /// script` block). `uv` manages it (`uv add --script`); add or
   edit it by hand only when explicitly asked.
@@ -339,7 +339,7 @@ applying it by hand.
   run time, `uv add --group dev <pkg>` for what only tests, linting, or
   type checking need{% if is_library %}, and `uv add --optional <extra> <pkg>` for
   an optional extra{% endif %}. Commit `pyproject.toml` and `uv.lock`
-  together — CI installs with `uv sync --locked` and fails on a stale
+  together: CI installs with `uv sync --locked` and fails on a stale
   lock.
 - To move to a newer release, raise the minimum with
   `uv add "<pkg>>=X.Y.Z"` (keep the `--group`{% if is_library %} or `--optional`{% endif %} flag
@@ -357,15 +357,15 @@ applying it by hand.
 The supported versions are stated in several places. Change them
 together, in one commit:
 
-- `requires-python` in `pyproject.toml` — the oldest supported version;
-- `[tool.ty.environment] python-version` — the same oldest version, so
+- `requires-python` in `pyproject.toml`: the oldest supported version;
+- `[tool.ty.environment] python-version`: the same oldest version, so
   `ty` flags syntax and APIs newer than it;
 - one `Programming Language :: Python :: X.Y` classifier per supported
   version;
-- the `python-version` list in `.github/workflows/ci.yml` — every
+- the `python-version` list in `.github/workflows/ci.yml`: every
   supported version, each tested on Linux;
-- `.python-version` — the version development, and CI on Windows and
-  macOS, run on: any supported one;
+- `.python-version`: the version development, and CI on Windows and
+  macOS, run on (any supported one);
 - the README's Python badge, which lists every supported version, and
   the requirement line in {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}.
 
@@ -376,7 +376,7 @@ and re-renders all of the above and the *Project* line of this file;
 a plain `copier update` after the template offers a newer Python
 extends the range.
 
-To leave a version out — a dependency has no wheels for it yet — drop
+To leave a version out (a dependency has no wheels for it yet), drop
 it from the classifiers, the CI list, and the badge together, and add
 it back once the dependency catches up. Dropping a version a release
 has supported is a `**Breaking:**` `Changed` entry in `CHANGELOG.md`;
@@ -385,7 +385,7 @@ supporting a new one is an `Added` entry.
 ## Documentation
 
 `README.md`, `CHANGELOG.md`,{% if include_todo %} `TODO.md`,{% endif %} and this
-file are kept current by whoever changes the code — update them in the
+file are kept current by whoever changes the code: update them in the
 same commit as the change they describe, not as a follow-up. A
 docs-only fix (wording, a stale example) is its own `📝` commit.
 
@@ -413,14 +413,14 @@ docs-only fix (wording, a stale example) is its own `📝` commit.
 
 Each document has one audience and one tense:
 
-- `README.md` describes the project **as it is now** — what it does and
+- `README.md` describes the project **as it is now**: what it does and
   how to {% if is_library %}install and use it{% else %}set it up and run it{% endif %}. No history, no "new in vX.Y".
 - `CHANGELOG.md` records what **changed for a user** of the
-  {% if is_library %}library{% else %}application{% endif %} — external behavior only, never internal refactoring.
+  {% if is_library %}library{% else %}application{% endif %}: external behavior only, never internal refactoring.
 {%- if include_todo %}
 - `TODO.md` lists work that is **not done yet**.
 {%- endif %}
-- `docs/decisions/` records **why** the code is shaped as it is — one
+- `docs/decisions/` records **why** the code is shaped as it is: one
   decision per file, written once.
 - `AGENTS.md` holds rules for whoever works on the code next.
 
@@ -454,8 +454,8 @@ The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Omit empty categories and never invent new ones: a performance
   improvement is `Changed`, a fixed performance regression is `Fixed`.
   The first entry replaces the `_No entries yet._` placeholder.
-- Record only changes to **external behavior** — what someone who
-  {% if is_library %}imports the library{% else %}runs the application{% endif %} can observe without reading its source:
+- Record only changes to **external behavior** (what someone who
+  {% if is_library %}imports the library{% else %}runs the application{% endif %} can observe without reading its source):
 {%- if is_library %}
   - the public API: importable names without a leading `_`, their
     signatures, return values, raised exceptions, and warnings;
@@ -469,7 +469,7 @@ The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - requirements: supported Python versions and runtime dependency
     ranges.
 
-  Internal refactoring stays out — restructuring, renaming or moving
+  Internal refactoring stays out: restructuring, renaming or moving
   {% if is_library %}private{% else %}internal{% endif %} code, removing dead code, tests, CI, dev-tooling and
   dev-dependency bumps, comments, docstrings, and the other Markdown
   documents. The test: would a user of the {% if is_library %}library{% else %}application{% endif %}
@@ -487,7 +487,7 @@ The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
     malformed header." / "`StagedFile.commit` no longer fails on a
     transient Windows `PermissionError`."
   - Never open with the heading's own verb ("Added ...", "Fixed ...")
-    or an imperative ("Add ...", "Fix ...") — that is commit-message
+    or an imperative ("Add ...", "Fix ..."); that is commit-message
     style.
 - Keep an entry short by default: one or two sentences saying what
   changed. Causes, internal mechanisms, and measurements belong in the
@@ -495,7 +495,7 @@ The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `**Breaking:**`, `Deprecated`, and `Removed` entries spell out the
   upgrade instead, since that is where a reader has to act. Say what
   changed, what behaved differently before or still works unchanged,
-  and what to do now — the replacement or the migration step. A
+  and what to do now (the replacement or the migration step). A
   `Deprecated` entry also says when the feature goes, if that is known.
 - Start every incompatible change with `**Breaking:**`, spelled exactly
   so. It can appear under `Changed`, `Removed`, `Fixed` (a fix that
@@ -521,7 +521,7 @@ The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   **bold** lead-in. Wrap lines at 72 columns.
 - `[Unreleased]` describes the net change since the last release. When
   an unreleased change is reworked, reverted, or fixed, edit or delete
-  its entry instead of adding a new one — users never saw the
+  its entry instead of adding a new one: users never saw the
   intermediate state.
 - Released sections are history: change them only to correct a factual
   error. A release pulled after publishing keeps its section, marked
@@ -551,9 +551,9 @@ promote `[Unreleased]` for release `X.Y.Z`:
 
 ### `TODO.md`
 
-`TODO.md` holds **open work only**: work deliberately deferred — out of
+`TODO.md` holds **open work only**: work deliberately deferred (out of
 scope for the current change, blocked on a decision, or a limitation
-found along the way. It is not a design document, a progress log, or a
+found along the way). It is not a design document, a progress log, or a
 record of what is done: decisions go to `docs/decisions/`, finished
 work to git history and `CHANGELOG.md`.
 
@@ -561,13 +561,13 @@ work to git history and `CHANGELOG.md`.
   changes: one may already describe the problem, or be resolved by the
   change.
 - An item is one bullet by default: what needs doing and why, led by
-  the relevant path in backticks when there is one — "`io/reader.py`:
-  stream large files instead of reading them whole (memory spikes above
-  ~1 GB)."
+  the relevant path in backticks when there is one, as in
+  "`io/reader.py`: stream large files instead of reading them whole
+  (memory spikes above ~1 GB)."
 - Only when one line cannot carry it, give the item a `### <what needs
   doing>` heading and a short body: the problem (a code snippet may show
   it), why it was deferred, and a closing `Revisit when ...` line naming
-  what should reopen it — a use case that needs it, a measurement that
+  what should reopen it: a use case that needs it, a measurement that
   would justify it, or the decision it waits on. A body that grows past
   a few short paragraphs is a design question: settle it in a
   `docs/decisions/` record and keep only the remaining work here.
@@ -576,13 +576,13 @@ work to git history and `CHANGELOG.md`.
   package or a topic), most important first within each. Headings
   carry no emoji, so their anchors stay plain.
 - No owners, dates, status markers, checkboxes, or "last updated"
-  lines — git history records who and when.
+  lines: git history records who and when.
 - Add an item only for work the current change does not finish. This
   file is the only place for it: `ruff` rejects `TODO`, `FIXME`,
   `XXX`, and `HACK` comments (its `FIX` rules), so deferred work
   cannot hide in the code.
-- Delete an item in the commit that resolves it — no "Done" section, no
-  strikethrough — and add a `CHANGELOG.md` entry if users can see the
+- Delete an item in the commit that resolves it (no "Done" section, no
+  strikethrough), and add a `CHANGELOG.md` entry if users can see the
   result. An item dropped without being done is deleted the same way,
   with the reason in the commit message. Restore `_No entries yet._`
   when the list becomes empty.
@@ -595,40 +595,40 @@ work to git history and `CHANGELOG.md`.
 
 The root `README.md` is the landing page: what the project is, how to
 {% if is_library %}install and use it{% else %}set it up and run it{% endif %}, and where to read further. It is not a
-reference — signatures, options, and edge cases belong in docstrings.
+reference; signatures, options, and edge cases belong in docstrings.
 
 Top to bottom, it holds:
 
-1. The title — `name` in `pyproject.toml` — and the badges.
+1. The title (`name` in `pyproject.toml`) and the badges.
 2. The one-line description in italics: word for word the
    `description` in `pyproject.toml`, trailing punctuation included,
    under 120 characters. Change the two together.
-3. Optionally, a short paragraph with no heading — two to four
+3. Optionally, a short paragraph with no heading: two to four
    sentences on scope, background, or who the project is for.
 4. The lead sections, in this order:
 {%- if is_library %}
-   - 📦 Installation — the Python requirement, `uv add` / `pip install`,
+   - 📦 Installation: the Python requirement, `uv add` / `pip install`,
      and each optional extra with what it adds.
-   - 🚀 Quick start — one runnable example of the main use case.
+   - 🚀 Quick start: one runnable example of the main use case.
      Examples for a single module belong in that module's README (see
      *Sub-READMEs*), not here.
-   - 🧩 Modules — each public module or subpackage: its import path in
+   - 🧩 Modules: each public module or subpackage: its import path in
      backticks and what it offers, as a line, or as a short paragraph
      under a `###` heading once there is more to say.
 {%- else %}
-   - 📦 Setup — every step a fresh clone needs before the project runs:
+   - 📦 Setup: every step a fresh clone needs before the project runs:
      requirements (Python, hardware, drivers), `uv sync`, and one-time
      steps such as environment files or system libraries, each with its
      command.
-   - 🚀 Usage — how to run the project: its commands, scripts, or entry
+   - 🚀 Usage: how to run the project: its commands, scripts, or entry
      points, and where their configuration lives.
-   - 🗂️ Layout, once the tree no longer explains itself — one line per
+   - 🗂️ Layout, once the tree no longer explains itself: one line per
      top-level directory a reader needs to find their way.
 {%- endif %}
 
    The first entry in a section replaces its placeholder.
-5. Project-specific sections, as the project needs them — a key
-   concept, platform notes, acknowledgements — in the order a reader
+5. Project-specific sections, as the project needs them (a key
+   concept, platform notes, acknowledgements), in the order a reader
    needs them, acknowledgements last.{% if is_library %} A command-line tool the
    library ships (`[project.scripts]`) comes first among them, as
    ⌨️ CLI: each command with one example.{% endif %}
@@ -648,21 +648,21 @@ Top to bottom, it holds:
   (`#️-license`){% if is_library %}, on GitHub and PyPI alike{% endif %}.
 - Keep the Python requirement in the badge and in {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}
   in step with `requires-python` in `pyproject.toml`.
-- A badge for a dependency — a framework, a CUDA version — goes right
+- A badge for a dependency (a framework, a CUDA version) goes right
   after the Python badge and shows the minimum in `pyproject.toml`; it
   moves with that minimum.
 - Every code example runs against the current code: a change that breaks
   one updates it in the same commit. Show the result when it is the
   point, as a trailing `# -> ...` comment.
 - Links stay valid: a commit that moves, renames, or deletes a file or
-  directory fixes every README link to it — the root's hub links and
+  directory fixes every README link to it: the root's hub links and
   the sub-READMEs' relative ones. `git grep -n '<old path>' -- '*.md'`
   finds them.
 {%- if is_library %}
 - The root README is also the PyPI project page, which has none of the
-  repository's other files. Link a repository file by absolute URL —
-  `https://github.com/{{ github_username }}/{{ repo_name }}/blob/main/<path>`, or
-  `/tree/main/<dir>` for a directory — never by a relative path such as
+  repository's other files. Link a repository file by absolute URL
+  (`https://github.com/{{ github_username }}/{{ repo_name }}/blob/main/<path>`, or
+  `/tree/main/<dir>` for a directory), never by a relative path such as
   `./CHANGELOG.md`, which 404s there; in-page `#anchors` are fine. Leave
   out what PyPI cannot render: Mermaid diagrams, `<picture>`, and images
   by relative path.
@@ -676,8 +676,8 @@ entry keeps its summary and links to that README, and examples specific
 to it move there.{% if not is_library %} A root README without 🗂️ Layout gains one for the
 link.{% endif %}
 
-A sub-README is shaped by what it documents — a file format, a family
-of APIs, a pipeline step — so it has no fixed sections. It does keep to
+A sub-README is shaped by what it documents (a file format, a family
+of APIs, a pipeline step), so it has no fixed sections. It does keep to
 these:
 
 - The title names what it covers: {% if is_library %}the import path in backticks,
@@ -685,14 +685,14 @@ these:
   path in backticks{% endif %}.
 - One or two sentences under the title say what it covers and when to
   reach for it.
-- It may go deeper than the root — concepts, worked examples, choosing
-  between APIs, pitfalls — but leaves signatures and parameter details
+- It may go deeper than the root (concepts, worked examples, choosing
+  between APIs, pitfalls) but leaves signatures and parameter details
   to docstrings and does not repeat the root.
 - Its code examples run, under the same rule as the root's.
 - Headings carry no emoji, so their anchors stay plain.
 - Once it runs past a couple of screens, it opens with a `## Contents`
   list: a plain bullet list linking each `##` section, never folded into
-  `<details>` — a contents list helps only while it is in view.
+  `<details>`: a contents list helps only while it is in view.
 - Keep `## Contents` in step with the headings: a commit that adds,
   removes, renames, or reorders a `##` section updates the list. An
   anchor is the heading lowercased, spaces turned into hyphens, and
@@ -706,8 +706,8 @@ these:
 
 ### `docs/decisions/`
 
-Record a design decision — a choice between real alternatives that
-later work should respect rather than reopen — as an Architecture
+Record a design decision (a choice between real alternatives that
+later work should respect rather than reopen) as an Architecture
 Decision Record: one file per decision at
 `docs/decisions/NNNN-title-with-dashes.md`, numbered in sequence from
 `0001` and never renumbered. Create the directory with the first record.
@@ -739,8 +739,8 @@ Use the [MADR](https://adr.github.io/madr/) shape, kept short:
 
 ### `AGENTS.md`
 
-- When a project-specific convention, command, or pitfall is settled —
-  the user states a rule, or a non-obvious workflow is agreed on —
+- When a project-specific convention, command, or pitfall is settled
+  (the user states a rule, or a non-obvious workflow is agreed on),
   record it below the `<!-- Add project-specific guidance below. -->`
   marker at the end of this file so later sessions follow it too.
 - Leave everything above the marker as is: it is rendered from the
@@ -793,7 +793,7 @@ their own published identity (e.g. `Claude <noreply@anthropic.com>`).
 breaking changes.
 {% if release_automation == 'github-oidc' %}
 Releases publish automatically via GitHub Actions **Trusted Publishing**
-(OIDC — no PyPI token is stored anywhere). Procedure for `X.Y.Z`:
+(OIDC: no PyPI token is stored anywhere). Procedure for `X.Y.Z`:
 
 1. Promote `CHANGELOG.md`'s `[Unreleased]` section to `[X.Y.Z]` (see
    *Documentation → `CHANGELOG.md`*).
@@ -805,13 +805,13 @@ Releases publish automatically via GitHub Actions **Trusted Publishing**
    `git tag -a vX.Y.Z -m "🔖 Release version X.Y.Z" && git push origin vX.Y.Z`.
 
 The `v*.*.*` tag triggers `.github/workflows/publish.yml`: it reruns
-CI across the OS matrix, builds the distributions once — failing fast
-if the tag does not match the `pyproject.toml` version — and uploads
+CI across the OS matrix, builds the distributions once (failing fast
+if the tag does not match the `pyproject.toml` version) and uploads
 them as an artifact,{% if use_testpypi %} publishes them to TestPyPI as a staging
-rehearsal,{% endif %} then — once you approve the `pypi` environment gate —
+rehearsal,{% endif %} then, once you approve the `pypi` environment gate,
 publishes the same artifacts to PyPI via OIDC. A final `github-release`
 job then creates the GitHub Release for the tag automatically, with
-the sdist + wheel attached — there is no manual release step. Its notes
+the sdist + wheel attached; there is no manual release step. Its notes
 are the matching `CHANGELOG.md` section with each wrapped paragraph or
 list item joined onto one line (GitHub renders every newline in a
 release body as a line break), closed by a `**Full Changelog**` line
@@ -821,27 +821,27 @@ to the publish jobs only.
 
 ### One-time setup (before the first release)
 
-1. **PyPI Trusted Publisher** — on PyPI, register a GitHub Actions
+1. **PyPI Trusted Publisher**: on PyPI, register a GitHub Actions
    publisher for the project: owner `{{ github_username }}`, repo
    `{{ repo_name }}`, workflow `publish.yml`, environment `pypi`. Use
    PyPI's *pending publisher* form for the very first upload (before
    the project exists on PyPI).
 {%- if use_testpypi %}
-2. **TestPyPI Trusted Publisher** — register the *same* publisher on
+2. **TestPyPI Trusted Publisher**: register the *same* publisher on
    [test.pypi.org](https://test.pypi.org/manage/account/publishing/)
    for the staging job: owner `{{ github_username }}`, repo
    `{{ repo_name }}`, workflow `publish.yml`. The `testpypi` job has
    no environment, so leave that field blank.
-3. **GitHub `pypi` environment** — create an environment named `pypi`
+3. **GitHub `pypi` environment**: create an environment named `pypi`
    in the repo settings and add yourself as a *required reviewer*, so
    every publish waits for explicit approval.
 {%- else %}
-2. **GitHub `pypi` environment** — create an environment named `pypi`
+2. **GitHub `pypi` environment**: create an environment named `pypi`
    in the repo settings and add yourself as a *required reviewer*, so
    every publish waits for explicit approval.
 
 If you decide you want a TestPyPI rehearsal step later, re-run
-`copier update` with `use_testpypi=true` — the pipeline gains a
+`copier update` with `use_testpypi=true`: the pipeline gains a
 `testpypi` job between `build` and `pypi`.
 {%- endif %}
 {% else %}

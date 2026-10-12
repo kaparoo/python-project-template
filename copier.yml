@@ -144,7 +144,7 @@ release_automation:
     github-oidc → ship `.github/workflows/publish.yml`. Pushing a `v*`
                   tag runs CI, waits for approval on a `pypi` GitHub
                   environment, then publishes to PyPI via Trusted
-                  Publishing (OIDC — no stored token). Needs a one-time
+                  Publishing (OIDC, no stored token). Needs a one-time
                   PyPI + GitHub setup, documented in the generated
                   AGENTS.md.
   choices:
@@ -157,8 +157,8 @@ use_testpypi:
   type: bool
   help: |
     Stage releases on TestPyPI before pushing to real PyPI (libraries
-    only). PyPI uploads are permanent — yank is possible, replace is
-    not — so a TestPyPI rehearsal catches install-time issues
+    only). PyPI uploads are permanent (yank is possible, replace is
+    not), so a TestPyPI rehearsal catches install-time issues
     (dependency resolution, missing files in the wheel, entry points)
     that `uvx twine check` doesn't.
 
@@ -182,7 +182,7 @@ use_testpypi:
 use_pytest:
   type: bool
   help: |
-    Configure a pytest test suite — `tests/` directory, the `pytest` dev
+    Configure a pytest test suite: `tests/` directory, the `pytest` dev
     dependency, `[tool.pytest.ini_options]`, the ruff `PT` rule with
     `[tool.ruff.lint.flake8-pytest-style]`, per-file-ignores for tests,
     and the test-adapter VSCode extension.
@@ -198,7 +198,7 @@ coverage_fail_under:
     Minimum branch-coverage percent that `pytest` enforces via
     `pytest-cov`'s `fail_under` gate.
 
-    0 (default) disables the gate — coverage is still measured and
+    0 (default) disables the gate: coverage is still measured and
     reported (`--cov-report=term-missing`), but the run never fails on
     a low percentage. Raise it once the project has a test baseline
     (e.g. 80); a fresh project with no tests yet would otherwise fail
@@ -215,7 +215,7 @@ include_todo:
     open items that aren't yet captured in code or tests. The
     generated `README.md` links to it from a 📋 TODO section.
 
-    Disable for tiny projects where a TODO file is overkill — the
+    Disable for tiny projects where a TODO file is overkill; the
     `README.md` section is omitted in sync.
   default: true
 

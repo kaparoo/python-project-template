@@ -677,7 +677,7 @@ def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
     assert "### `README.md`" in agents
     assert "The root `README.md` is the landing page" in agents
     assert "word for word the\n   `description` in `pyproject.toml`" in agents
-    for lead in ("📦 Installation —", "🚀 Quick start —", "🧩 Modules —"):
+    for lead in ("📦 Installation:", "🚀 Quick start:", "🧩 Modules:"):
         assert lead in agents, f"missing lead section {lead}"
     assert "5. Project-specific sections" in agents
     assert "📋 TODO, 📜 Changelog, ⚖️ License." in agents
@@ -690,7 +690,7 @@ def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
     assert "`#resolving-conflicts-on_conflict`" in agents
     assert "| that README → `## Contents`, if present" in agents
     assert "only the root README reaches PyPI" in agents
-    assert "📦 Setup —" not in agents
+    assert "📦 Setup:" not in agents
     assert "🗂️ Layout" not in agents
     # Design decisions as MADR records, and AGENTS itself.
     assert "### `docs/decisions/`" in agents
@@ -713,7 +713,7 @@ def test_agents_md_doc_upkeep_rules_follow_options(tmp_path: Path) -> None:
     assert "📋 TODO" not in agents
     assert "🧩 Modules" not in agents
     assert "PyPI" not in agents
-    for lead in ("📦 Setup —", "🚀 Usage —", "🗂️ Layout, once"):
+    for lead in ("📦 Setup:", "🚀 Usage:", "🗂️ Layout, once"):
         assert lead in agents, f"missing lead section {lead}"
     assert "| `README.md` → 🚀 Usage" in agents
     assert "   📜 Changelog, ⚖️ License." in agents

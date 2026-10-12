@@ -8,7 +8,7 @@
 [![Copier](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/copier-org/copier/master/img/badge/badge-grayscale-inverted-border-purple.json)](https://github.com/copier-org/copier)
 
 A personal [copier](https://copier.readthedocs.io/) template for bootstrapping
-Python projects with the Astral toolchain — `uv`, `ruff`, `ty` — plus `pytest`,
+Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus `pytest`,
 all pre-configured.
 
 ## 🚀 Quick start
@@ -42,7 +42,7 @@ versions without losing your customizations.
 
 | Question | Type | Default | Notes |
 |----------|------|---------|-------|
-| `project_name` | str | *(required)* | PEP 503 form — lowercase, hyphens |
+| `project_name` | str | *(required)* | PEP 503 form: lowercase, hyphens |
 | `project_description` | str | `""` | One-line summary |
 | `package_name` | str | *derived* | snake_case of `project_name` |
 | `author_name` | str | `Jaewoo Park` | Used in pyproject + LICENSE |
@@ -52,7 +52,7 @@ versions without losing your customizations.
 | `python_version` | choice | `3.14` | Oldest supported; CI tests it and every newer choice. `3.13` / `3.14` / `3.15`; `3.12` is deprecated |
 | `license_year` | int | `2026` | Copyright year |
 | `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
-| `release_automation` | choice | `manual` | `manual` / `github-oidc` — ship `publish.yml` (libraries only) |
+| `release_automation` | choice | `manual` | `manual` / `github-oidc`; `github-oidc` ships `publish.yml` (libraries only) |
 | `use_testpypi` | bool | `true` | Stage on TestPyPI before PyPI (libraries only) |
 | `use_pytest` | bool | `true` | Adds `tests/` + pytest config |
 | `coverage_fail_under` | int | `0` | Branch-coverage gate; `0` = off (pytest only) |
@@ -64,7 +64,7 @@ asked when their parent feature is enabled (a library, or pytest).
 - **`is_library = false`** produces an application (no build system, no
   `py.typed` marker); uv treats it as a non-distributable project.
 - **`use_pytest = false`** omits the entire pytest layer (`tests/`,
-  config, ruff `PT` rule) — useful for ML/DL projects where
+  config, ruff `PT` rule), useful for ML/DL projects where
   deterministic test workflows are impractical.
 
 ## 🗂️ Layout

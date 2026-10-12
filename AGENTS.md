@@ -1,7 +1,7 @@
-# Agent guide — `python-project-template`
+# Agent guide: `python-project-template`
 
 This file is for AI coding assistants (Claude Code, Copilot, etc.) working
-**on this repository itself** — the copier template source.
+**on this repository itself**, the copier template source.
 
 > ⚠️ Do not confuse with [`template/AGENTS.md`](./template/AGENTS.md), which
 > is the (empty) AGENTS.md that ships **inside** generated projects.
@@ -15,30 +15,30 @@ Python projects with `uv`, `ruff`, `ty`, and `pytest` pre-configured.
 
 - **Author / sole user**: Jaewoo Park (`kaparoo`)
 - **Audience of generated projects**: also the author
-- **Public consumption**: not expected — design for the author's workflow first
+- **Public consumption**: not expected; design for the author's workflow first
 
 ## Variants
 
-Two branches, two independent version lines — never confuse them:
+Two branches, two independent version lines. Never confuse them:
 
 | Branch | Tag form | `copier` resolution | Default `use_pytest` |
 |--------|----------|----------------------|----------------------|
-| `main` | `vX.Y.Z` (PEP 440) | Latest `v*` tag — used when no `--vcs-ref` | `true` |
+| `main` | `vX.Y.Z` (PEP 440) | Latest `v*` tag, used when no `--vcs-ref` | `true` |
 | `pytorch` | `pytorch-vX.Y.Z` (not PEP 440 → ignored by copier auto-resolve) | Requires explicit `--vcs-ref pytorch` (or `--vcs-ref pytorch-vX.Y.Z`) | `false` (DL workflows are non-deterministic) |
 
 The `pytorch-v*` tags are **deliberately** not PEP 440 so they never
-shadow the base template's `copier copy` / `copier update` resolution —
+shadow the base template's `copier copy` / `copier update` resolution;
 otherwise a default `copier copy gh:kaparoo/python-project-template`
 would hijack to the highest tag regardless of branch.
 
 **Variant policy**: shared changes land on `main` first, then are
-merged forward into `pytorch`. The reverse direction is never used —
+merged forward into `pytorch`. The reverse direction is never used:
 `pytorch`-only features (torch dependencies, compute-backend questions,
 PyTorch wheel index) stay on `pytorch`. See
 [Merging `main` into `pytorch`](#merging-main-into-pytorch) below for
 the recurring `CHANGELOG.md` resolution pattern.
 
-## Layout — two distinct concerns
+## Layout: two distinct concerns
 
 ```
 .
@@ -47,7 +47,7 @@ the recurring `CHANGELOG.md` resolution pattern.
 ├── pyproject.toml             ← WORKSPACE tooling only (copier + pytest + ruff)
 ├── tests/                     ← tests for the template itself
 ├── TODO.md                    ← open work on the template itself
-├── template/                  ← THE TEMPLATE — every file here ships to users
+├── template/                  ← THE TEMPLATE: every file here ships to users
 │   ├── pyproject.toml.jinja   ← rendered into generated projects
 │   ├── ...
 │   └── {{ package_name }}/    ← directory name is a Jinja variable
@@ -93,7 +93,7 @@ It catches what slipped through; it does not replace the local run.
 ### 4. Some tests run the real toolchain on a generated project
 
 A few integration tests in `tests/test_generate.py` don't just inspect
-rendered text — they `git init` / `uv lock` / `uv sync` / commit a
+rendered text: they `git init` / `uv lock` / `uv sync` / commit a
 generated project, run the gates its `ci.yml` defines (`ruff format
 --check`, `ruff check`, `ty check`, `pytest`), and build a library with
 `uv build`, so a template or dependency change that breaks a generated
@@ -105,7 +105,7 @@ project fails here rather than only in manual dogfooding. These need:
 ## Commit convention
 
 Follow the commit convention documented under *Commit convention* in
-[`README.md`](./README.md) — emoji prefix, backticked
+[`README.md`](./README.md): emoji prefix, backticked
 tool names, single-purpose commits, no rewriting of published history,
 no skipped hooks.
 
@@ -116,7 +116,7 @@ agents accumulate changes and commit only on request, split with
 `git stash`. Pushing still waits for the user.
 
 **AI-specific requirement**: append a `Co-Authored-By` trailer with the
-acting assistant's own published identity — do not hardcode one vendor.
+acting assistant's own published identity; do not hardcode one vendor.
 
 ```
 Co-Authored-By: <agent-name> <agent-email>
@@ -128,7 +128,7 @@ Examples:
 
 ## Changelog
 
-`CHANGELOG.md` follows the same rules generated projects get — read
+`CHANGELOG.md` follows the same rules generated projects get; read
 *Documentation → `CHANGELOG.md`* in
 [`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja) (skip the Jinja
 tags; the library wording applies). In short: the six Keep a Changelog
@@ -140,7 +140,7 @@ at the bottom.
 What counts as **external behavior** here is what a template user meets
 through `copier copy` / `copier update`:
 
-- the questions — names, help, choices, defaults, validators, `when`;
+- the questions (names, help, choices, defaults, validators, `when`);
 - the generated files and their content, including `.copier-answers.yml`;
 - `_tasks`, the after-copy / after-update messages, and `_migrations`.
 
@@ -155,7 +155,7 @@ The `pytorch` branch keeps its variant changelog under the same rules.
 [`TODO.md`](./TODO.md) holds open work on this template: releases, the
 `pytorch` variant, downstream updates, and rule or infrastructure
 changes put off for later. It follows the rules generated projects
-get — read *Documentation → `TODO.md`* in
+get; read *Documentation → `TODO.md`* in
 [`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja). Read it
 before starting a change, and delete an item in the commit that
 resolves it.
@@ -165,11 +165,11 @@ resolves it.
 This workspace itself is versioned with SemVer (see
 [`CHANGELOG.md`](./CHANGELOG.md)):
 
-- `MAJOR` — changes that need a `_migrations` entry in `copier.yml`
+- `MAJOR`: changes that need a `_migrations` entry in `copier.yml`
   (so existing generated projects can update across them).
-- `MINOR` — new copier options, new generated files, new sections in
+- `MINOR`: new copier options, new generated files, new sections in
   generated docs.
-- `PATCH` — fixes, doc tweaks, behavior-preserving cleanup.
+- `PATCH`: fixes, doc tweaks, behavior-preserving cleanup.
 
 ### Cutting a release
 
@@ -190,7 +190,7 @@ For shared work, the order is **main first, then `pytorch`**:
 release `vX.Y.Z` on `main`, merge `main` into `pytorch` (resolving
 the CHANGELOG conflict per below), then promote pytorch's own
 `[Unreleased]` to `[X.Y.Z]` and tag `pytorch-vX.Y.Z`. The two
-version sequences are **independent** — `pytorch-v1.1.0` is not
+version sequences are **independent**: `pytorch-v1.1.0` is not
 required to mirror `v1.1.0` numerically once they diverge.
 
 ### Merging `main` into `pytorch`
@@ -202,14 +202,14 @@ git switch pytorch
 git merge main --no-ff -m "🔀 Merge \`main\` into \`pytorch\`"
 ```
 
-**Recurring `CHANGELOG.md` conflict** — pytorch keeps a variant-only
+**Recurring `CHANGELOG.md` conflict**: pytorch keeps a variant-only
 changelog (it does NOT mirror `main`'s release history). Resolution
 principle:
 
-- **Take** main's new `[Unreleased]` bullets (Added / Changed / Fixed) —
+- **Take** main's new `[Unreleased]` bullets (Added / Changed / Fixed):
   the underlying template change applies to both branches.
 - **Drop** main's `## [X.Y.Z]` heading and any base `v*` comparison
-  links — pytorch has its own release line.
+  links: pytorch has its own release line.
 - **Keep** pytorch's existing `## [X.Y.Z]` headings (the variant's
   prior releases) and the `pytorch-v*` comparison links at the
   bottom.
@@ -246,7 +246,7 @@ default-false there).
 
 ### Modifying ruff/ty/pytest config in generated projects
 
-Edit `template/pyproject.toml.jinja`, then run the suite — the
+Edit `template/pyproject.toml.jinja`, then run the suite: the
 integration tests render a generated project, build it (for libraries),
 and run its lint/type/test gates, so a broken config surfaces here.
 
@@ -255,10 +255,10 @@ and run its lint/type/test gates, so a broken config surfaces here.
 A question's default, choices, help, validator, or `when` is external
 behavior (see [Changelog](#changelog)), so a change to one touches:
 
-1. `copier.yml` — the question itself.
-2. [`README.md`](./README.md) options table — its row (type, default,
+1. `copier.yml`: the question itself.
+2. [`README.md`](./README.md) options table: its row (type, default,
    notes) and the prose under the table that describes it.
-3. `tests/test_generate.py` — the new value and, where it matters, the
+3. `tests/test_generate.py`: the new value and, where it matters, the
    old one.
 4. `CHANGELOG.md` → `[Unreleased]`.
 
@@ -274,24 +274,24 @@ it goes in its `help`, and warn in `_message_after_copy` /
 The list of offered versions lives in `copier.yml`; everything else
 reads the `python_version` answer. A change touches:
 
-1. `copier.yml` — `choices`, `default`, `help`, the deprecation
+1. `copier.yml`: `choices`, `default`, `help`, the deprecation
    warnings in the after-copy / after-update messages, and the list in
    the computed `python_versions` right below the question.
-2. [`README.md`](./README.md) — the Python badge lists every version
+2. [`README.md`](./README.md): the Python badge lists every version
    still offered (deprecated ones included), and the options table row
    and its notes.
-3. `tests/test_generate.py` — the default, a round-trip of each new
+3. `tests/test_generate.py`: the default, a round-trip of each new
    choice, rejection of a version outside the list, and the warning for
    a deprecated choice and its absence on the default.
-4. `CHANGELOG.md` — `Added` for a new choice, `Changed` for a new
+4. `CHANGELOG.md`: `Added` for a new choice, `Changed` for a new
    default, `Deprecated` / `Removed` for a choice on its way out.
 
-Inside `template/`, `python_version` — the oldest supported version —
+Inside `template/`, `python_version` (the oldest supported version)
 is rendered into `.python-version`, `requires-python`,
 `[tool.ty.environment] python-version`, the README requirement line,
-and the generated `AGENTS.md`. `python_versions` — every offered
+and the generated `AGENTS.md`. `python_versions` (every offered
 version from that one up, computed and never recorded in
-`.copier-answers.yml` — is rendered into the classifiers, the README
+`.copier-answers.yml`) is rendered into the classifiers, the README
 badge, and the `ci.yml` test matrix. A new place that needs a version
 reads one of the two variables, never a literal.
 
@@ -304,15 +304,15 @@ the dev tooling needs it.
 Raise generated-project and workspace minimums to the current PyPI
 release together, in one `⬆️` commit:
 
-1. `template/pyproject.toml.jinja` — the `dev` dependency group
+1. `template/pyproject.toml.jinja`: the `dev` dependency group
    (`ruff`, `ty`, `pytest`, `pytest-cov`), `[build-system] requires`
    (`uv_build>=X.Y.Z,<X.(Y+1)`), `[tool.ruff] required-version`, and the
-   "omitted (ruff vX.Y.Z)" note at the end of the file — re-check that
+   "omitted (ruff vX.Y.Z)" note at the end of the file; re-check that
    the sections it lists still use only defaults.
-2. [`pyproject.toml`](./pyproject.toml) — the workspace `dev` group
+2. [`pyproject.toml`](./pyproject.toml): the workspace `dev` group
    (`copier`, `pytest`, `ruff`) and its `[tool.ruff] required-version`,
    then `uv lock --upgrade` for `uv.lock`.
-3. This file — `copier (>=X.Y.Z)` in
+3. This file: `copier (>=X.Y.Z)` in
    [Toolchain choices](#toolchain-choices-dont-second-guess-without-cause).
 4. Run the full suite: the integration tests run the new versions on a
    generated project, so an incompatible release fails here.
@@ -323,7 +323,7 @@ release together, in one `⬆️` commit:
 
 1. Every `uses:` in `template/.github/workflows/ci.yml.jinja` and
    `publish.yml.jinja`, and in this repo's own
-   `.github/workflows/ci.yml` — one action, one version across all
+   `.github/workflows/ci.yml`: one action, one version across all
    three files.
    `pypa/gh-action-pypi-publish` stays on `release/v1`, the ref PyPA
    documents.
@@ -351,8 +351,8 @@ has no date in its render context without the `jinja2-time`
 extension, which every user would then have to install alongside
 Copier. In January:
 
-1. `copier.yml` — raise `license_year`'s `default`.
-2. [`README.md`](./README.md) — the `license_year` row of the options
+1. `copier.yml`: raise `license_year`'s `default`.
+2. [`README.md`](./README.md): the `license_year` row of the options
    table.
 3. `CHANGELOG.md` → `Changed`.
 
@@ -389,11 +389,11 @@ falls back to the latest tag and silently misses post-tag changes.
 
 ## Things to avoid
 
-- Editing `template/.vscode/extensions.json` (no extension) — the active
+- Editing `template/.vscode/extensions.json` (no extension): the active
   file is `template/.vscode/extensions.json.jinja`. The same applies to
   every `.jinja` file.
 - Adding Python plugin-based tools (`mypy plugins`, `django-stubs`)
-  to generated projects — `ty` deliberately has no plugin system. Use
+  to generated projects: `ty` deliberately has no plugin system. Use
   PEP 681 `dataclass_transform` or direct stubs instead.
 - Committing `dist/`, `.venv/`, `.cache/`, `_gen_*/` test artifacts.
 - Force-pushing to `main` or `pytorch` without explicit user

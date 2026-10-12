@@ -109,7 +109,7 @@ jobs:
             flag { print }
           ' CHANGELOG.md > section.md
           if ! grep -q '[^[:space:]]' section.md; then
-            echo "::error::No CHANGELOG section for $GITHUB_REF_NAME — promote [Unreleased] to a dated ## [$version] heading before tagging."
+            echo "::error::No CHANGELOG section for $GITHUB_REF_NAME. Promote [Unreleased] to a dated ## [$version] heading before tagging."
             exit 1
           fi
           # GitHub renders every newline in a release body as a line break,
@@ -140,7 +140,7 @@ jobs:
           if [ -n "$compare" ]; then
             printf '\n**Full Changelog**: %s\n' "$compare" >> release-notes.md
           else
-            echo "::warning::No [$version] link reference in CHANGELOG.md — the release notes go out without a comparison link."
+            echo "::warning::No [$version] link reference in CHANGELOG.md, so the release notes go out without a comparison link."
           fi
           cat release-notes.md
 
