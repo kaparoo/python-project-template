@@ -570,9 +570,22 @@ def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
     assert "`DeprecationWarning`" in agents
     assert "Cut a release only when the user asks" in agents
     assert "https://github.com/kaparoo/test-app/compare/vX.Y.Z...HEAD" in agents
-    # TODO, README (Modules is library-only), and AGENTS itself.
+    # TODO: open work only, one line or a short body with a revisit trigger.
     assert "### `TODO.md`" in agents
-    assert "🧩 Modules has one bullet per public module" in agents
+    assert "holds **open work only**" in agents
+    assert "`Revisit when ...`" in agents
+    assert 'no "Done" section' in agents
+    # README: a landing page; PyPI-safe links and the hub are library-only.
+    assert "### `README.md`" in agents
+    assert "`README.md` is the landing page" in agents
+    assert "https://github.com/kaparoo/test-app/blob/main/<path>" in agents
+    assert "🧩 Modules gives each public module or subpackage" in agents
+    assert "The root README then becomes a hub" in agents
+    assert "📦 Development setup lists every step" not in agents
+    # Design decisions as MADR records, and AGENTS itself.
+    assert "### `docs/decisions/`" in agents
+    assert "`docs/decisions/NNNN-title-with-dashes.md`" in agents
+    assert "superseded by NNNN" in agents
     assert "### `AGENTS.md`" in agents
 
 
@@ -586,7 +599,11 @@ def test_agents_md_doc_upkeep_rules_follow_options(tmp_path: Path) -> None:
     assert "a command, an option, or a configuration" in agents
     assert "DeprecationWarning" not in agents
     assert "TODO.md" not in agents
+    assert "📋 TODO" not in agents
     assert "🧩 Modules" not in agents
+    assert "PyPI" not in agents
+    assert "📦 Development setup lists every step" in agents
+    assert "### `docs/decisions/`" in agents
 
 
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:

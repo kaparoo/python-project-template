@@ -14,10 +14,17 @@ for new copier options or features, `PATCH` for fixes.
 - `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
   The default stays `3.14`.
 - A `## Documentation` section in the generated `AGENTS.md`: which
-  document a change updates, and how to write `CHANGELOG.md` (the six
-  Keep a Changelog categories, external behavior only, phrasing,
-  `**Breaking:**`, deprecations, link references), `TODO.md`,
-  `README.md`, and `AGENTS.md` itself.
+  document a change updates, and how to write each one:
+  - `CHANGELOG.md`: the six Keep a Changelog categories, external
+    behavior only, phrasing, `**Breaking:**`, deprecations, and link
+    references.
+  - `TODO.md`: open work only, as one-line items or a short body that
+    ends with a `Revisit when ...` condition.
+  - `README.md`: a landing page with runnable examples; for a library,
+    absolute links for PyPI and a hub for per-subpackage READMEs.
+  - Design decisions: one MADR-style record per decision under
+    `docs/decisions/`, superseded rather than rewritten.
+  - `AGENTS.md` itself.
 - A `## Releases` section in the generated `AGENTS.md` for applications
   (`is_library = false`): versions are promoted and tagged, not
   published.

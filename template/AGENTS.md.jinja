@@ -154,6 +154,7 @@ example) is its own `📝` commit.
 {%- if is_library %}
 | adds, removes, or renames a public module                 | `README.md` → 🧩 Modules                 |
 | changes how the package is installed                      | `README.md` → 📦 Installation            |
+| changes an API that a README example uses                 | that README → the example                |
 {%- else %}
 | changes how the project is set up or run                  | `README.md` → 📦 Development setup       |
 {%- endif %}
@@ -161,6 +162,7 @@ example) is its own `📝` commit.
 | defers work, or uncovers a problem it does not fix        | `TODO.md` → add an item                  |
 | resolves a `TODO.md` item                                 | `TODO.md` → remove the item              |
 {%- endif %}
+| settles a design choice later work should not reopen      | `docs/decisions/` → add a record         |
 | settles a convention later sessions must follow           | `AGENTS.md` → below the marker           |
 
 Each document has one audience and one tense:
@@ -172,6 +174,8 @@ Each document has one audience and one tense:
 {%- if include_todo %}
 - `TODO.md` lists work that is **not done yet**.
 {%- endif %}
+- `docs/decisions/` records **why** the code is shaped as it is — one
+  decision per file, written once.
 - `AGENTS.md` holds rules for whoever works on the code next.
 
 ### `CHANGELOG.md`
@@ -290,33 +294,110 @@ promote `[Unreleased]` for release `X.Y.Z`:
 
 ### `TODO.md`
 
-- Items form a flat bullet list under `## Open`. One line each: what
-  needs doing and why, led by the relevant path in backticks when there
-  is one — "`io/reader.py`: stream large files instead of reading them
-  whole (memory spikes above ~1 GB)."
-- Add an item when work is deliberately deferred — out of scope for the
-  current change, blocked on a decision, or a limitation found along the
-  way. Not for something the current change finishes.
-- Prefer an item here over a `# TODO` comment for anything a later
+`TODO.md` holds **open work only**: work deliberately deferred — out of
+scope for the current change, blocked on a decision, or a limitation
+found along the way. It is not a design document, a progress log, or a
+record of what is done: decisions go to `docs/decisions/`, finished
+work to git history and `CHANGELOG.md`.
+
+- An item is one bullet by default: what needs doing and why, led by
+  the relevant path in backticks when there is one — "`io/reader.py`:
+  stream large files instead of reading them whole (memory spikes above
+  ~1 GB)."
+- Only when one line cannot carry it, give the item a `### <what needs
+  doing>` heading and a short body: the problem (a code snippet may show
+  it), why it was deferred, and a closing `Revisit when ...` line naming
+  what should reopen it — a use case that needs it, a measurement that
+  would justify it, or the decision it waits on. A body that grows past
+  a few short paragraphs is a design question: settle it in a
+  `docs/decisions/` record and keep only the remaining work here.
+- Items sit under `## Open`, most important first. Once the list
+  outgrows a screen, replace `## Open` with `##` headings by area (a
+  package or a topic), most important first within each.
+- No owners, dates, status markers, checkboxes, or "last updated"
+  lines — git history records who and when.
+- Add an item only for work the current change does not finish, and
+  prefer an item here over a `# TODO` comment for anything a later
   session should pick up.
-- Delete an item in the commit that resolves it (there is no "Done"
-  section) and add a `CHANGELOG.md` entry if users can see the result.
-  Restore `_No entries yet._` when the list becomes empty.
+- Delete an item in the commit that resolves it — no "Done" section, no
+  strikethrough — and add a `CHANGELOG.md` entry if users can see the
+  result. An item dropped without being done is deleted the same way,
+  with the reason in the commit message. Restore `_No entries yet._`
+  when the list becomes empty.
 {%- endif %}
 
 ### `README.md`
 
+`README.md` is the landing page: what the project is, how to
+{% if is_library %}install it{% else %}set it up and run it{% endif %}, a short example, and where to read further. It
+is not a reference — signatures, options, and edge cases belong in
+docstrings.
+
 - Keep the existing sections, their order, and the badges; edit
-  sections in place.
+  sections in place. A new section goes before{% if include_todo %} 📋 TODO and{% endif %}
+  📜 Changelog; ⚖️ License stays last.
 - Keep the one-line description under the badges in sync with
-  `description` in `pyproject.toml`.
+  `description` in `pyproject.toml`, under 120 characters.
+- Every code example runs against the current code: a change that breaks
+  one updates it in the same commit. Show the result when it is the
+  point, as a trailing `# -> ...` comment.
 {%- if is_library %}
-- 🧩 Modules has one bullet per public module: its import path in
-  backticks and a one-line purpose. Update it whenever a public module
-  is added, removed, or renamed; the first entry replaces the
-  placeholder. It is an overview, not an API reference — signatures and
-  details belong in docstrings.
+- The root README is also the PyPI project page, which has none of the
+  repository's other files. Link a repository file by absolute URL —
+  `https://github.com/{{ github_username }}/{{ repo_name }}/blob/main/<path>`, or
+  `/tree/main/<dir>` for a directory — never by a relative path such as
+  `./CHANGELOG.md`, which 404s there; in-page `#anchors` are fine. Leave
+  out what PyPI cannot render: Mermaid diagrams, `<picture>`, and images
+  by relative path.
+- 🧩 Modules gives each public module or subpackage its import path in
+  backticks and what it offers — a line, or a short paragraph under a
+  `###` heading once there is more to say. Update it whenever a public
+  module is added, removed, or renamed; the first entry replaces the
+  placeholder.
+- As the package grows, a subpackage can get its own `README.md` next
+  to its code. The root README then becomes a hub: the subpackage's
+  🧩 Modules entry keeps its summary and links to that README, and the
+  subpackage's usage examples live there, not in the root. A subpackage
+  README follows the rules above, but may link relatively — only the
+  root README reaches PyPI.
+{%- else %}
+- 📦 Development setup lists every step a fresh clone needs before the
+  project runs — environment files, system libraries, hardware or
+  driver requirements — each with its command.
 {%- endif %}
+
+### `docs/decisions/`
+
+Record a design decision — a choice between real alternatives that
+later work should respect rather than reopen — as an Architecture
+Decision Record: one file per decision at
+`docs/decisions/NNNN-title-with-dashes.md`, numbered in sequence from
+`0001` and never renumbered. Create the directory with the first record.
+A rule for how code is written is not a decision record; it goes to
+`AGENTS.md`.
+
+Use the [MADR](https://adr.github.io/madr/) shape, kept short:
+
+```markdown
+# <Decision, stated as a short sentence>
+
+- Status: accepted
+- Date: YYYY-MM-DD
+
+## Context and problem statement
+
+## Considered options
+
+## Decision outcome
+
+## Consequences
+```
+
+- Write the record in the commit that implements the decision, or in
+  its own `📝` commit when the decision comes first.
+- A record is history: once accepted, change it only to fix a factual
+  error. When a later decision reverses it, write a new record and set
+  the old one's status to `superseded by NNNN`.
 
 ### `AGENTS.md`
 
