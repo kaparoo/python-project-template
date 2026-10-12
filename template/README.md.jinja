@@ -43,7 +43,8 @@ _Document your modules here._
 {% else -%}
 ## 📦 Setup
 
-Requires Python {{ python_version }}+.
+Requires Python {{ python_version }}+{% if compute_backend == 'cuda' %} and an NVIDIA GPU whose driver
+supports CUDA {{ cuda_version }}{% endif %}.
 
 ```bash
 git clone https://github.com/{{ github_username }}/{{ repo_name }}.git

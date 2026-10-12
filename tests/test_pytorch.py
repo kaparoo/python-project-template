@@ -82,3 +82,16 @@ def test_pytest_projects_get_a_cuda_skip_mark(render: Render) -> None:
 
     project = render()
     assert not (project / "tests").exists()
+
+
+def test_application_setup_names_the_gpu_requirement(render: Render) -> None:
+    project = render({"is_library": False})
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert (
+        "Requires Python 3.14+ and an NVIDIA GPU whose driver\nsupports CUDA 13.0."
+        in readme
+    )
+
+    cpu = render({"is_library": False, "compute_backend": "cpu"})
+    readme = (cpu / "README.md").read_text(encoding="utf-8")
+    assert "## 📦 Setup\n\nRequires Python 3.14+.\n" in readme

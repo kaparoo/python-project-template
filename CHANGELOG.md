@@ -92,6 +92,8 @@ for new copier options or features, `PATCH` for fixes.
   imports the package, so the generated CI passes on the first push;
   until now `pytest` collected nothing and failed it, which also
   blocked `publish.yml`.
+- The NVIDIA GPU and CUDA driver requirement in an application's
+  `📦 Setup` when `compute_backend` is `cuda`.
 - A `tests/marks.py` in pytest projects holding `requires_cuda`, a
   `skipif` mark for tests that need a CUDA device.
 - A registered `slow` pytest marker in generated projects, and
