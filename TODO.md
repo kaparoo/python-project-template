@@ -6,10 +6,11 @@ resolves it.
 
 ## Releases and variants
 
-- Cut `v1.6.0` once the user asks for it. `[Unreleased]` already holds
-  a minor release: the `python_version` range moved to 3.13–3.15, the
-  CI Python matrix, and the generated `AGENTS.md` documentation,
-  dependency, and README rules.
+- Cut `v2.0.0` once the user asks for it. It is a major release:
+  removing the `3.12` choice breaks `copier update` for a project that
+  recorded it. `[Unreleased]` also holds the CI Python matrix and build
+  job, the stricter `ruff` settings, and the generated `AGENTS.md`
+  workflow, code style, test, dependency, and documentation rules.
 - Run the generated CI on GitHub Actions once: render a project, push
   it to a scratch repository, and check that Linux runs every
   supported version while Windows and macOS fall back to
@@ -28,11 +29,30 @@ beyond the usual `CHANGELOG.md` one (see *Merging `main` into
   the variant's CPU `torch` install and its `lock` job;
 - `tests/test_generate.py`, where `use_pytest` defaults to `false`.
 
-Before taking the matrix, check which Python versions the pinned
-`torch` and `torchvision` ship wheels for, and narrow
-`python_versions` on that branch to match.
+Work the variant needs beyond resolving conflicts:
 
-Revisit when `v1.6.0` is tagged: shared work lands on `main` first.
+- Narrow the `python_version` choices and the computed
+  `python_versions` to 3.13–3.14. `torch` 2.12.1 and `torchvision`
+  0.27.1 ship wheels for cp310–cp314 only (CPU and `cu130` alike), so a
+  3.15 job could not install them. Widen it once they ship cp315.
+- Fold the new CI into the variant's: the matrix and `setup-uv`'s
+  `python-version` under the job-level `UV_INDEX` CPU override, the
+  separate `lock` job in place of `--locked`, and `UV_INDEX` on the
+  library `build` job too, or its isolated install pulls the CUDA
+  `torch` from PyPI.
+- In the generated `AGENTS.md`: say the `lock` job, not
+  `uv sync --locked`, catches a stale lock; add to *Supported Python
+  versions* that `torch` must ship wheels for each one; list what moves
+  with `torch_version` (the minimum and the badge); recast the
+  variant-only lines that still use em dashes.
+- Add `{"use_pytest": True}` to the new tests that assume pytest, and
+  expect the narrower matrix.
+- Also, as agreed: generate a `tests/marks.py` holding a
+  `requires_cuda` skip mark when `use_pytest` is on, and pre-fill the
+  GPU and driver requirement in an application's 📦 Setup when
+  `compute_backend` is `cuda`.
+
+Revisit when `v2.0.0` is tagged: shared work lands on `main` first.
 
 ## Infrastructure
 

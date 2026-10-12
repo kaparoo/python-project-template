@@ -168,8 +168,9 @@ resolves it.
 This workspace itself is versioned with SemVer (see
 [`CHANGELOG.md`](./CHANGELOG.md)):
 
-- `MAJOR`: changes that need a `_migrations` entry in `copier.yml`
-  (so existing generated projects can update across them).
+- `MAJOR`: changes that break `copier update` for an existing
+  generated project: a removed question or choice, or anything that
+  needs a `_migrations` entry in `copier.yml` to update across.
 - `MINOR`: new copier options, new generated files, new sections in
   generated docs.
 - `PATCH`: fixes, doc tweaks, behavior-preserving cleanup.
