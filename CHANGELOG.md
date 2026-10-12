@@ -154,6 +154,9 @@ for new copier options or features, `PATCH` for fixes.
 - The generated `README.md` of a library links `LICENSE`, `TODO.md`, and
   `CHANGELOG.md` by absolute GitHub URL, so the links no longer 404 on
   the PyPI project page. Applications keep relative links.
+- The generated `.gitignore`, `.gitattributes`, and `TODO.md` have LF
+  line endings like every other generated file; rendered on Windows
+  with `core.autocrlf` on, they used to come out with CRLF.
 
 ## [1.5.5] - 2026-07-07
 

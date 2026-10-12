@@ -160,3 +160,13 @@ def test_generated_docs_use_no_em_dash(
             if "\N{EM DASH}" in line or " -- " in prose:
                 dashed.append(f"{name}:{number}: {line}")
     assert not dashed, "\n".join(dashed)
+
+
+def test_generated_files_use_lf_line_endings(render: Render) -> None:
+    project = render()
+    crlf = [
+        path.relative_to(project).as_posix()
+        for path in project.rglob("*")
+        if path.is_file() and b"\r\n" in path.read_bytes()
+    ]
+    assert not crlf, f"CRLF line endings in {crlf}"

@@ -10,3 +10,7 @@
 *.py   text eol=lf
 *.md   text eol=lf
 *.jinja text eol=lf
+# Every file under `template/` ships to generated projects, including
+# ones no extension rule matches (`.gitignore`, `.gitattributes`, and
+# conditional names that end in `{% endif %}`), so all of it is LF.
+template/** text eol=lf
