@@ -109,6 +109,12 @@ Follow the commit convention documented in
 tool names, single-purpose commits, no rewriting of published history,
 no skipped hooks.
 
+In this repository, commit each completed step as you go, without
+waiting to be asked; the user reviews the history step by step. This
+differs on purpose from generated projects, whose `AGENTS.md` has
+agents accumulate changes and commit only on request, split with
+`git stash`. Pushing still waits for the user.
+
 **AI-specific requirement**: append a `Co-Authored-By` trailer with the
 acting assistant's own published identity — do not hardcode one vendor.
 
