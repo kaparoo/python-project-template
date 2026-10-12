@@ -69,3 +69,16 @@ def test_dependency_guide_covers_torch(render: Render) -> None:
     assert "`torch` and `torchvision` install from the `pytorch` index" in prose(deps)
     assert "moves the README's PyTorch badge" in prose(deps)
     assert "The newest version is also capped by `torch`" in prose(deps)
+
+
+def test_pytest_projects_get_a_cuda_skip_mark(render: Render) -> None:
+    project = render({"use_pytest": True})
+    marks = (project / "tests" / "marks.py").read_text(encoding="utf-8")
+    assert "requires_cuda = pytest.mark.skipif(" in marks
+    assert "not torch.cuda.is_available()" in marks
+    assert 'reason="needs a CUDA device"' in marks
+    tests = (project / "tests" / "AGENTS.md").read_text(encoding="utf-8")
+    assert "`tests/marks.py` starts with `requires_cuda`" in prose(tests)
+
+    project = render()
+    assert not (project / "tests").exists()

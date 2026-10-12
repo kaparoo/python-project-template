@@ -124,7 +124,8 @@ whenever it works in `tests/`; the project-wide rules are in the root
   - a platform, device, or service: a `skipif` mark defined once in
     `tests/marks.py` and imported where needed
     (`from tests.marks import requires_cuda`), never redefined per
-    file;
+    file. `tests/marks.py` starts with `requires_cuda`, which skips
+    on a machine without a CUDA device, CI's runners included;
   - data the repository does not hold: the opt-in fixture of
     *Test data*.
 - Parametrize over the condition rather than duplicating a test

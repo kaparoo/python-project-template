@@ -92,6 +92,8 @@ for new copier options or features, `PATCH` for fixes.
   imports the package, so the generated CI passes on the first push;
   until now `pytest` collected nothing and failed it, which also
   blocked `publish.yml`.
+- A `tests/marks.py` in pytest projects holding `requires_cuda`, a
+  `skipif` mark for tests that need a CUDA device.
 - A registered `slow` pytest marker in generated projects, and
   `tests/assets/local/` in the generated `.gitignore` for test data too
   large or private to commit.
