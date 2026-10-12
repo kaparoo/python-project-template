@@ -113,6 +113,30 @@ Examples:
 - Claude Code → `Co-Authored-By: Claude <noreply@anthropic.com>`
 - GitHub Copilot → `Co-Authored-By: Copilot <198982749+Copilot@users.noreply.github.com>`
 
+## Changelog
+
+`CHANGELOG.md` follows the same rules generated projects get — read
+*Documentation → `CHANGELOG.md`* in
+[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja) (skip the Jinja
+tags; the library wording applies). In short: the six Keep a Changelog
+categories only, in order; noun phrases under `Added` / `Removed`,
+subject + present tense elsewhere; short entries, with `**Breaking:**`,
+`Deprecated`, and `Removed` spelling out the upgrade; link references
+at the bottom.
+
+What counts as **external behavior** here is what a template user meets
+through `copier copy` / `copier update`:
+
+- the questions — names, help, choices, defaults, validators, `when`;
+- the generated files and their content, including `.copier-answers.yml`;
+- `_tasks`, the after-copy / after-update messages, and `_migrations`.
+
+Everything that stays in this repository is internal and stays out:
+`pyproject.toml` / `uv.lock` / `.python-version` / `.vscode/` of the
+workspace, `tests/`, and this repo's own `README.md` and `AGENTS.md`.
+
+The `pytorch` branch keeps its variant changelog under the same rules.
+
 ## Releases
 
 This workspace itself is versioned with SemVer (see

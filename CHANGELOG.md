@@ -11,7 +11,7 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Added
 
-- `python_version` gains a `3.15` choice now that Python 3.15.0 is out.
+- `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
   The default stays `3.14`.
 - A `## Documentation` section in the generated `AGENTS.md`: which
   document a change updates, and how to write `CHANGELOG.md` (the six
@@ -24,36 +24,25 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Changed
 
-- Bumped generated dev-dependency minimums to the current latest:
-  `ruff>=0.17.0`, `ty>=0.0.86`, and `uv_build>=0.13.0,<0.14` (the upper
-  bound moves with uv's minor line). `pytest` stays `>=9.1.1` and
-  `pytest-cov` stays `>=7.1.0`. The generated `[tool.ruff]`
-  `required-version` floor and the omitted-defaults note move to `0.17.0`
-  in lockstep. Workspace dev tooling bumped to match (`copier>=9.18.2`,
-  `ruff>=0.17.0`).
-- Bumped the generated GitHub Actions to their current majors:
-  `actions/checkout@v7`, `astral-sh/setup-uv@v10.3.0`, and
-  `actions/download-artifact@v8` (`actions/upload-artifact@v7` is already
-  current). All still run on Node 24.
+- Generated projects require `ruff>=0.17.0`, `ty>=0.0.86`, and
+  `uv_build>=0.13.0,<0.14`; the `[tool.ruff]` `required-version` floor
+  follows to `0.17.0`.
+- The generated workflows use `actions/checkout@v7`,
+  `astral-sh/setup-uv@v10.3.0`, and `actions/download-artifact@v8`.
 - The generated `CHANGELOG.md` ends with an `[Unreleased]` link
   reference, and the library release steps in `AGENTS.md` defer to the
   new `CHANGELOG.md` rules.
-- The workspace pins Python `3.14` via a committed `.python-version`.
-  uv 0.13 picks 3.15 for a fresh environment otherwise, and `copier`'s
-  `pyyaml` dependency has no Windows cp315 wheel yet, so `uv sync` would
-  try (and fail) to build it from source.
 
 ### Removed
 
-- Dropped `"ruff.nativeServer": "on"` from the generated (and workspace)
-  `.vscode/settings.json` — Ruff 0.17 removed `ruff-lsp`, so the setting is
-  deprecated and ignored by the VS Code extension.
-- Dropped the `3.12` choice from `python_version`; the supported range is
-  now `3.13` – `3.15`. A project generated with `3.12` that runs
-  `copier update --defaults` silently falls back to the `3.14` default
-  (re-rendering `.python-version`, `requires-python`, and the `ty` /
-  classifier versions) — pass `-d python_version=3.13` to stay on the
-  lowest supported version instead.
+- `"ruff.nativeServer": "on"` from the generated `.vscode/settings.json`;
+  Ruff 0.17 ignores it.
+- **Breaking:** `3.12` as a `python_version` choice; the supported range
+  is now `3.13` – `3.15`. A project generated with `3.12` falls back to
+  the `3.14` default on `copier update --defaults`, which re-renders
+  `.python-version`, `requires-python`, and the `ty` and classifier
+  versions. Pass `-d python_version=3.13` to stay on the lowest
+  supported version instead.
 
 ## [1.5.5] - 2026-07-07
 
