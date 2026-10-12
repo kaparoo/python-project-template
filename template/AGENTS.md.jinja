@@ -135,9 +135,11 @@ A module runs, top to bottom:
 5. The module body: constants, type aliases, functions, and classes.
 6. An `if __name__ == "__main__":` guard, in a runnable script only.
 
-- One blank line separates the parts above, and the import groups. Two
-  blank lines follow the import section, whatever comes next, and
-  separate top-level definitions; one separates methods.
+- One blank line separates the parts above, and the import groups.
+  After the import section (the `TYPE_CHECKING` block included), two
+  blank lines come before a function or a class and one before a
+  constant or an alias, as ruff's import sorting (`I001`) expects. Two
+  blank lines separate top-level definitions; one separates methods.
 - Import by absolute path. A relative import is for the rare case an
   absolute one cannot work, and carries `# noqa: TID252` with the
   reason.

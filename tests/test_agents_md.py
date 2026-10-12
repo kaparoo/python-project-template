@@ -60,7 +60,10 @@ def test_agents_md_documents_code_style(render: Render) -> None:
     assert "from __future__ import annotations" in agents
     assert "except in an `__init__.py`, which does not need it" in agents
     assert "2. `__all__` as a tuple" in agents
-    assert "Two blank lines follow the import section" in prose(agents)
+    assert (
+        "two blank lines come before a function or a class and one before a "
+        "constant or an alias"
+    ) in prose(agents)
     assert "carries `# noqa: TID252`" in agents
     assert "Define a private helper above its first caller" in agents
     assert "(ruff `E501`)" in agents
