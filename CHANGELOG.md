@@ -13,7 +13,7 @@ for new copier options or features, `PATCH` for fixes.
 
 - `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
   The default stays `3.14`.
-- A `## Documentation` section in the generated `AGENTS.md`: which
+- **A `## Documentation` section in the generated `AGENTS.md`**: which
   document a change updates, and how to write each one:
   - `CHANGELOG.md`: the six Keep a Changelog categories, external
     behavior only, phrasing, `**Breaking:**`, deprecations, and link
@@ -40,22 +40,22 @@ for new copier options or features, `PATCH` for fixes.
   reference, and the library release steps in `AGENTS.md` defer to the
   new `CHANGELOG.md` rules.
 - GitHub Release notes from `publish.yml`
-  (`release_automation = github-oidc`) join the CHANGELOG's wrapped lines
-  into one line per paragraph or list item, since GitHub renders every
-  newline in a release body as a break, and end with a
+  (`release_automation = github-oidc`) join the CHANGELOG's wrapped
+  lines into one line per paragraph or list item, since GitHub renders
+  every newline in a release body as a break, and end with a
   `**Full Changelog**` link taken from the CHANGELOG's link reference.
 
 ### Deprecated
 
-- The `3.12` `python_version` choice is deprecated and will be removed in
-  2.0.0. It still renders, now labeled `3.12 (deprecated)`, and
+- The `3.12` `python_version` choice is deprecated and will be removed
+  in 2.0.0. It still renders, now labeled `3.12 (deprecated)`, and
   `copier copy` / `copier update` end with a warning for it. Move a
   project with `copier update -d python_version=3.13` (or later).
 
 ### Removed
 
-- `"ruff.nativeServer": "on"` from the generated `.vscode/settings.json`;
-  Ruff 0.17 ignores it.
+- `"ruff.nativeServer": "on"` from the generated
+  `.vscode/settings.json`; Ruff 0.17 ignores it.
 
 ### Fixed
 
