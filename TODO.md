@@ -15,14 +15,3 @@ and the computed `python_versions` once both ship cp315 wheels, on the
 CPU index too, which CI uses.
 
 Revisit when `torch` publishes cp315 wheels.
-
-## Infrastructure
-
-### Dependabot for generated projects
-
-`template/.github/dependabot.yml`: Dependabot updates for generated
-projects' `uv` dependencies and GitHub Actions. The minimums inside
-`template/*.jinja` stay manual. The user postponed it until the code
-style and test rules landed; both are now in.
-
-Revisit when the user takes it up.
