@@ -27,6 +27,10 @@ for new copier options or features, `PATCH` for fixes.
   `actions/checkout@v7`, `astral-sh/setup-uv@v10.3.0`, and
   `actions/download-artifact@v8` (`actions/upload-artifact@v7` is already
   current). All still run on Node 24.
+- The workspace pins Python `3.14` via a committed `.python-version`.
+  uv 0.13 picks 3.15 for a fresh environment otherwise, and `copier`'s
+  `pyyaml` dependency has no Windows cp315 wheel yet, so `uv sync` would
+  try (and fail) to build it from source.
 
 ### Removed
 
