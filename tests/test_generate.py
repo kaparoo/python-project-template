@@ -212,6 +212,12 @@ def test_use_pytest_true_includes_pytest_machinery(tmp_path: Path) -> None:
     assert "--cov" in pyproject
     assert "[tool.coverage.run]" in pyproject
     assert "fail_under = 0" in pyproject
+    # `slow` is registered, so `--strict-markers` accepts it.
+    assert (
+        """'slow: takes seconds or more; deselect with -m "not slow"',""" in pyproject
+    )
+    gitignore = (project / ".gitignore").read_text(encoding="utf-8")
+    assert "\ntests/assets/local/\n" in gitignore
     # Library mode → editable install handles imports, no `pythonpath` needed.
     assert "pythonpath" not in pyproject
     assert '"PT",' in pyproject
@@ -232,6 +238,7 @@ def test_use_pytest_false_omits_pytest_machinery(tmp_path: Path) -> None:
     assert "[tool.pytest.ini_options]" not in pyproject
     assert "[tool.coverage.run]" not in pyproject
     assert "--cov" not in pyproject
+    assert "slow:" not in pyproject
     assert '"PT",' not in pyproject
     # per-file-ignores table still exists (for `__init__.py`), but the
     # pytest-specific `tests/**` entry is gone.
@@ -880,11 +887,40 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     """`use_pytest` projects get layout + quality guidance; omitted otherwise."""
     project = _generate(tmp_path)  # default use_pytest true
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    for heading in (
+        "## Tests",
+        "### Layout",
+        "### Test data",
+        "### Writing tests",
+        "### Skipped tests",
+        "### Coverage and speed",
+    ):
+        assert f"\n{heading}\n" in agents, f"missing {heading}"
     assert "Don't mix the two styles" in agents  # flat vs class TestX layout
     assert "verify it with a spy" in agents  # test-quality guidance
+    # Data in tests/assets, the git-ignored local part opt-in.
+    assert "live in `tests/assets/`" in agents
+    assert "`tests/assets/local/`" in agents
+    # Warnings and logs, monkeypatch over mock, regression tests first.
+    assert "`pytest.warns(Category, match=...)`" in agents
+    assert "`record.getMessage()`" in agents
+    assert "not\n  `unittest.mock`" in agents
+    assert "A bug fix starts with a test that fails on the bug." in agents
+    # Skips: one mechanism per missing thing, shared marks in one file.
+    assert '`pytest.importorskip("<module>")`' in agents
+    assert "`tests/marks.py`" in agents
+    assert "When CI cannot run the tests" in agents
+    # Coverage gate and the slow marker.
+    assert "Never lower `fail_under`" in agents
+    assert "tests cover the public API" in agents
+    assert '`uv run pytest -m "not slow"`' in agents
+    # The old Conventions copy is gone: the rules live in Tests only.
+    conventions = agents.split("## Conventions", 1)[1].split("## Tests", 1)[0]
+    assert "pytest" not in conventions
 
     no_pytest = _generate(tmp_path / "np", {"use_pytest": False})
     agents_np = (no_pytest / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Tests" not in agents_np
     assert "verify it with a spy" not in agents_np
     assert "Don't mix the two styles" not in agents_np
 
@@ -1034,6 +1070,20 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     probe.unlink()
     assert result.returncode == 1
     assert "FIX002" in result.stdout
+    # The registered `slow` marker passes `--strict-markers`, and
+    # `-m "not slow"` deselects it (exit 5: nothing left to run).
+    probe = project / "tests" / "test_probe.py"
+    probe.write_text(
+        "import pytest\n\n\n@pytest.mark.slow\ndef test_probe():\n    pass\n",
+        encoding="utf-8",
+    )
+    _run_in_project(project, ["uv", "run", "pytest", "--no-cov", str(probe)])
+    _run_in_project(
+        project,
+        ["uv", "run", "pytest", "--no-cov", "-m", "not slow", str(probe)],
+        allow_codes=(5,),
+    )
+    probe.unlink()
 
 
 def test_generated_minimal_application_passes_lint_and_type_check(

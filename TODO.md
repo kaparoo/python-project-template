@@ -84,8 +84,6 @@ Revisit when the `pytorch-v*` release after `v1.6.0` is out.
 
 ## Generated `AGENTS.md` rules
 
-- Tests: markers for slow or GPU tests, when to raise `fail_under`,
-  and a failing regression test before a fix.
 - Code style: file and module layout, class member order, docstrings,
   and comments. Start from the rules downstream projects already keep
   above their markers: `iivs-lib`'s `__all__` placements, singular

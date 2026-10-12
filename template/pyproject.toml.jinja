@@ -111,6 +111,9 @@ addopts = [
     "--cov",
     "--cov-report=term-missing",
 ]
+markers = [
+    'slow: takes seconds or more; deselect with -m "not slow"',
+]
 {%- if not is_library %}
 # Application mode has no editable install — put the project root on
 # `sys.path` so tests can import the flat-layout package.

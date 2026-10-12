@@ -31,12 +31,13 @@ uv run ty check          # type-check
 {%- if use_pytest %}
 uv run pytest            # run tests (coverage included by default)
 uv run pytest --no-cov   # skip coverage for quick iteration
+uv run pytest -m "not slow"  # skip tests marked slow
 {%- endif %}
 ```
 {% if use_pytest %}
 Coverage is measured by `pytest-cov` against `{{ package_name }}/` with
 branch tracking; the `fail_under` gate lives in `pyproject.toml`
-(`0` = measure only — raise it once you have a baseline).
+(see *Tests → Coverage and speed*).
 {% endif %}
 
 ## Workflow
@@ -116,35 +117,6 @@ to restore the rest, and `git stash drop` that stash.
 - Keep code fully typed — `ty` runs with `error-on-warning`.
 - Fix `ruff` findings rather than suppressing them, unless there is a
   clear, commented reason.
-{%- if use_pytest %}
-- Tests live in `tests/` and may use bare `assert` (ruff `S101` is
-  waived there).
-- Mirror the package layout under `tests/`: `{{ package_name }}/sub/mod.py`
-  is tested by `tests/sub/test_mod.py`. Keep `__init__.py` markers in
-  test subpackages (matches the `INP` ruff rule).
-- Fixtures live in `tests/conftest.py` when you need them — modern
-  default, applies to `tests/` only. Use a root `conftest.py` only for
-  `pytest_plugins` declarations, doctest fixtures shared with source
-  files, or project-wide collection hooks.
-- Test layout: flat module-level `def test_*` functions by default;
-  reach for a plain `class TestX:` (grouping only, no inheritance) to
-  organize a large or multi-feature surface. Don't mix the two styles
-  within one file.
-- Not every source file needs a dedicated test file — types-only
-  modules, re-export `__init__.py` markers, and details covered through
-  a public-facing module are intentional exceptions.
-- Cross-module test helpers live in `tests/<pkg>/helpers.py`; shared
-  fixtures in `tests/fixtures/`; per-package configuration in
-  `conftest.py`.
-- Test quality: assertions check concrete return values *and* side
-  effects, not merely "no exception raised"; error paths use
-  `pytest.raises(..., match=...)`; verify numbers against independently
-  computed values, not the implementation's own output; make timing/IO
-  deterministic (an injected clock, fault injection) rather than flaky.
-  A good test fails on *subtle* breakage, not just obvious breakage.
-  When a contract is "one batched call per source",
-  verify it with a spy, not only by the result.
-{%- endif %}
 - `ty` has no plugin system; rely on standard typing (PEP 681
   `dataclass_transform`, `.pyi` stubs), not type-checker plugins.
 - Suppress `ty` errors with `# ty: ignore[<error-name>]` using `ty`'s
@@ -155,6 +127,112 @@ to restore the rest, and `git stash drop` that stash.
   ("unsupported node type 'X': expected File, Directory, ..."; "balance
   pause/resume, or use `suspend()`"). The message should tell the caller
   what to do next.
+
+{%- if use_pytest %}
+
+## Tests
+
+### Layout
+
+- Tests live in `tests/` and may use bare `assert` (ruff `S101` is
+  waived there).
+- Mirror the package layout under `tests/`:
+  `{{ package_name }}/sub/mod.py` is tested by `tests/sub/test_mod.py`.
+  Keep `__init__.py` markers in test subpackages (matches the `INP`
+  ruff rule).
+- Not every source file needs a dedicated test file — types-only
+  modules, re-export `__init__.py` markers, and details covered through
+  a public-facing module are intentional exceptions.
+- Fixtures live in `tests/conftest.py` when you need them — modern
+  default, applies to `tests/` only. Use a root `conftest.py` only for
+  `pytest_plugins` declarations, doctest fixtures shared with source
+  files, or project-wide collection hooks.
+- Cross-module test helpers live in `tests/<pkg>/helpers.py`; shared
+  fixtures in `tests/fixtures/`, as modules the root `conftest.py`
+  loads through `pytest_plugins`; shared skip marks in
+  `tests/marks.py`; per-package configuration in `conftest.py`.
+
+### Test data
+
+- Data files the tests read live in `tests/assets/`, which is not a
+  Python package and mirrors nothing.
+- Prefer data a test builds in `tmp_path` over a committed file. Commit
+  a file only when building it would hide what the test checks: a real
+  file header, a sample from a device.
+- Data too large or private to commit goes in `tests/assets/local/`,
+  which `.gitignore` excludes, and is opt-in: its fixture is
+  parametrized over the files present, so a clone without them skips
+  those tests instead of failing.
+
+### Writing tests
+
+- Flat module-level `def test_*` functions by default; reach for a
+  plain `class TestX:` (grouping only, no inheritance) to organize a
+  large or multi-feature surface. Don't mix the two styles within one
+  file.
+- Name a test for the behavior it checks, as a phrase:
+  `test_folder_error_ends_with_the_offending_full_path`.
+- Assertions check concrete return values *and* side effects, not
+  merely "no exception raised"; error paths use
+  `pytest.raises(..., match=...)`; verify numbers against independently
+  computed values, not the implementation's own output; make timing and
+  IO deterministic (an injected clock, fault injection) rather than
+  flaky. A good test fails on *subtle* breakage, not just obvious
+  breakage. When a contract is "one batched call per source",
+  verify it with a spy, not only by the result.
+- A warning the code emits on purpose is behavior: assert it with
+  `pytest.warns(Category, match=...)`. Test log output where it is the
+  product — a run's report, a message a user acts on — through
+  `caplog.records`: the level and `record.getMessage()`, not the
+  formatted `caplog.text`.
+- Replace or observe a collaborator with `monkeypatch`, not
+  `unittest.mock`: patch the attribute with a small fake, or wrap the
+  real method in a spy that records each call and delegates to it. A
+  spy keeps the real behavior, so the test checks the contract rather
+  than a scripted double. Patch the name where the code looks it up; a
+  fixture that patches returns what it records.
+- A bug fix starts with a test that fails on the bug. Fix the code and
+  keep the test as the guard, named for the behavior it pins down, not
+  for the bug report.
+
+### Skipped tests
+
+- A test that cannot run everywhere is skipped — never deleted or left
+  failing — and its `reason` names what is missing ("needs a CUDA
+  device", "symlinks need privilege on Windows"). Pick the mechanism by
+  what is missing:
+  - an optional dependency: `pytest.importorskip("<module>")` at the
+    top of the module;
+  - a platform, device, or service: a `skipif` mark defined once in
+    `tests/marks.py` and imported where needed
+    (`from tests.marks import requires_cuda`), never redefined per
+    file;
+  - data the repository does not hold: the opt-in fixture of
+    *Test data*.
+- Parametrize over the condition rather than duplicating a test
+  (`pytest.param("cuda", marks=requires_cuda)`), so a machine without
+  it still runs the other cases.
+- When CI cannot run the tests — hardware its runners lack — say so
+  below the marker in this file. The local run is then the gate: run
+  the full suite on a machine that has the hardware before asking for a
+  commit, and report any group that skipped.
+
+### Coverage and speed
+
+- With `fail_under = 0` coverage is measured, not enforced. Once the
+  tests cover the {% if is_library %}public API{% else %}main code paths{% endif %}, set it a few points below the
+  measured total and raise it as coverage grows; the libraries built
+  from this template hold 95.
+- Never lower `fail_under` to let a change pass: cover the change, or
+  exclude a line that cannot run under test with `# pragma: no cover`
+  and a comment saying why. Leave out only modules with nothing to
+  execute, such as type aliases, through `omit` in
+  `[tool.coverage.run]`.
+- Keep the suite fast enough to run before every commit. A test that
+  takes seconds gets `@pytest.mark.slow`, registered in
+  `pyproject.toml`; `uv run pytest -m "not slow"` serves quick
+  iteration, and the full suite still runs before a commit and in CI.
+{%- endif %}
 
 ## Python style
 

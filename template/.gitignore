@@ -25,6 +25,9 @@ temp/
 # Tool caches (consolidated location for mypy, pytest, ruff)
 .cache/
 
+# Test data too large or private to commit (see AGENTS.md -> Tests)
+tests/assets/local/
+
 
 # ========================== #
 #     Visual Studio Code     #
