@@ -52,6 +52,8 @@ for new copier options or features, `PATCH` for fixes.
   go through `uv add` / `uv remove` with `uv.lock` committed alongside,
   a `ruff` bump moves `required-version` with it, and the supported
   Python versions change together in every place that states them.
+  On this branch they also cover `torch` and `torchvision`, and say
+  that the CI `lock` job is what catches a stale `uv.lock`.
 - `➕` and `➖` among the generated commit prefixes, for adding and
   removing a dependency.
 - **A `## Code style` section in the generated `AGENTS.md`**,

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from tests.helpers import prose
+
 if TYPE_CHECKING:
     from tests.helpers import Render
 
@@ -57,3 +59,13 @@ def test_agents_md_names_the_pytorch_variant(render: Render) -> None:
     assert "`copier update --UNSAFE --vcs-ref pytorch`" in agents
     answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
     assert "copier update --vcs-ref pytorch" in answers
+
+
+def test_dependency_guide_covers_torch(render: Render) -> None:
+    project = render()
+    deps = (project / ".agents" / "dependencies.md").read_text(encoding="utf-8")
+    assert "uv sync --locked" not in deps
+    assert "CI's `lock` job runs `uv lock --check`" in prose(deps)
+    assert "`torch` and `torchvision` install from the `pytorch` index" in prose(deps)
+    assert "moves the README's PyTorch badge" in prose(deps)
+    assert "The newest version is also capped by `torch`" in prose(deps)

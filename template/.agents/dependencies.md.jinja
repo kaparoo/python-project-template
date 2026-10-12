@@ -5,12 +5,18 @@
   run time, `uv add --group dev <pkg>` for what only tests, linting, or
   type checking need{% if is_library %}, and `uv add --optional <extra> <pkg>` for
   an optional extra{% endif %}. Commit `pyproject.toml` and `uv.lock`
-  together: CI installs with `uv sync --locked` and fails on a stale
-  lock.
+  together: CI's `lock` job runs `uv lock --check` and fails on a stale
+  lock. The other jobs re-resolve against the CPU PyTorch index, so
+  they cannot catch one.
 - To move to a newer release, raise the minimum with
   `uv add "<pkg>>=X.Y.Z"` (keep the `--group`{% if is_library %} or `--optional`{% endif %} flag
   it was added with), or refresh only the lock with
   `uv lock --upgrade-package <pkg>`.
+- `torch` and `torchvision` install from the `pytorch` index in
+  `[[tool.uv.index]]`, which `[tool.uv.sources]` pins them to. Raising
+  `torch`'s minimum also moves the README's PyTorch badge and its
+  🖥️ Compute environment line; raise `torchvision` to the release
+  paired with it, and check that the backend's index publishes both.
 - Raising `ruff`'s minimum also raises `[tool.ruff] required-version`
   and the "omitted (ruff vX.Y.Z)" note at the end of `pyproject.toml`;
   re-check that the sections it lists still use only defaults.
@@ -40,7 +46,9 @@ The range comes from the template: the oldest version is the
 template offers. `copier update -d python_version=X.Y` moves the oldest
 and re-renders all of the above and the *Project* line of
 `AGENTS.md`; a plain `copier update` after the template offers a
-newer Python extends the range.
+newer Python extends the range. The newest version is also capped by
+`torch`: a supported version needs `torch` and `torchvision` wheels on
+the project's index and on the CPU index CI uses.
 
 To leave a version out (a dependency has no wheels for it yet), drop
 it from the classifiers, the CI list, and the badge together, and add
