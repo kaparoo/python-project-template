@@ -28,9 +28,18 @@ def test_default_generation_creates_expected_files(render: Render) -> None:
         "test_app/__init__.py",
         "test_app/py.typed",
         "tests/__init__.py",
+        "tests/AGENTS.md",
+        "tests/CLAUDE.md",
         "CHANGELOG.md",
         "TODO.md",
         ".copier-answers.yml",
+        ".agents/changelog.md",
+        ".agents/commits.md",
+        ".agents/decisions.md",
+        ".agents/dependencies.md",
+        ".agents/readme.md",
+        ".agents/releases.md",
+        ".agents/todo.md",
     ]
     missing = [path for path in expected if not (project / path).is_file()]
     assert not missing, f"Missing files: {missing}"
@@ -210,10 +219,9 @@ def test_is_library_true_includes_build_system_and_py_typed(render: Render) -> N
     assert 'name = "testpypi"' in pyproject
     assert 'publish-url = "https://upload.pypi.org/legacy/"' in pyproject
     assert 'publish-url = "https://test.pypi.org/legacy/"' in pyproject
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Releases" in agents
-    assert "uv publish --index testpypi" in agents
-    assert "uvx twine check dist/*" in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert "uv publish --index testpypi" in releases
+    assert "uvx twine check dist/*" in releases
 
 
 def test_is_library_false_omits_build_system_and_py_typed(render: Render) -> None:
@@ -229,8 +237,8 @@ def test_is_library_false_omits_build_system_and_py_typed(render: Render) -> Non
     assert "pepy.tech" not in readme
     assert 'name = "testpypi"' not in pyproject
     assert "upload.pypi.org" not in pyproject
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "uv publish" not in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert "uv publish" not in releases
 
 
 def test_answers_file_records_all_inputs(render: Render) -> None:
@@ -260,8 +268,8 @@ def test_fixme_comments_fail_lint_and_agents_md_says_so(render: Render) -> None:
     project = render()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"FIX",   # flake8-fixme' in pyproject
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "This file is the only place for it: `ruff` rejects `TODO`" in prose(agents)
+    todo = (project / ".agents" / "todo.md").read_text(encoding="utf-8")
+    assert "`TODO.md` is the only place for it: `ruff` rejects `TODO`" in prose(todo)
 
     no_todo = render({"include_todo": False})
     agents = (no_todo / "AGENTS.md").read_text(encoding="utf-8")

@@ -76,10 +76,10 @@ def test_ci_workflow_omits_test_step_without_pytest(render: Render) -> None:
 def test_release_automation_manual_default(render: Render) -> None:
     project = render()
     assert not (project / ".github" / "workflows" / "publish.yml").exists()
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Releases" in agents
-    assert "uv publish --index testpypi" in agents
-    assert "Trusted Publishing" not in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert releases.startswith("# Releasing `test-app`\n")
+    assert "uv publish --index testpypi" in releases
+    assert "Trusted Publishing" not in releases
 
 
 def test_release_automation_github_oidc(render: Render) -> None:
@@ -108,12 +108,12 @@ def test_release_automation_github_oidc(render: Render) -> None:
     assert "join the CHANGELOG's hard-wrapped lines" in yml
     assert "**Full Changelog**" in yml
     assert "No [$version] link reference in CHANGELOG.md" in yml
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "Trusted Publishing" in agents
-    assert "Trusted Publisher" in agents
-    assert "TestPyPI Trusted Publisher" in agents
-    assert "required reviewer" in agents
-    assert "github-release" in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert "Trusted Publishing" in releases
+    assert "Trusted Publisher" in releases
+    assert "TestPyPI Trusted Publisher" in releases
+    assert "required reviewer" in releases
+    assert "github-release" in releases
 
 
 def test_release_automation_github_oidc_without_testpypi(render: Render) -> None:
@@ -137,10 +137,10 @@ def test_release_automation_github_oidc_without_testpypi(render: Render) -> None
     assert "github-release:" in yml
     assert "gh release create" in yml
     assert "skip-existing" not in yml
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "Trusted Publishing" in agents
-    assert "TestPyPI Trusted Publisher" not in agents
-    assert "use_testpypi=true" in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert "Trusted Publishing" in releases
+    assert "TestPyPI Trusted Publisher" not in releases
+    assert "use_testpypi=true" in releases
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert 'name = "pypi"' in pyproject
     assert 'name = "testpypi"' not in pyproject
@@ -149,10 +149,10 @@ def test_release_automation_github_oidc_without_testpypi(render: Render) -> None
 def test_release_automation_manual_without_testpypi(render: Render) -> None:
     project = render({"use_testpypi": False})
     assert not (project / ".github" / "workflows" / "publish.yml").exists()
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Releases" in agents
-    assert "uv publish --index testpypi" not in agents
-    assert "uv publish --index pypi" in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert releases.startswith("# Releasing `test-app`\n")
+    assert "uv publish --index testpypi" not in releases
+    assert "uv publish --index pypi" in releases
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert 'name = "pypi"' in pyproject
     assert 'name = "testpypi"' not in pyproject
@@ -161,10 +161,10 @@ def test_release_automation_manual_without_testpypi(render: Render) -> None:
 def test_application_omits_release_machinery(render: Render) -> None:
     project = render({"is_library": False})
     assert not (project / ".github" / "workflows" / "publish.yml").exists()
-    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Releases" in agents
-    assert "is an application and is not published" in agents
-    assert "git tag -a vX.Y.Z" in agents
-    assert "uv publish" not in agents
-    assert "uv build" not in agents
-    assert "Trusted Publishing" not in agents
+    releases = (project / ".agents" / "releases.md").read_text(encoding="utf-8")
+    assert releases.startswith("# Releasing `test-app`\n")
+    assert "is an application and is not published" in releases
+    assert "git tag -a vX.Y.Z" in releases
+    assert "uv publish" not in releases
+    assert "uv build" not in releases
+    assert "Trusted Publishing" not in releases

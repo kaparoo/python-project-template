@@ -9,8 +9,9 @@ resolves it.
 - Cut `v2.0.0` once the user asks for it. It is a major release:
   removing the `3.12` choice breaks `copier update` for a project that
   recorded it. `[Unreleased]` also holds the CI Python matrix and build
-  job, the stricter `ruff` settings, and the generated `AGENTS.md`
-  workflow, code style, test, dependency, and documentation rules.
+  job, the stricter `ruff` settings, and the generated agent guides
+  (`AGENTS.md`, `.agents/`, `tests/AGENTS.md`) with their workflow,
+  code style, test, dependency, and documentation rules.
 - Run the generated CI on GitHub Actions once: render a project, push
   it to a scratch repository, and check that Linux runs every
   supported version while Windows and macOS fall back to
@@ -22,7 +23,9 @@ resolves it.
 beyond the usual `CHANGELOG.md` one (see *Merging `main` into
 `pytorch`* in `AGENTS.md`):
 
-- `template/AGENTS.md.jinja`, which has drifted about 300 lines;
+- `template/AGENTS.md.jinja`, which has drifted about 300 lines and
+  is now split into `template/.agents/` and `tests/AGENTS.md`: move
+  each variant-only line to the guide that now holds its topic;
 - `template/README.md.jinja`, whose PyTorch and CUDA badges now go
   right after the Python badge;
 - `template/.github/workflows/ci.yml.jinja`: the Python matrix against
@@ -40,11 +43,11 @@ Work the variant needs beyond resolving conflicts:
   separate `lock` job in place of `--locked`, and `UV_INDEX` on the
   library `build` job too, or its isolated install pulls the CUDA
   `torch` from PyPI.
-- In the generated `AGENTS.md`: say the `lock` job, not
+- In the generated `.agents/dependencies.md`: say the `lock` job, not
   `uv sync --locked`, catches a stale lock; add to *Supported Python
   versions* that `torch` must ship wheels for each one; list what moves
-  with `torch_version` (the minimum and the badge); recast the
-  variant-only lines that still use em dashes.
+  with `torch_version` (the minimum and the badge). Recast the
+  variant-only lines in every guide that still use em dashes.
 - Add `{"use_pytest": True}` to the new tests that assume pytest, and
   expect the narrower matrix.
 - Also, as agreed: generate a `tests/marks.py` holding a

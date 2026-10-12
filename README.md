@@ -101,8 +101,8 @@ pull request.
 
 Commits use a Gitmoji, a concrete imperative verb, and the name of what
 changed (`` ✨ Add `ensure_dir` to `filesystem.utils` ``). The full rules,
-with the emoji table and fixed forms, are *Commit convention* in
-[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja); this
+with the emoji table and fixed forms, are in
+[`template/.agents/commits.md.jinja`](./template/.agents/commits.md.jinja); this
 repository follows them too, with the few differences listed in
 [`AGENTS.md`](./AGENTS.md).
 

@@ -10,6 +10,18 @@ from tests.helpers import sections
 if TYPE_CHECKING:
     from tests.helpers import Render
 
+DOCS = ("AGENTS.md", "README.md", "CHANGELOG.md", "TODO.md")
+GUIDES = (
+    ".agents/changelog.md",
+    ".agents/commits.md",
+    ".agents/decisions.md",
+    ".agents/dependencies.md",
+    ".agents/readme.md",
+    ".agents/releases.md",
+    ".agents/todo.md",
+    "tests/AGENTS.md",
+)
+
 
 def test_generated_changelog_skeleton(render: Render) -> None:
     project = render()
@@ -105,7 +117,7 @@ def test_generated_markdown_wraps_prose_at_72_columns(
 ) -> None:
     project = render(answers)
     too_wide = []
-    for name in ("AGENTS.md", "README.md", "CHANGELOG.md", "TODO.md"):
+    for name in (*DOCS, *GUIDES):
         path = project / name
         if not path.exists():
             continue
@@ -139,7 +151,7 @@ def test_generated_docs_use_no_em_dash(
 ) -> None:
     project = render(answers)
     dashed = []
-    for name in ("AGENTS.md", "README.md", "CHANGELOG.md", "TODO.md", "pyproject.toml"):
+    for name in (*DOCS, *GUIDES, "pyproject.toml"):
         path = project / name
         if not path.exists():
             continue

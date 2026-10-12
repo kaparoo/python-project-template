@@ -135,14 +135,14 @@ release_automation:
     How releases get published to PyPI (libraries only).
 
     manual      → no CI publish workflow; you build and `uv publish`
-                  by hand. The AGENTS.md "Releases" section documents
-                  the flow with keyring tokens.
+                  by hand. The generated `.agents/releases.md`
+                  documents the flow with keyring tokens.
     github-oidc → ship `.github/workflows/publish.yml`. Pushing a `v*`
                   tag runs CI, waits for approval on a `pypi` GitHub
                   environment, then publishes to PyPI via Trusted
                   Publishing (OIDC, no stored token). Needs a one-time
                   PyPI + GitHub setup, documented in the generated
-                  AGENTS.md.
+                  `.agents/releases.md`.
   choices:
     - manual
     - github-oidc
@@ -161,14 +161,14 @@ use_testpypi:
     When `release_automation = manual`:
       - `pyproject.toml` ships both the `pypi` and `testpypi` named
         `[[tool.uv.index]]` entries with `publish-url`.
-      - AGENTS.md "Releases" includes a `uv publish --index testpypi`
-        step before PyPI.
+      - `.agents/releases.md` includes a
+        `uv publish --index testpypi` step before PyPI.
 
     When `release_automation = github-oidc`:
       - `publish.yml` becomes a 4-job pipeline
         (ci → build → testpypi → pypi), promoting the same artifacts.
       - You'll need a second Trusted Publisher for TestPyPI; the
-        AGENTS.md setup checklist covers this.
+        `.agents/releases.md` setup checklist covers this.
 
     Disable if PyPI-only is fine (e.g. tiny personal libraries where
     the `environment: pypi` approval gate is enough of a checkpoint).

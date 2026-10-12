@@ -13,8 +13,17 @@ for new copier options or features, `PATCH` for fixes.
 
 - `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
   The default stays `3.14`.
-- **A `## Documentation` section in the generated `AGENTS.md`**: which
-  document a change updates, and how to write each one:
+- **Task guides in generated projects**: `AGENTS.md` keeps the rules
+  every task needs and indexes one guide per task, which an agent reads
+  only when that task comes up. The guides live in `.agents/`
+  (`commits.md`, `dependencies.md`, `changelog.md`, `readme.md`,
+  `todo.md` with `include_todo`, `decisions.md`, and `releases.md`),
+  plus `tests/AGENTS.md` in pytest projects, which a `tests/CLAUDE.md`
+  loads. The commit convention and the release steps move there from
+  `AGENTS.md`.
+- **Documentation rules for agents**: the generated `AGENTS.md` says
+  which document a change updates, and the guides say how to write
+  each one:
   - `CHANGELOG.md`: the six Keep a Changelog categories, external
     behavior only, phrasing, `**Breaking:**`, deprecations, and link
     references.
@@ -31,15 +40,15 @@ for new copier options or features, `PATCH` for fixes.
   - One wrap width, 72 columns, for every document, English for a new
     one, and no em dashes.
   - `AGENTS.md` itself.
-- A `## Releases` section in the generated `AGENTS.md` for applications
-  (`is_library = false`): versions are promoted and tagged, not
-  published.
-- A `## Dependencies` section in the generated `AGENTS.md`: changes go
-  through `uv add` / `uv remove` with `uv.lock` committed alongside, a
-  `ruff` bump moves `required-version` with it, and the supported
+- Release steps for applications (`is_library = false`) in the
+  generated `.agents/releases.md`: versions are promoted and tagged,
+  not published.
+- Dependency rules in the generated `.agents/dependencies.md`: changes
+  go through `uv add` / `uv remove` with `uv.lock` committed alongside,
+  a `ruff` bump moves `required-version` with it, and the supported
   Python versions change together in every place that states them.
-- `➕` and `➖` among the generated `AGENTS.md` commit prefixes, for
-  adding and removing a dependency.
+- `➕` and `➖` among the generated commit prefixes, for adding and
+  removing a dependency.
 - **A `## Code style` section in the generated `AGENTS.md`**,
   replacing Conventions and Python style; it no longer asks for a blank
   line before a function's final `return`:
@@ -51,13 +60,14 @@ for new copier options or features, `PATCH` for fixes.
     order, `@override`, frozen slotted dataclasses, one-line lower-case
     messages without a period, and the form of docstrings and comments,
     filled to 88 columns.
+  - Rules `ruff` already enforces are named, not spelled out.
 - A `## Workflow` section in the generated `AGENTS.md`: the gates a
   change passes before it counts as done, commits and pushes only on
   request on the current branch, accumulated changes split into
   single-purpose commits with `git stash`, and secrets kept out of the
   repository.
-- **A `## Tests` section in the generated `AGENTS.md`** (pytest
-  projects), taking over the test rules from Conventions:
+- **A generated `tests/AGENTS.md`** (pytest projects), taking over
+  the test rules from Conventions:
   - Layout: `fixtures/` packages at the top or per subpackage, test
     data in `tests/assets/`, how tests import, and optional
     annotations.
@@ -99,8 +109,8 @@ for new copier options or features, `PATCH` for fixes.
   `pyproject.toml` lists a classifier for every supported version, and
   the README badge names them all instead of `X.Y+`.
 - The generated `CHANGELOG.md` ends with an `[Unreleased]` link
-  reference, and the library release steps in `AGENTS.md` defer to the
-  new `CHANGELOG.md` rules.
+  reference, and the library release steps defer to the new
+  `CHANGELOG.md` rules.
 - The generated `TODO.md` introduces itself as open work only, each
   item deleted in the commit that resolves it, instead of asking for
   every item to be promoted to `CHANGELOG.md`.
@@ -113,7 +123,7 @@ for new copier options or features, `PATCH` for fixes.
   cannot wrap; and they reject relative imports
   (`ban-relative-imports = "all"`). Shorten or rewrap a line that runs
   over, and import by absolute path.
-- The generated `AGENTS.md` commit convention fixes the subject's form
+- The generated commit convention fixes the subject's form
   (a Gitmoji, a concrete imperative verb, and the name of what changed,
   within 72 characters), says when a body is written, gives fixed forms
   for upgrades, releases, and reverts, and draws its emoji table from

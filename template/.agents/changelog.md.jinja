@@ -1,0 +1,112 @@
+# Writing `CHANGELOG.md`
+
+The format is [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+- New entries go under `## [Unreleased]`, grouped into these six
+  categories and no others, always in this order:
+
+  | Category     | For                                          |
+  | ------------ | -------------------------------------------- |
+  | `Added`      | new features                                 |
+  | `Changed`    | changes in existing functionality            |
+  | `Deprecated` | features that will be removed                |
+  | `Removed`    | features removed now                         |
+  | `Fixed`      | bug fixes                                    |
+  | `Security`   | vulnerabilities                              |
+
+  Omit empty categories and never invent new ones: a performance
+  improvement is `Changed`, a fixed performance regression is `Fixed`.
+  The first entry replaces the `_No entries yet._` placeholder.
+- Record only changes to **external behavior** (what someone who
+  {% if is_library %}imports the library{% else %}runs the application{% endif %} can observe without reading its source):
+{%- if is_library %}
+  - the public API: importable names without a leading `_`, their
+    signatures, return values, raised exceptions, and warnings;
+  - results, side effects, and file or serialization formats;
+{%- else %}
+  - commands, command-line options, and configuration keys;
+  - accepted inputs, produced outputs (files, formats, reports), exit
+    codes, and results;
+{%- endif %}
+  - performance;
+  - requirements: supported Python versions and runtime dependency
+    ranges.
+
+  Internal refactoring stays out: restructuring, renaming or moving
+  {% if is_library %}private{% else %}internal{% endif %} code, removing dead code, tests, CI, dev-tooling and
+  dev-dependency bumps, comments, docstrings, and the other Markdown
+  documents. The test: would a user of the {% if is_library %}library{% else %}application{% endif %}
+  notice the difference, or have to act on it? If a refactor does
+  change behavior, however slightly, record the behavior change, not
+  the refactor.
+- One bullet per change, phrased to read on from its category heading:
+  - `Added` and `Removed` lead with *what* as a noun phrase:
+    "`CommitRetry`, a frozen retry policy for commit steps refused by a
+    transient Windows lock." / "`utils.types`, replaced by PEP 695 type
+    parameters."
+  - `Changed`, `Deprecated`, `Fixed`, and `Security` make what the user
+    sees the subject and describe the new state in the present tense:
+    "`load()` now raises `FormatError` instead of `ValueError` on a
+    malformed header." / "`StagedFile.commit` no longer fails on a
+    transient Windows `PermissionError`."
+  - Never open with the heading's own verb ("Added ...", "Fixed ...")
+    or an imperative ("Add ...", "Fix ..."); that is commit-message
+    style.
+- Keep an entry short by default: one or two sentences saying what
+  changed. Causes, internal mechanisms, and measurements belong in the
+  commit message, not here.
+- `**Breaking:**`, `Deprecated`, and `Removed` entries spell out the
+  upgrade instead, since that is where a reader has to act. Say what
+  changed, what behaved differently before or still works unchanged,
+  and what to do now (the replacement or the migration step). A
+  `Deprecated` entry also says when the feature goes, if that is known.
+- Start every incompatible change with `**Breaking:**`, spelled exactly
+  so. It can appear under `Changed`, `Removed`, `Fixed` (a fix that
+  breaks code relying on the old behavior), and `Security`; `Added` and
+  `Deprecated` never break anything. Pre-1.0, breaking changes ship in a
+  minor bump.
+{%- if is_library %}
+- Before removing or renaming a public name, deprecate it when you can:
+  keep it working for at least one release with a `DeprecationWarning`
+  and list it under `Deprecated` with its replacement.
+{%- else %}
+- Before removing or renaming a command, an option, or a configuration
+  key, deprecate it when you can: keep it working for at least one
+  release with a warning and list it under `Deprecated` with its
+  replacement.
+{%- endif %}
+  The eventual `Removed` entry is still `**Breaking:**` and says which
+  version deprecated it ("deprecated since 0.15"). Something that has
+  to go at once skips the `Deprecated` step but never the
+  `**Breaking:**` mark.
+- Backtick identifiers, option values, file names, and commands. Group
+  several small changes to one feature as sub-bullets under a single
+  **bold** lead-in. Wrap lines at 72 columns.
+- `[Unreleased]` describes the net change since the last release. When
+  an unreleased change is reworked, reverted, or fixed, edit or delete
+  its entry instead of adding a new one: users never saw the
+  intermediate state.
+- Released sections are history: change them only to correct a factual
+  error. A release pulled after publishing keeps its section, marked
+  `## [X.Y.Z] - YYYY-MM-DD [YANKED]`.
+- A changelog written before these rules keeps its released sections
+  as they are. Bring only `[Unreleased]` in line, and add the link
+  references for every past version.
+
+Cut a release only when the user asks for one. You may suggest it when
+`[Unreleased]` has grown long or holds a `**Breaking:**` change. To
+promote `[Unreleased]` for release `X.Y.Z`:
+
+1. Re-read the section: merge entries that describe one change and drop
+   any whose subject came and went within the cycle.
+2. Rename its heading to `## [X.Y.Z] - YYYY-MM-DD` (ISO 8601 date) and
+   add a fresh, empty `## [Unreleased]` above it.
+3. Update the link references at the bottom of the file:
+
+   ```
+   [Unreleased]: https://github.com/{{ github_username }}/{{ repo_name }}/compare/vX.Y.Z...HEAD
+   [X.Y.Z]: https://github.com/{{ github_username }}/{{ repo_name }}/compare/vPREVIOUS...vX.Y.Z
+   ```
+
+   For the first release, `[X.Y.Z]` points to
+   `https://github.com/{{ github_username }}/{{ repo_name }}/releases/tag/vX.Y.Z` instead.

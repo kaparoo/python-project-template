@@ -132,9 +132,9 @@ project fails here rather than only in manual dogfooding. These need:
 ## Commit convention
 
 Commits here follow the convention generated projects get: read
-*Commit convention* in
-[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja) (subject form,
-emoji table, body, trailers, fixed forms). Only these differ:
+[`template/.agents/commits.md.jinja`](./template/.agents/commits.md.jinja)
+(subject form, emoji table, body, trailers, fixed forms). Only these
+differ:
 
 - Commit each completed step as you go, without waiting to be asked;
   the user reviews the history step by step. Generated projects
@@ -150,13 +150,12 @@ emoji table, body, trailers, fixed forms). Only these differ:
 ## Changelog
 
 `CHANGELOG.md` follows the same rules generated projects get; read
-*Documentation → `CHANGELOG.md`* in
-[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja) (skip the Jinja
-tags; the library wording applies). In short: the six Keep a Changelog
-categories only, in order; noun phrases under `Added` / `Removed`,
-subject + present tense elsewhere; short entries, with `**Breaking:**`,
-`Deprecated`, and `Removed` spelling out the upgrade; link references
-at the bottom.
+[`template/.agents/changelog.md.jinja`](./template/.agents/changelog.md.jinja)
+(skip the Jinja tags; the library wording applies). In short: the six
+Keep a Changelog categories only, in order; noun phrases under
+`Added` / `Removed`, subject + present tense elsewhere; short entries,
+with `**Breaking:**`, `Deprecated`, and `Removed` spelling out the
+upgrade; link references at the bottom.
 
 What counts as **external behavior** here is what a template user meets
 through `copier copy` / `copier update`:
@@ -179,11 +178,10 @@ The `pytorch` branch keeps its variant changelog under the same rules.
 later. What the generated projects must change after an update is
 theirs, not the template's, and stays out of it: the user keeps that
 list in `../python-project-template-downstream.md`, next to the
-repositories. `TODO.md` follows the rules generated projects
-get; read *Documentation → `TODO.md`* in
-[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja). Read it
-before starting a change, and delete an item in the commit that
-resolves it.
+repositories. `TODO.md` follows the rules generated projects get,
+in the template's `.agents/` TODO guide (its file name is a Jinja
+conditional). Read it before starting a change, and delete an item in
+the commit that resolves it.
 
 ## Releases
 
@@ -346,14 +344,18 @@ release together, in one `⬆️` commit:
 
 ### Keeping template files in step
 
-`template/AGENTS.md.jinja` quotes the other template files: the README
-section names (📦 Installation, 🚀 Quick start, 🧩 Modules, 📦 Setup,
-🚀 Usage, 🗂️ Layout, 📋 TODO, 📜 Changelog, ⚖️ License), the
-`CHANGELOG.md` and `TODO.md` skeletons (`## [Unreleased]`, `## Open`,
-`_No entries yet._`, the `[Unreleased]` link reference), what
-`publish.yml` does, and `pyproject.toml` settings (`error-on-warning`,
-`fail_under`, `required-imports`). Change both sides in the same
-commit, and assert the shared strings on both sides in `tests/`.
+The generated agent guides (`template/AGENTS.md.jinja`,
+`template/.agents/`, and `template/{% if use_pytest %}tests{% endif %}/AGENTS.md.jinja`)
+quote the other template files: the README section names
+(📦 Installation, 🚀 Quick start, 🧩 Modules, 📦 Setup, 🚀 Usage,
+🗂️ Layout, 📋 TODO, 📜 Changelog, ⚖️ License), the `CHANGELOG.md` and
+`TODO.md` skeletons (`## [Unreleased]`, `## Open`, `_No entries yet._`,
+the `[Unreleased]` link reference), what `publish.yml` does, and
+`pyproject.toml` settings (`error-on-warning`, `fail_under`,
+`required-imports`). The core `AGENTS.md` indexes every guide in its
+*Task guides* table, so a guide added or removed changes the table
+too. Change both sides in the same commit, and assert the shared
+strings on both sides in `tests/`.
 
 ### Each new year
 
