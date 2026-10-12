@@ -21,7 +21,7 @@ resolves it.
 
 `pytorch` has none of the commits from `v1.5.5` on. Expect conflicts
 beyond the usual `CHANGELOG.md` one (see *Merging `main` into
-`pytorch`* in `AGENTS.md`):
+`pytorch`* in `.agents/releases.md`):
 
 - `template/AGENTS.md.jinja`, which has drifted about 300 lines and
   is now split into `template/.agents/` and `tests/AGENTS.md`: move

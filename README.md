@@ -71,6 +71,7 @@ asked when their parent feature is enabled (a library, or pytest).
 
 ```
 .
+├── .agents/            ← task guides for AI assistants (not shipped)
 ├── .github/workflows/  ← CI for this repo (not shipped)
 ├── copier.yml          ← questions, tasks, after-action messages
 ├── pyproject.toml      ← workspace dev tooling (copier + pytest + ruff)
