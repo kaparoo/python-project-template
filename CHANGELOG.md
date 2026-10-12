@@ -40,6 +40,10 @@ for new copier options or features, `PATCH` for fixes.
   Python versions change together in every place that states them.
 - `➕` and `➖` among the generated `AGENTS.md` commit prefixes, for
   adding and removing a dependency.
+- A `## Workflow` section in the generated `AGENTS.md`: the gates a
+  change passes before it counts as done, commits and pushes only on
+  request on the current branch, and secrets kept out of the
+  repository.
 - A `🚀 Quick start` placeholder section in a library's generated
   `README.md`, between `📦 Installation` and `🧩 Modules`, and a
   `🚀 Usage` placeholder in an application's, after its setup section.

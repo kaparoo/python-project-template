@@ -39,6 +39,49 @@ branch tracking; the `fail_under` gate lives in `pyproject.toml`
 (`0` = measure only — raise it once you have a baseline).
 {% endif %}
 
+## Workflow
+
+A change is done when the gates pass. Before reporting it finished,
+run them in this order and fix what they find:
+
+```bash
+uv run ruff format .
+uv run ruff check --fix .
+uv run ty check
+{%- if use_pytest %}
+uv run pytest
+{%- else %}
+uv run python -c "import {{ package_name }}"
+{%- endif %}
+```
+
+If one cannot run here — a test needing hardware or a service this
+machine lacks — say which and why instead of skipping it silently. CI
+runs the same gates, but it should confirm a change, not discover that
+it is broken.
+
+- Commit only when the user asks. Until then the change stays in the
+  working tree; when asked, commit it as single-purpose commits that
+  follow the *Commit convention* below.
+- Push only when the user asks; a release the user asked for includes
+  its push and tag. Never force-push, rewrite pushed history, or move
+  or delete a tag.
+- Work on the current branch, usually `main`. Create a branch only when
+  the user asks for one.
+- Never skip git hooks (`--no-verify`).
+
+### Secrets
+
+- No token, password, or private key in code, docs, commit messages,
+  or logs — nor a test or example value that is real somewhere.
+- Code reads a secret from an environment variable. `.env` holds the
+  local values and is never committed (`.gitignore` covers it); the
+  README's {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %} names each variable the project
+  needs, never its value.
+- If a secret has been committed, stop and tell the user before
+  changing anything: removing it from history does not take it back.
+  The credential has to be revoked and replaced.
+
 ## Conventions
 
 - Keep code fully typed — `ty` runs with `error-on-warning`.

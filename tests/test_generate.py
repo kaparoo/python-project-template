@@ -794,6 +794,33 @@ def test_generated_markdown_wraps_prose_at_72_columns(
     assert not too_wide, "\n".join(too_wide)
 
 
+def test_agents_md_documents_workflow_and_secrets(tmp_path: Path) -> None:
+    """Default (pytest): the gates that make a change done, git actions
+    only on request, and secrets kept out of the repository."""
+    project = _generate(tmp_path)
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Workflow" in agents
+    assert (
+        "uv run ruff format .\nuv run ruff check --fix .\n"
+        "uv run ty check\nuv run pytest\n```"
+    ) in agents
+    assert "instead of skipping it silently" in agents
+    assert "Commit only when the user asks" in agents
+    assert "Push only when the user asks" in agents
+    assert "Never force-push" in agents
+    assert "Create a branch only when" in agents
+    assert "### Secrets" in agents
+    assert "The credential has to be revoked and replaced" in agents
+
+
+def test_agents_md_workflow_gates_follow_options(tmp_path: Path) -> None:
+    """Without pytest, the import check CI runs is the last gate."""
+    project = _generate(tmp_path, {"use_pytest": False})
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert 'uv run ty check\nuv run python -c "import test_app"\n```' in agents
+    assert "uv run pytest\n```" not in agents
+
+
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     project = _generate(tmp_path)
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")

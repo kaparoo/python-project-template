@@ -84,12 +84,6 @@ Revisit when the `pytorch-v*` release after `v1.6.0` is out.
 
 ## Generated `AGENTS.md` rules
 
-- Definition of done: run the format, lint, type-check, and test gates
-  before committing.
-- Git scope for agents: when to push, whether to branch, and no force
-  pushes or tag rewrites.
-- Secrets: no tokens in code or docs; `.env` comes from a script or an
-  example file.
 - Tests: markers for slow or GPU tests, when to raise `fail_under`,
   and a failing regression test before a fix.
 - Code style: file and module layout, class member order, docstrings,
