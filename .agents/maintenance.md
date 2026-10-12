@@ -70,6 +70,10 @@ the dev tooling needs it.
 
 ## Bumping tool minimums
 
+Dependency updates are manual by choice: neither the template nor this
+repository uses Dependabot, which cannot edit the `.jinja` files and
+would collide with `copier update` in generated projects.
+
 Raise generated-project and workspace minimums to the current PyPI
 release together, in one `⬆️` commit:
 
