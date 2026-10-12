@@ -22,8 +22,10 @@ for new copier options or features, `PATCH` for fixes.
     ends with a `Revisit when ...` condition.
   - `README.md`: a landing page laid out top to bottom (lead sections,
     then project-specific ones, then TODO / Changelog / License) with
-    runnable examples, absolute links for PyPI in a library, and
-    free-form sub-READMEs the root links to as a hub.
+    runnable examples, absolute links for PyPI in a library, no
+    hand-made contents or "back to top" links in the root, and
+    free-form sub-READMEs the root links to as a hub, each with a
+    `## Contents` list kept in step with its headings once long.
   - Design decisions: one MADR-style record per decision under
     `docs/decisions/`, superseded rather than rewritten.
   - `AGENTS.md` itself.

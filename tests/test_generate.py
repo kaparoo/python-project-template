@@ -595,10 +595,14 @@ def test_agents_md_documents_doc_upkeep_rules(tmp_path: Path) -> None:
         assert lead in agents, f"missing lead section {lead}"
     assert "5. Project-specific sections" in agents
     assert "📋 TODO, 📜 Changelog, ⚖️ License." in agents
-    assert "No hand-written table of contents" in agents
+    assert 'No hand-written table of contents and no "back to top"' in agents
     assert "https://github.com/kaparoo/test-app/blob/main/<path>" in agents
     assert "#### Sub-READMEs" in agents
     assert "so it has no fixed sections" in agents
+    assert "never folded into\n  `<details>`" in agents
+    assert "Keep `## Contents` in step with the headings" in agents
+    assert "`#resolving-conflicts-on_conflict`" in agents
+    assert "| that README → `## Contents`, if present" in agents
     assert "only the root README reaches PyPI" in agents
     assert "📦 Setup —" not in agents
     assert "🗂️ Layout" not in agents

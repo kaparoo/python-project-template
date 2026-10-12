@@ -160,6 +160,7 @@ example) is its own `📝` commit.
 | adds, moves, or removes a top-level directory             | `README.md` → 🗂️ Layout, if present      |
 {%- endif %}
 | changes code that a README example uses                   | that README → the example                |
+| adds, removes, renames, or reorders a sub-README section  | that README → `## Contents`, if present  |
 {%- if include_todo %}
 | defers work, or uncovers a problem it does not fix        | `TODO.md` → add an item                  |
 | resolves a `TODO.md` item                                 | `TODO.md` → remove the item              |
@@ -375,9 +376,12 @@ Top to bottom, it holds:
 - Keep the template's sections, their names, and their order, and edit
   them in place; a project-specific section goes only where step 5
   puts it.
-- No hand-written table of contents: GitHub outlines a README from its
-  headings, and a root README long enough to need one is carrying
-  material that belongs in a sub-README or in docstrings.
+- No hand-written table of contents and no "back to top" links: GitHub
+  gives every README an Outline button, and a root README long enough to
+  need either is carrying material that belongs in a sub-README or in
+  docstrings. Hand-made links to these headings also break silently: an
+  emoji such as ⚖️ leaves an invisible U+FE0F in its anchor
+  (`#️-license`){% if is_library %}, on GitHub and PyPI alike{% endif %}.
 - Keep the Python requirement in the badge and in {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}
   in step with `requires-python` in `pyproject.toml`.
 - Every code example runs against the current code: a change that breaks
@@ -414,8 +418,17 @@ these:
   between APIs, pitfalls — but leaves signatures and parameter details
   to docstrings and does not repeat the root.
 - Its code examples run, under the same rule as the root's.
+- Headings carry no emoji, so their anchors stay plain.
 - Once it runs past a couple of screens, it opens with a `## Contents`
-  list linking its sections.
+  list: a plain bullet list linking each `##` section, never folded into
+  `<details>` — a contents list helps only while it is in view.
+- Keep `## Contents` in step with the headings: a commit that adds,
+  removes, renames, or reorders a `##` section updates the list. An
+  anchor is the heading lowercased, spaces turned into hyphens, and
+  punctuation other than `-` and `_` dropped:
+  `` ## Resolving conflicts: `on_conflict` `` links as
+  `#resolving-conflicts-on_conflict`.
+- No "back to top" links: GitHub's file view has its own Top button.
 {%- if is_library %}
 - It may link relatively: only the root README reaches PyPI.
 {%- endif %}
