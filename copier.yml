@@ -87,7 +87,8 @@ repo_name:
 python_version:
   type: str
   help: |
-    Target Python version (major.minor).
+    Oldest supported Python version (major.minor). The project supports
+    and CI tests every version from this one up to the newest choice.
 
     3.12 is deprecated and will be removed in template 2.0.0; pick 3.13
     or later for a new project.
@@ -97,6 +98,15 @@ python_version:
     "3.13": "3.13"
     "3.12 (deprecated)": "3.12"
   default: "3.14"
+
+# Computed, never asked or recorded: every offered version from
+# `python_version` up. It is the supported range a generated project
+# declares (classifiers, README badge) and tests (the CI matrix), so
+# keep the list in step with `python_version`'s choices.
+python_versions:
+  type: yaml
+  default: "{{ ['3.12', '3.13', '3.14', '3.15'] | select('ge', python_version) | list }}"
+  when: false
 
 
 # ─── License ───

@@ -12,14 +12,21 @@ concurrency:
 
 jobs:
   check:
-    name: Lint, type-check{% if use_pytest %}, test{% endif %} ({% raw %}${{ matrix.os }}{% endraw %})
+    name: Lint, type-check, {% if use_pytest %}test{% else %}import{% endif %} ({% raw %}${{ matrix.os }}, ${{ matrix.python-version || '.python-version' }}{% endraw %})
     runs-on: {% raw %}${{ matrix.os }}{% endraw %}
     timeout-minutes: 20
 
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # Every supported Python on Linux; Windows and macOS run
+        # `.python-version` only, since platform differences rarely
+        # depend on the Python version.
+        os: [ubuntu-latest]
+        python-version: {{ python_versions | tojson }}
+        include:
+          - os: windows-latest
+          - os: macos-latest
 
     steps:
       - uses: actions/checkout@v7
@@ -28,6 +35,7 @@ jobs:
         uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
+          python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
 
       - name: Sync dependencies
         run: uv sync --group dev --locked
@@ -44,4 +52,8 @@ jobs:
 
       - name: Tests
         run: uv run pytest
+{%- else %}
+
+      - name: Import check
+        run: uv run python -c "import {{ package_name }}"
 {%- endif %}

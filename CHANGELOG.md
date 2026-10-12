@@ -49,6 +49,15 @@ for new copier options or features, `PATCH` for fixes.
   follows to `0.17.0`.
 - The generated workflows use `actions/checkout@v7`,
   `astral-sh/setup-uv@v10.3.0`, and `actions/download-artifact@v8`.
+- **The generated CI tests every supported Python version**:
+  - Linux runs each version from `python_version` up to the newest one
+    the template offers; Windows and macOS run `.python-version`.
+  - Job names gain the Python version, so a branch protection rule that
+    requires the old check names needs the new ones.
+  - Without `use_pytest`, each job checks that the package imports.
+- `python_version` is the oldest supported version: the generated
+  `pyproject.toml` lists a classifier for every supported version, and
+  the README badge names them all instead of `X.Y+`.
 - The generated `CHANGELOG.md` ends with an `[Unreleased]` link
   reference, and the library release steps in `AGENTS.md` defer to the
   new `CHANGELOG.md` rules.

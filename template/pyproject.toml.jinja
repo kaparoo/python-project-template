@@ -28,7 +28,9 @@ classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: {{ python_version }}",
+{%- for version in python_versions %}
+    "Programming Language :: Python :: {{ version }}",
+{%- endfor %}
     "Programming Language :: Python :: Implementation :: CPython",
 {%- if is_library %}
     "Typing :: Typed",

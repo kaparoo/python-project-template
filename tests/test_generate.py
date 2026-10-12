@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING
 
 import copier
 import pytest
+import yaml
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -155,6 +156,34 @@ def test_python_version_default_has_no_deprecation_warning(
 ) -> None:
     _generate(tmp_path)
     assert "deprecated" not in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    ("python_version", "supported"),
+    (
+        ("3.12", ["3.12", "3.13", "3.14", "3.15"]),
+        ("3.14", ["3.14", "3.15"]),
+        ("3.15", ["3.15"]),
+    ),
+)
+def test_supported_python_versions_span_from_the_oldest(
+    tmp_path: Path, python_version: str, supported: list[str]
+) -> None:
+    """`python_versions` runs from the answer to the newest choice and
+    drives the classifiers, the README badge, and the CI matrix alike,
+    without being recorded as an answer."""
+    project = _generate(tmp_path, {"python_version": python_version})
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    classifiers = re.findall(r'"Programming Language :: Python :: (3\.\d+)"', pyproject)
+    assert classifiers == supported
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert f"badge/python-{'%20%7C%20'.join(supported)}-blue.svg" in readme
+    ci = yaml.safe_load(
+        (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    assert ci["jobs"]["check"]["strategy"]["matrix"]["python-version"] == supported
+    answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
+    assert "python_versions" not in answers
 
 
 def test_pyproject_uses_pep639_license_metadata(tmp_path: Path) -> None:
@@ -437,6 +466,27 @@ def test_ci_workflow_present_and_pinned(tmp_path: Path) -> None:
     assert "uv run pytest" in ci
 
 
+def test_ci_matrix_tests_every_version_on_linux_and_one_elsewhere(
+    tmp_path: Path,
+) -> None:
+    """Linux runs each supported Python; Windows and macOS run the
+    `.python-version` interpreter, which `setup-uv` falls back to."""
+    project = _generate(tmp_path, {"python_version": "3.13"})
+    ci = yaml.safe_load(
+        (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    job = ci["jobs"]["check"]
+    assert job["strategy"]["fail-fast"] is False
+    assert job["strategy"]["matrix"] == {
+        "os": ["ubuntu-latest"],
+        "python-version": ["3.13", "3.14", "3.15"],
+        "include": [{"os": "windows-latest"}, {"os": "macos-latest"}],
+    }
+    setup_uv = next(s for s in job["steps"] if s.get("name") == "Set up uv")
+    assert setup_uv["with"]["python-version"] == "${{ matrix.python-version }}"
+    assert "${{ matrix.python-version || '.python-version' }}" in job["name"]
+
+
 def test_ci_workflow_omits_test_step_without_pytest(tmp_path: Path) -> None:
     project = _generate(tmp_path, {"use_pytest": False})
     ci = (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
@@ -444,6 +494,8 @@ def test_ci_workflow_omits_test_step_without_pytest(tmp_path: Path) -> None:
     # lint + type-check steps always remain
     assert "uv run ruff check ." in ci
     assert "uv run ty check" in ci
+    # The matrix still checks each version imports, with no tests to run.
+    assert 'run: uv run python -c "import test_app"' in ci
 
 
 # ─── Release automation (publish.yml) ───
@@ -655,11 +707,12 @@ def test_agents_md_documents_dependency_rules(tmp_path: Path) -> None:
         "`[tool.ty.environment] python-version`",
         "`Programming Language :: Python :: X.Y` classifier",
         "`.python-version`",
-        "the requirement line in\n  📦 Installation",
+        "the requirement line in 📦 Installation",
     ):
         assert place in agents, f"missing {place}"
     assert "`copier update -d python_version=X.Y`" in agents
-    assert "`uv run --isolated --python X.Y pytest`" in agents
+    assert "the `python-version` list in `.github/workflows/ci.yml`" in agents
+    assert "drop\nit from the classifiers, the CI list, and the badge" in agents
     assert "| \N{HEAVY PLUS SIGN}     | Add a dependency" in agents
     assert "| \N{HEAVY MINUS SIGN}     | Remove a dependency" in agents
 
@@ -670,9 +723,8 @@ def test_agents_md_dependency_rules_follow_options(tmp_path: Path) -> None:
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
     assert "## Dependencies" in agents
     assert "--optional" not in agents
-    assert "the requirement line in\n  📦 Setup" in agents
-    assert '`uv run --isolated --python X.Y python -c "import test_app"`' in agents
-    assert "--python X.Y pytest" not in agents
+    assert "the requirement line in 📦 Setup" in agents
+    assert "--isolated" not in agents
 
 
 def test_agents_md_documents_readme_upkeep_details(tmp_path: Path) -> None:

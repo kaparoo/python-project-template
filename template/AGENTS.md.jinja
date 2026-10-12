@@ -174,19 +174,25 @@ together, in one commit:
   `ty` flags syntax and APIs newer than it;
 - one `Programming Language :: Python :: X.Y` classifier per supported
   version;
-- `.python-version` — the version development and CI run on, any
-  supported one;
-- the README's Python badge and the requirement line in
-  {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}.
+- the `python-version` list in `.github/workflows/ci.yml` — every
+  supported version, each tested on Linux;
+- `.python-version` — the version development, and CI on Windows and
+  macOS, run on: any supported one;
+- the README's Python badge, which lists every supported version, and
+  the requirement line in {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}.
 
-The oldest version is the template's `python_version` answer: move it
-with `copier update -d python_version=X.Y`, which re-renders all of the
-above and the *Project* line of this file; then add back by hand any
-newer versions the project also supports. CI runs `.python-version`
-only, so check the oldest version locally before changing it:
-{% if use_pytest %}`uv run --isolated --python X.Y pytest`{% else %}`uv run --isolated --python X.Y python -c "import {{ package_name }}"`{% endif %}.
-Dropping a version is a `**Breaking:**` `Changed` entry in
-`CHANGELOG.md`; supporting a new one is an `Added` entry.
+The range comes from the template: the oldest version is the
+`python_version` answer, and the newest is the newest version the
+template offers. `copier update -d python_version=X.Y` moves the oldest
+and re-renders all of the above and the *Project* line of this file;
+a plain `copier update` after the template offers a newer Python
+extends the range.
+
+To leave a version out — a dependency has no wheels for it yet — drop
+it from the classifiers, the CI list, and the badge together, and add
+it back once the dependency catches up. Dropping a version a release
+has supported is a `**Breaking:**` `Changed` entry in `CHANGELOG.md`;
+supporting a new one is an `Added` entry.
 
 ## Documentation
 

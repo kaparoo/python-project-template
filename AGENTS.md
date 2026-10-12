@@ -251,8 +251,9 @@ it goes in its `help`, and warn in `_message_after_copy` /
 The list of offered versions lives in `copier.yml`; everything else
 reads the `python_version` answer. A change touches:
 
-1. `copier.yml` — `choices`, `default`, `help`, and the deprecation
-   warnings in the after-copy / after-update messages.
+1. `copier.yml` — `choices`, `default`, `help`, the deprecation
+   warnings in the after-copy / after-update messages, and the list in
+   the computed `python_versions` right below the question.
 2. [`README.md`](./README.md) — the Python badge lists every version
    still offered (deprecated ones included), and the options table row
    and its notes.
@@ -262,12 +263,14 @@ reads the `python_version` answer. A change touches:
 4. `CHANGELOG.md` — `Added` for a new choice, `Changed` for a new
    default, `Deprecated` / `Removed` for a choice on its way out.
 
-Inside `template/`, `python_version` is rendered into
-`.python-version`, `requires-python`, the version classifier,
-`[tool.ty.environment] python-version`, the README badge and
-requirement line, and the generated `AGENTS.md`. A new place that
-needs the version reads the variable, never a literal. The generated
-workflows name no Python version — `uv` follows `.python-version`.
+Inside `template/`, `python_version` — the oldest supported version —
+is rendered into `.python-version`, `requires-python`,
+`[tool.ty.environment] python-version`, the README requirement line,
+and the generated `AGENTS.md`. `python_versions` — every offered
+version from that one up, computed and never recorded in
+`.copier-answers.yml` — is rendered into the classifiers, the README
+badge, and the `ci.yml` test matrix. A new place that needs a version
+reads one of the two variables, never a literal.
 
 The workspace's own Python (`.python-version`, `requires-python` in
 [`pyproject.toml`](./pyproject.toml)) moves independently: only when

@@ -49,7 +49,7 @@ versions without losing your customizations.
 | `author_email` | str | `kaparoo2001@gmail.com` | |
 | `github_username` | str | `kaparoo` | |
 | `repo_name` | str | `{{ project_name }}` | |
-| `python_version` | choice | `3.14` | `3.13` / `3.14` / `3.15`; `3.12` is deprecated |
+| `python_version` | choice | `3.14` | Oldest supported; CI tests it and every newer choice. `3.13` / `3.14` / `3.15`; `3.12` is deprecated |
 | `license_year` | int | `2026` | Copyright year |
 | `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
 | `release_automation` | choice | `manual` | `manual` / `github-oidc` — ship `publish.yml` (libraries only) |
