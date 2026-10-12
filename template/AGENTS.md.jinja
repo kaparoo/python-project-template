@@ -59,6 +59,13 @@ If one cannot run here — a test needing hardware or a service this
 machine lacks — say which and why instead of skipping it silently. CI
 runs the same gates, but it should confirm a change, not discover that
 it is broken.
+{%- if is_library %}
+
+CI also builds the sdist and wheel, checks their metadata, and imports
+the package from the wheel alone. When a change touches packaging —
+`pyproject.toml`, the package layout, or files the package ships — run
+`uv build` and `uvx twine check dist/*` locally too.
+{%- endif %}
 
 - Commit only when the user asks; see *Committing* below.
 - Push only when the user asks; a release the user asked for includes

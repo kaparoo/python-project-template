@@ -9,6 +9,7 @@ full pipeline to confirm tasks behave end-to-end.
 from __future__ import annotations
 
 import re
+import shlex
 import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -485,6 +486,27 @@ def test_ci_matrix_tests_every_version_on_linux_and_one_elsewhere(
     setup_uv = next(s for s in job["steps"] if s.get("name") == "Set up uv")
     assert setup_uv["with"]["python-version"] == "${{ matrix.python-version }}"
     assert "${{ matrix.python-version || '.python-version' }}" in job["name"]
+
+
+def test_ci_build_job_checks_library_distributions(tmp_path: Path) -> None:
+    """A library's CI builds, checks, and installs its wheel on every
+    push; an application has nothing to distribute and no such job."""
+    library = _generate(tmp_path / "library", {"python_version": "3.13"})
+    ci = yaml.safe_load(
+        (library / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    runs = [s["run"] for s in ci["jobs"]["build"]["steps"] if "run" in s]
+    assert runs[:2] == ["uv build", "uvx twine check dist/*"]
+    assert runs[2].startswith(
+        "uv run --isolated --no-project --python 3.13 --with dist/*.whl"
+    )
+    assert "files('test_app').joinpath('py.typed').is_file()" in runs[2]
+
+    application = _generate(tmp_path / "application", {"is_library": False})
+    ci = yaml.safe_load(
+        (application / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    assert set(ci["jobs"]) == {"check"}
 
 
 def test_ci_workflow_omits_test_step_without_pytest(tmp_path: Path) -> None:
@@ -972,9 +994,27 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     # A fresh project has no tests → pytest exits 5 (none collected), but the
     # run still loads the pytest + pytest-cov plugins (the real compat check).
     _run_in_project(project, ["uv", "run", "pytest"], allow_codes=(0, 5))
-    # Beyond ci.yml: a library is published, so confirm the `uv_build`
-    # backend actually produces an sdist + wheel from the generated config.
-    _run_in_project(project, ["uv", "build"])
+    # The `build` job of ci.yml, run step by step as written, so the test
+    # and the workflow cannot drift: `uv build`, `twine check`, then the
+    # wheel alone in a fresh environment, importing the package and
+    # finding its `py.typed`. The shell would expand the `dist/*` globs;
+    # here they are expanded by hand, skipping dotfiles as the shell does
+    # (`uv build` leaves a `dist/.gitignore`).
+    ci = yaml.safe_load(
+        (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    commands = [s["run"] for s in ci["jobs"]["build"]["steps"] if "run" in s]
+    assert commands[0] == "uv build"
+    for command in commands:
+        args: list[str] = []
+        for arg in shlex.split(command):
+            matches = (
+                sorted(m for m in project.glob(arg) if not m.name.startswith("."))
+                if "*" in arg
+                else []
+            )
+            args.extend([str(m) for m in matches] if matches else [arg])
+        _run_in_project(project, args)
     dist = project / "dist"
     assert any(dist.glob("*.whl")), "uv build produced no wheel"
     assert any(dist.glob("*.tar.gz")), "uv build produced no sdist"
