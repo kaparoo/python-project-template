@@ -18,6 +18,10 @@ for new copier options or features, `PATCH` for fixes.
   `required-version` floor and the omitted-defaults note move to `0.17.0`
   in lockstep. Workspace dev tooling bumped to match (`copier>=9.18.2`,
   `ruff>=0.17.0`).
+- Bumped the generated GitHub Actions to their current majors:
+  `actions/checkout@v7`, `astral-sh/setup-uv@v10.3.0`, and
+  `actions/download-artifact@v8` (`actions/upload-artifact@v7` is already
+  current). All still run on Node 24.
 
 ## [1.5.5] - 2026-07-07
 

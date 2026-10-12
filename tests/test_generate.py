@@ -349,8 +349,8 @@ def test_ci_workflow_present_and_pinned(tmp_path: Path) -> None:
     assert ci_path.is_file()
     ci = ci_path.read_text(encoding="utf-8")
     assert "name: CI" in ci
-    assert "actions/checkout@v6" in ci
-    assert "astral-sh/setup-uv@v8.1.0" in ci
+    assert "actions/checkout@v7" in ci
+    assert "astral-sh/setup-uv@v10.3.0" in ci
     # GitHub Actions expressions survived Jinja rendering verbatim.
     assert "${{ matrix.os }}" in ci
     assert "raw" not in ci  # {% raw %} wrappers fully consumed
@@ -398,7 +398,7 @@ def test_release_automation_github_oidc(tmp_path: Path) -> None:
     assert "uvx twine check dist/*" in yml  # metadata verification
     # 4-job pipeline: ci → build → testpypi → pypi.
     assert "actions/upload-artifact@v7" in yml  # build job ships artifacts
-    assert "actions/download-artifact@v7" in yml  # testpypi/publish consume them
+    assert "actions/download-artifact@v8" in yml  # testpypi/publish consume them
     # PyPA official action with explicit attestations + hash echo.
     assert "pypa/gh-action-pypi-publish@release/v1" in yml
     assert "repository-url: https://test.pypi.org/legacy/" in yml
@@ -444,7 +444,7 @@ def test_release_automation_github_oidc_without_testpypi(tmp_path: Path) -> None
     # 3-job structure: ci → build → pypi. Build still ships artifacts
     # so OIDC publish has no build-time dependency footprint.
     assert "actions/upload-artifact@v7" in yml
-    assert "actions/download-artifact@v7" in yml
+    assert "actions/download-artifact@v8" in yml
     assert "needs: build" in yml  # pypi job depends on build (no testpypi)
     assert "testpypi" not in yml.lower()  # but no staging job either
     # Tag-version verification and the GitHub Release job still ship; the
