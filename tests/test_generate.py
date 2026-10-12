@@ -805,7 +805,13 @@ def test_agents_md_documents_workflow_and_secrets(tmp_path: Path) -> None:
         "uv run ty check\nuv run pytest\n```"
     ) in agents
     assert "instead of skipping it silently" in agents
-    assert "Commit only when the user asks" in agents
+    assert "Commit only when the user asks; see *Committing* below." in agents
+    assert "### Committing" in agents
+    assert "`git stash push --include-untracked -m" in agents
+    assert "so each commit passes on its own" in agents
+    assert "`git checkout stash@{0} -- <file>`" in agents
+    assert "No `git add -p` or other interactive commands." in agents
+    assert "Drop a stash only once its changes are back" in agents
     assert "Push only when the user asks" in agents
     assert "Never force-push" in agents
     assert "Create a branch only when" in agents

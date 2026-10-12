@@ -42,7 +42,8 @@ for new copier options or features, `PATCH` for fixes.
   adding and removing a dependency.
 - A `## Workflow` section in the generated `AGENTS.md`: the gates a
   change passes before it counts as done, commits and pushes only on
-  request on the current branch, and secrets kept out of the
+  request on the current branch, accumulated changes split into
+  single-purpose commits with `git stash`, and secrets kept out of the
   repository.
 - A `🚀 Quick start` placeholder section in a library's generated
   `README.md`, between `📦 Installation` and `🧩 Modules`, and a

@@ -60,15 +60,37 @@ machine lacks — say which and why instead of skipping it silently. CI
 runs the same gates, but it should confirm a change, not discover that
 it is broken.
 
-- Commit only when the user asks. Until then the change stays in the
-  working tree; when asked, commit it as single-purpose commits that
-  follow the *Commit convention* below.
+- Commit only when the user asks; see *Committing* below.
 - Push only when the user asks; a release the user asked for includes
   its push and tag. Never force-push, rewrite pushed history, or move
   or delete a tag.
 - Work on the current branch, usually `main`. Create a branch only when
   the user asks for one.
 - Never skip git hooks (`--no-verify`).
+
+### Committing
+
+Changes accumulate in the working tree until the user asks for a
+commit. Then split them into single-purpose commits that follow the
+*Commit convention* below, one logical unit at a time, with
+`git stash`:
+
+1. Set every other unit aside:
+   `git stash push --include-untracked -m "<units>" -- <their paths>`.
+2. Run the gates on what remains, so each commit passes on its own,
+   and commit it.
+3. `git stash pop`, and repeat until `git stash list` is empty.
+
+A file holding parts of two units goes into a stash of its own, pushed
+last so it is `stash@{0}`. Bring it back with
+`git checkout stash@{0} -- <file>`, remove the other unit's part,
+stage, and commit; then run `git checkout stash@{0} -- <file>` again
+to restore the rest, and `git stash drop` that stash.
+
+- Order the units so each commit builds only on the ones before it.
+- No `git add -p` or other interactive commands.
+- Drop a stash only once its changes are back in the working tree.
+- Report the commits made, one line each.
 
 ### Secrets
 
