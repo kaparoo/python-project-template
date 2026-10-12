@@ -118,12 +118,12 @@ the package from the wheel alone. When a change touches packaging
 
 Run `uv run ruff format .` and `uv run ruff check --fix .` rather than
 styling by hand. `ruff` enforces the import groups and order, the blank
-lines after the imports, the 88-column limit (`E501`), `pathlib` over
-`os.path` (`PTH`), exception messages built in a `msg` variable (`EM`),
-and `%`-style logging arguments (`G`). The rules below are the ones it
-cannot check. *All Python code* covers tests too; *Source code* does
-not.{% if use_pytest %} `tests/AGENTS.md` says what tests do
-differently.{% endif %}
+lines around imports and definitions, the 88-column limit (`E501`),
+`pathlib` over `os.path` (`PTH`), exception messages built in a `msg`
+variable (`EM`), and `%`-style logging arguments (`G`). The rules
+below are the ones it cannot check. *All Python code* covers tests
+too; *Source code* does not.{% if use_pytest %} `tests/AGENTS.md` says
+what tests do differently.{% endif %}
 
 ### All Python code
 
@@ -137,10 +137,8 @@ A module runs, top to bottom:
 4. Constants, type aliases, functions, and classes.
 5. An `if __name__ == "__main__":` guard, in a runnable script only.
 
-- One blank line between the parts above. After the imports, two
-  before a function or class and one before a constant or alias (as
-  `I001` expects). Two between top-level definitions, one between
-  methods.
+- One blank line between `__all__` and the imports; `ruff` sets every
+  other blank line between the parts above.
 - Import by absolute path. A relative import is for the rare case an
   absolute one cannot work, with `# noqa: TID252` and the reason.
 - Define a private helper above its first caller, so the module reads

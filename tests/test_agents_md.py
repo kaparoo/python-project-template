@@ -139,9 +139,9 @@ def test_agents_md_documents_code_style(render: Render) -> None:
         agents
     )
     assert "2. `__all__` as a tuple" in agents
-    assert "two before a function or class and one before a constant or alias" in prose(
-        agents
-    )
+    assert "the blank lines around imports and definitions" in prose(agents)
+    assert "One blank line between `__all__` and the imports" in agents
+    assert "two before a function or class" not in prose(agents)
     assert "with `# noqa: TID252` and the reason" in agents
     assert "Define a private helper above its first caller" in agents
     assert "takes one argument per line" in agents
