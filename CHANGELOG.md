@@ -66,6 +66,9 @@ for new copier options or features, `PATCH` for fixes.
 - The generated `TODO.md` introduces itself as open work only, each
   item deleted in the commit that resolves it, instead of asking for
   every item to be promoted to `CHANGELOG.md`.
+- Generated projects select `ruff`'s `FIX` rules, so a `TODO`,
+  `FIXME`, `XXX`, or `HACK` comment fails lint. A project that has
+  such comments moves them into `TODO.md` when it updates.
 - The generated `README.md` of an application names its setup section
   `📦 Setup` instead of `📦 Development setup`.
 - GitHub Release notes from `publish.yml`

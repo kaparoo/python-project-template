@@ -98,8 +98,6 @@ Revisit when the `pytorch-v*` release after `v1.6.0` is out.
   module names, and PEP 695 alias imports; `cardiomyocytes`' two
   logging registers, meaningful `__repr__` for `%r`, and single-line
   error messages.
-- `template/pyproject.toml.jinja`: select `ruff`'s `FIX` rules so a
-  `# TODO` comment fails lint. Waits on the user's decision.
 
 ## Infrastructure
 

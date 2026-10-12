@@ -242,8 +242,9 @@ document in English; a document already written in another language
 keeps that language.
 {%- if not include_todo %}
 
-This project keeps no `TODO.md`: report work you defer to the user
-rather than leaving it in a `# TODO` comment.
+This project keeps no `TODO.md`: report work you defer to the user.
+`ruff` rejects a `# TODO` comment (its `FIX` rules), so one cannot
+hold it either.
 {%- endif %}
 
 ### `CHANGELOG.md`
@@ -388,9 +389,10 @@ work to git history and `CHANGELOG.md`.
   carry no emoji, so their anchors stay plain.
 - No owners, dates, status markers, checkboxes, or "last updated"
   lines — git history records who and when.
-- Add an item only for work the current change does not finish, and
-  prefer an item here over a `# TODO` comment for anything a later
-  session should pick up.
+- Add an item only for work the current change does not finish. This
+  file is the only place for it: `ruff` rejects `TODO`, `FIXME`,
+  `XXX`, and `HACK` comments (its `FIX` rules), so deferred work
+  cannot hide in the code.
 - Delete an item in the commit that resolves it — no "Done" section, no
   strikethrough — and add a `CHANGELOG.md` entry if users can see the
   result. An item dropped without being done is deleted the same way,

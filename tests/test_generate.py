@@ -851,6 +851,20 @@ def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
     assert tests_init.strip() == ""
 
 
+def test_fixme_comments_fail_lint_and_agents_md_says_so(tmp_path: Path) -> None:
+    """`FIX` is selected, and both `AGENTS.md` variants send deferred work
+    elsewhere: to `TODO.md`, or to the user when there is none."""
+    project = _generate(tmp_path / "with_todo")
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert '"FIX",   # flake8-fixme' in pyproject
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "This\n  file is the only place for it: `ruff` rejects `TODO`" in agents
+
+    no_todo = _generate(tmp_path / "no_todo", {"include_todo": False})
+    agents = (no_todo / "AGENTS.md").read_text(encoding="utf-8")
+    assert "report work you defer to the user.\n`ruff` rejects" in agents
+
+
 # ─── Integration: full pipeline with _tasks ───
 
 
@@ -931,6 +945,22 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     dist = project / "dist"
     assert any(dist.glob("*.whl")), "uv build produced no wheel"
     assert any(dist.glob("*.tar.gz")), "uv build produced no sdist"
+    # The `FIX` rules are live: a deferred-work comment fails lint, which
+    # is what pushes it into `TODO.md`.
+    probe = project / "test_app" / "probe.py"
+    probe.write_text(
+        "from __future__ import annotations\n\n# TODO: probe\n", encoding="utf-8"
+    )
+    result = subprocess.run(
+        ["uv", "run", "ruff", "check", str(probe)],
+        cwd=project,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    probe.unlink()
+    assert result.returncode == 1
+    assert "FIX002" in result.stdout
 
 
 def test_generated_minimal_application_passes_lint_and_type_check(
