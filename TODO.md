@@ -101,17 +101,21 @@ Revisit when the `pytorch-v*` release after `v1.6.0` is out.
 
 ## Infrastructure
 
-Each waits on the user's decision.
-
 - `.github/workflows/`: CI for this repository, running
   `uv run pytest` on push. The suite needs `git`, `uv`, and a git
   identity.
+
+### Dependabot and a library build check
+
+Two additions to generated projects, postponed by the user until the
+code style and test rules land:
+
 - `template/.github/dependabot.yml`: Dependabot updates for generated
   projects' `uv` dependencies and GitHub Actions. The minimums inside
   `template/*.jinja` stay manual.
 - `template/.github/workflows/ci.yml.jinja`: `uv build` and
   `uvx twine check` for libraries, so packaging breaks surface before
-  a release.
-- `template/.gitignore`: ignores all of `.claude/`; consider
-  committing `.claude/settings.json` and ignoring only
-  `settings.local.json`.
+  a release rather than in `publish.yml`.
+
+Revisit when the code style and test rules are in the generated
+`AGENTS.md`.

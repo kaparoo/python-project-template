@@ -19,7 +19,7 @@ private/
 temps/
 temp/
 
-# Claude Code settings
+# Claude Code settings (kept out of the repository on purpose)
 .claude/
 
 # Tool caches (consolidated location for mypy, pytest, ruff)
