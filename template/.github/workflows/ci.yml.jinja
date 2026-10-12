@@ -71,10 +71,6 @@ jobs:
     name: Build and check distributions
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # The isolated install below resolves the wheel's `torch` too: keep it
-    # on the CPU index, or it pulls the multi-GB CUDA build from PyPI.
-    env:
-      UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu
 
     steps:
       - uses: actions/checkout@v7
@@ -91,8 +87,13 @@ jobs:
         run: uvx twine check dist/*
 
       # A fresh environment holding only the wheel catches modules or the
-      # `py.typed` marker left out of the distribution.
+      # `py.typed` marker left out of the distribution. It resolves the
+      # wheel's `torch` too, so it takes the CPU index (the CUDA build on
+      # PyPI is multi-GB); the steps above keep PyPI, where `twine` finds
+      # dependencies that read current metadata.
       - name: Install the wheel and import the package
+        env:
+          UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu
         run: >-
           uv run --isolated --no-project --python {{ python_version }}
           --with dist/*.whl

@@ -47,8 +47,12 @@ def test_ci_lock_job_validates_committed_lock(render: Render) -> None:
     assert "actions/checkout@v7" in [s.get("uses") for s in lock["steps"]]
     assert "astral-sh/setup-uv@v10.3.0" in [s.get("uses") for s in lock["steps"]]
     cpu_index = "pytorch=https://download.pytorch.org/whl/cpu"
-    for job in ("check", "build"):
-        assert ci["jobs"][job]["env"] == {"UV_INDEX": cpu_index}, job
+    assert ci["jobs"]["check"]["env"] == {"UV_INDEX": cpu_index}
+    build = ci["jobs"]["build"]
+    assert "env" not in build
+    envs = {s["name"]: s.get("env") for s in build["steps"] if "name" in s}
+    assert envs["Install the wheel and import the package"] == {"UV_INDEX": cpu_index}
+    assert envs["Verify metadata"] is None
     assert "\N{EM DASH}" not in text
 
     application = render({"is_library": False})
