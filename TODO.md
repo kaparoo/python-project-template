@@ -34,15 +34,6 @@ Before taking the matrix, check which Python versions the pinned
 
 Revisit when `v1.6.0` is tagged: shared work lands on `main` first.
 
-### Remove the `3.12` choice in 2.0.0
-
-`3.12` is deprecated in 1.6.0. Removing it makes a recorded `3.12`
-answer fail validation on `copier update`, so 2.0.0 needs a
-`_migrations` entry, or at least an after-update message, that moves
-such a project to `3.13`.
-
-Revisit when 2.0.0 is planned.
-
 ## Infrastructure
 
 ### Dependabot for generated projects

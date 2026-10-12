@@ -267,10 +267,9 @@ behavior (see [Changelog](#changelog)), so a change to one touches:
 
 Removing a choice or a question breaks `copier update` for projects
 that recorded it, which makes it `MAJOR` (see [Releases](#releases)).
-Within a major, deprecate instead, as `python_version` does for
-`3.12`: keep the value working under a `(deprecated)` label, say when
-it goes in its `help`, and warn in `_message_after_copy` /
-`_message_after_update`.
+Within a major, deprecate instead: keep the value working under a
+`(deprecated)` label, say when it goes in its `help`, and warn in
+`_message_after_copy` / `_message_after_update`.
 
 ### Changing the `python_version` choices
 

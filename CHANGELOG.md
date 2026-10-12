@@ -124,15 +124,12 @@ for new copier options or features, `PATCH` for fixes.
   every newline in a release body as a break, and end with a
   `**Full Changelog**` link taken from the CHANGELOG's link reference.
 
-### Deprecated
-
-- The `3.12` `python_version` choice is deprecated and will be removed
-  in 2.0.0. It still renders, now labeled `3.12 (deprecated)`, and
-  `copier copy` / `copier update` end with a warning for it. Move a
-  project with `copier update -d python_version=3.13` (or later).
-
 ### Removed
 
+- **Breaking:** `3.12` as a `python_version` choice: generated projects
+  need Python 3.13 or newer. Update a project that recorded `3.12` with
+  `copier update -d python_version=3.13` (or later); with `--defaults`
+  alone, it silently takes the default, `3.14`.
 - `"ruff.nativeServer": "on"` from the generated
   `.vscode/settings.json`; Ruff 0.17 ignores it.
 

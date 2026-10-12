@@ -137,32 +137,13 @@ def test_python_version_rejects_versions_outside_the_supported_range(
     tmp_path: Path,
 ) -> None:
     with pytest.raises(ValueError, match="Invalid choice for 'python_version'"):
-        _generate(tmp_path, {"python_version": "3.11"})
-
-
-def test_python_version_3_12_renders_with_a_deprecation_warning(
-    tmp_path: Path,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    project = _generate(tmp_path, {"python_version": "3.12"})
-    assert (project / ".python-version").read_text(encoding="utf-8").strip() == "3.12"
-    answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
-    assert "python_version: '3.12'" in answers
-    assert "Python 3.12 is deprecated" in capsys.readouterr().err
-
-
-def test_python_version_default_has_no_deprecation_warning(
-    tmp_path: Path,
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    _generate(tmp_path)
-    assert "deprecated" not in capsys.readouterr().err
+        _generate(tmp_path, {"python_version": "3.12"})
 
 
 @pytest.mark.parametrize(
     ("python_version", "supported"),
     (
-        ("3.12", ["3.12", "3.13", "3.14", "3.15"]),
+        ("3.13", ["3.13", "3.14", "3.15"]),
         ("3.14", ["3.14", "3.15"]),
         ("3.15", ["3.15"]),
     ),

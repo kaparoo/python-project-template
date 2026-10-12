@@ -1,7 +1,7 @@
 # python-project-template
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg?logo=opensourceinitiative&logoColor=white)](./LICENSE)
-[![Python](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14%20%7C%203.15-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.13%20%7C%203.14%20%7C%203.15-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![ty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ty/main/assets/badge/v0.json)](https://github.com/astral-sh/ty)
@@ -49,7 +49,7 @@ versions without losing your customizations.
 | `author_email` | str | `kaparoo2001@gmail.com` | |
 | `github_username` | str | `kaparoo` | |
 | `repo_name` | str | `{{ project_name }}` | |
-| `python_version` | choice | `3.14` | Oldest supported; CI tests it and every newer choice. `3.13` / `3.14` / `3.15`; `3.12` is deprecated |
+| `python_version` | choice | `3.14` | Oldest supported; CI tests it and every newer choice. `3.13` / `3.14` / `3.15` |
 | `license_year` | int | `2026` | Copyright year |
 | `is_library` | bool | `true` | Adds `[build-system]` + `py.typed` |
 | `release_automation` | choice | `manual` | `manual` / `github-oidc`; `github-oidc` ships `publish.yml` (libraries only) |
