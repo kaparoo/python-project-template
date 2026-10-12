@@ -17,8 +17,8 @@ jobs:
     timeout-minutes: 20
     # CI runners have no GPU. Force the CPU PyTorch build for every `uv`
     # command (sync + run) regardless of the project's compute_backend:
-    # CPU wheels are far smaller than CUDA wheels and — unlike CUDA wheels —
-    # are published for macOS too, so the cross-OS matrix resolves cleanly.
+    # CPU wheels are far smaller than CUDA wheels and, unlike them, are
+    # published for macOS too, so the cross-OS matrix resolves cleanly.
     # `uv` re-resolves against this index and ignores the committed
     # CUDA `uv.lock` for the CI run only.
     env:
@@ -71,6 +71,10 @@ jobs:
     name: Build and check distributions
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # The isolated install below resolves the wheel's `torch` too: keep it
+    # on the CPU index, or it pulls the multi-GB CUDA build from PyPI.
+    env:
+      UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu
 
     steps:
       - uses: actions/checkout@v7
@@ -105,10 +109,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v8.1.0
+        uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
 

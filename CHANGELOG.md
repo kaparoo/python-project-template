@@ -96,7 +96,8 @@ for new copier options or features, `PATCH` for fixes.
 - A `build` job in a library's generated CI: on every push it builds
   the sdist and wheel, runs `twine check`, and installs the wheel alone
   to import the package and find its `py.typed`, so a packaging break
-  surfaces before a release tag.
+  surfaces before a release tag. Like the `check` job, it resolves
+  `torch` from the CPU PyTorch index.
 - A `🚀 Quick start` placeholder section in a library's generated
   `README.md`, between `📦 Installation` and `🧩 Modules`, and a
   `🚀 Usage` placeholder in an application's, after its setup section.

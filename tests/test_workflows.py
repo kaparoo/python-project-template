@@ -37,11 +37,26 @@ def test_ci_workflow_adds_test_step_with_pytest(render: Render) -> None:
 
 def test_ci_lock_job_validates_committed_lock(render: Render) -> None:
     project = render()
-    ci = (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
-    assert "uv lock --check" in ci
-    assert "Verify lockfile" in ci
-    assert ci.count("UV_INDEX: pytorch=https://download.pytorch.org/whl/cpu") == 1
-    assert "\nenv:\n" not in ci
+    text = (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    ci = yaml.safe_load(text)
+    assert "env" not in ci
+    lock = ci["jobs"]["lock"]
+    assert lock["name"] == "Verify lockfile"
+    assert "env" not in lock
+    assert [s["run"] for s in lock["steps"] if "run" in s] == ["uv lock --check"]
+    assert "actions/checkout@v7" in [s.get("uses") for s in lock["steps"]]
+    assert "astral-sh/setup-uv@v10.3.0" in [s.get("uses") for s in lock["steps"]]
+    cpu_index = "pytorch=https://download.pytorch.org/whl/cpu"
+    for job in ("check", "build"):
+        assert ci["jobs"][job]["env"] == {"UV_INDEX": cpu_index}, job
+    assert "\N{EM DASH}" not in text
+
+    application = render({"is_library": False})
+    ci = yaml.safe_load(
+        (application / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+    )
+    assert ci["jobs"]["check"]["env"] == {"UV_INDEX": cpu_index}
+    assert "build" not in ci["jobs"]
 
 
 def test_ci_matrix_tests_every_version_on_linux_and_one_elsewhere(
