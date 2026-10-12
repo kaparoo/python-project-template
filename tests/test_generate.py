@@ -350,28 +350,39 @@ def test_include_todo_false_omits_todo_md_and_readme_link(tmp_path: Path) -> Non
     assert "TODO.md" not in readme
 
 
-def test_readme_includes_five_sections_for_library(tmp_path: Path) -> None:
-    """Default (`is_library=True`, `include_todo=True`) → all 5 sections."""
+def _sections(readme: str) -> list[str]:
+    """The `##` headings of a rendered README, in order."""
+    return [line for line in readme.splitlines() if line.startswith("## ")]
+
+
+def test_readme_sections_for_library(tmp_path: Path) -> None:
+    """Default (`is_library=True`, `include_todo=True`): lead sections
+    Installation → Quick start → Modules, then the closing three."""
     project = _generate(tmp_path)
     readme = (project / "README.md").read_text(encoding="utf-8")
-    for section in (
+    assert _sections(readme) == [
         "## 📦 Installation",
+        "## 🚀 Quick start",
         "## 🧩 Modules",
         "## 📋 TODO",
         "## 📜 Changelog",
         "## ⚖️ License",
-    ):
-        assert section in readme, f"missing {section}"
+    ]
     assert "uv add test-app" in readme
     assert "pip install test-app" in readme
 
 
-def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> None:
+def test_readme_sections_for_application(tmp_path: Path) -> None:
+    """Application: lead sections Setup → Usage (Layout is added on demand)."""
     project = _generate(tmp_path, {"is_library": False})
     readme = (project / "README.md").read_text(encoding="utf-8")
-    assert "## 📦 Development setup" in readme
-    assert "## 📦 Installation" not in readme
-    assert "## 🧩 Modules" not in readme  # library-only section
+    assert _sections(readme) == [
+        "## 📦 Setup",
+        "## 🚀 Usage",
+        "## 📋 TODO",
+        "## 📜 Changelog",
+        "## ⚖️ License",
+    ]
     assert "uv add test-app" not in readme
     assert "uv sync --group dev" in readme
 

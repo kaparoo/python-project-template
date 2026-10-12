@@ -30,6 +30,9 @@ for new copier options or features, `PATCH` for fixes.
 - A `## Releases` section in the generated `AGENTS.md` for applications
   (`is_library = false`): versions are promoted and tagged, not
   published.
+- A `🚀 Quick start` placeholder section in a library's generated
+  `README.md`, between `📦 Installation` and `🧩 Modules`, and a
+  `🚀 Usage` placeholder in an application's, after its setup section.
 
 ### Changed
 
@@ -44,6 +47,8 @@ for new copier options or features, `PATCH` for fixes.
 - The generated `TODO.md` introduces itself as open work only, each
   item deleted in the commit that resolves it, instead of asking for
   every item to be promoted to `CHANGELOG.md`.
+- The generated `README.md` of an application names its setup section
+  `📦 Setup` instead of `📦 Development setup`.
 - GitHub Release notes from `publish.yml`
   (`release_automation = github-oidc`) join the CHANGELOG's wrapped
   lines into one line per paragraph or list item, since GitHub renders

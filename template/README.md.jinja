@@ -28,12 +28,16 @@ uv add {{ project_name }}
 pip install {{ project_name }}
 ```
 
+## 🚀 Quick start
+
+_Show the main use case in one short, runnable example._
+
 ## 🧩 Modules
 
 _Document your modules here._
 
 {% else -%}
-## 📦 Development setup
+## 📦 Setup
 
 Requires Python {{ python_version }}+.
 
@@ -42,6 +46,10 @@ git clone https://github.com/{{ github_username }}/{{ repo_name }}.git
 cd {{ repo_name }}
 uv sync --group dev
 ```
+
+## 🚀 Usage
+
+_Show how to run the project: its commands, scripts, or entry points._
 
 {% endif -%}
 {% if include_todo -%}
