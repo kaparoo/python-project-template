@@ -45,6 +45,7 @@ the recurring `CHANGELOG.md` resolution pattern.
 ├── copier.yml                 ← template configuration (questions, tasks, etc.)
 ├── pyproject.toml             ← WORKSPACE tooling only (copier + pytest + ruff)
 ├── tests/                     ← tests for the template itself
+├── TODO.md                    ← open work on the template itself
 ├── template/                  ← THE TEMPLATE — every file here ships to users
 │   ├── pyproject.toml.jinja   ← rendered into generated projects
 │   ├── ...
@@ -136,6 +137,16 @@ Everything that stays in this repository is internal and stays out:
 workspace, `tests/`, and this repo's own `README.md` and `AGENTS.md`.
 
 The `pytorch` branch keeps its variant changelog under the same rules.
+
+## TODO
+
+[`TODO.md`](./TODO.md) holds open work on this template: releases, the
+`pytorch` variant, downstream updates, and rule or infrastructure
+changes put off for later. It follows the rules generated projects
+get — read *Documentation → `TODO.md`* in
+[`template/AGENTS.md.jinja`](./template/AGENTS.md.jinja). Read it
+before starting a change, and delete an item in the commit that
+resolves it.
 
 ## Releases
 

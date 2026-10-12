@@ -78,6 +78,7 @@ asked when their parent feature is enabled (a library, or pytest).
 │   ├── {{ package_name }}/
 │   └── ...
 ├── tests/              ← tests for the template itself
+├── TODO.md             ← open work on the template
 └── AGENTS.md           ← guide for AI assistants working on this repo
 ```
 
@@ -125,6 +126,10 @@ don't skip git hooks.
 AI coding assistants working on this repository additionally follow
 [`AGENTS.md`](./AGENTS.md) for workflow rules and the toolchain
 rationale they must respect.
+
+## 📋 TODO
+
+See [TODO.md](./TODO.md) for open work on the template.
 
 ## 📜 Changelog
 
