@@ -9,6 +9,11 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Added
+
+- `python_version` gains a `3.15` choice now that Python 3.15.0 is out.
+  The default stays `3.14`.
+
 ### Changed
 
 - Bumped generated dev-dependency minimums to the current latest:
@@ -28,6 +33,12 @@ for new copier options or features, `PATCH` for fixes.
 - Dropped `"ruff.nativeServer": "on"` from the generated (and workspace)
   `.vscode/settings.json` — Ruff 0.17 removed `ruff-lsp`, so the setting is
   deprecated and ignored by the VS Code extension.
+- Dropped the `3.12` choice from `python_version`; the supported range is
+  now `3.13` – `3.15`. A project generated with `3.12` that runs
+  `copier update --defaults` silently falls back to the `3.14` default
+  (re-rendering `.python-version`, `requires-python`, and the `ty` /
+  classifier versions) — pass `-d python_version=3.13` to stay on the
+  lowest supported version instead.
 
 ## [1.5.5] - 2026-07-07
 

@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import copier
+import pytest
 
 if TYPE_CHECKING:
     from collections.abc import Mapping
@@ -120,6 +121,20 @@ def test_python_version_propagates_to_all_locations(tmp_path: Path) -> None:
     assert 'requires-python = ">=3.13"' in pyproject
     assert 'python-version = "3.13"' in pyproject
     assert "Python :: 3.13" in pyproject
+
+
+def test_python_version_defaults_to_3_14(tmp_path: Path) -> None:
+    project = _generate(tmp_path)
+    assert (project / ".python-version").read_text(encoding="utf-8").strip() == "3.14"
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'requires-python = ">=3.14"' in pyproject
+
+
+def test_python_version_rejects_versions_outside_the_supported_range(
+    tmp_path: Path,
+) -> None:
+    with pytest.raises(ValueError, match="Invalid choice for 'python_version'"):
+        _generate(tmp_path, {"python_version": "3.12"})
 
 
 def test_pyproject_uses_pep639_license_metadata(tmp_path: Path) -> None:
@@ -261,11 +276,11 @@ def test_is_library_false_omits_build_system_and_py_typed(tmp_path: Path) -> Non
 def test_answers_file_records_all_inputs(tmp_path: Path) -> None:
     project = _generate(
         tmp_path,
-        {"project_name": "answers-test", "python_version": "3.12"},
+        {"project_name": "answers-test", "python_version": "3.15"},
     )
     answers = (project / ".copier-answers.yml").read_text(encoding="utf-8")
     assert "project_name: answers-test" in answers
-    assert "python_version: '3.12'" in answers
+    assert "python_version: '3.15'" in answers
 
 
 # ─── Agent guide ───
