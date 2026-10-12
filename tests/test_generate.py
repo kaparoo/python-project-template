@@ -950,6 +950,8 @@ def test_future_import_required_with_init_exempt(tmp_path: Path) -> None:
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert 'required-imports = ["from __future__ import annotations"]' in pyproject
     assert '"__init__.py" = ["I002"]' in pyproject
+    assert 'ban-relative-imports = "all"' in pyproject
+    assert '"E501"' not in pyproject
 
     # Empty package marker stays empty — no future import.
     init = (project / "fut_app" / "__init__.py").read_text(encoding="utf-8")
@@ -1075,7 +1077,11 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     # is what pushes it into `TODO.md`.
     probe = project / "test_app" / "probe.py"
     probe.write_text(
-        "from __future__ import annotations\n\n# TODO: probe\n", encoding="utf-8"
+        "from __future__ import annotations\n\n"
+        "from . import sibling\n\n"
+        "# TODO: probe\n"
+        f"WIDE = {'x' * 90!r}\n",
+        encoding="utf-8",
     )
     result = subprocess.run(
         ["uv", "run", "ruff", "check", str(probe)],
@@ -1087,6 +1093,8 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     probe.unlink()
     assert result.returncode == 1
     assert "FIX002" in result.stdout
+    assert "TID252" in result.stdout
+    assert "E501" in result.stdout
     # The registered `slow` marker passes `--strict-markers`, and
     # `-m "not slow"` deselects it (exit 5: nothing left to run).
     probe = project / "tests" / "test_probe.py"

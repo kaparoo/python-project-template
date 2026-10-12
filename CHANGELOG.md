@@ -96,6 +96,11 @@ for new copier options or features, `PATCH` for fixes.
   and `publish.yml` messages, and the question help no longer use em
   dashes; the sentences are recast with colons, commas, or
   parentheses.
+- Generated projects check line length (`E501`, 88 columns) on every
+  line, docstrings, comments, and strings included, which `ruff format`
+  cannot wrap; and they reject relative imports
+  (`ban-relative-imports = "all"`). Shorten or rewrap a line that runs
+  over, and import by absolute path.
 - Generated projects select `ruff`'s `FIX` rules, so a `TODO`,
   `FIXME`, `XXX`, or `HACK` comment fails lint. A project that has
   such comments moves them into `TODO.md` when it updates.
