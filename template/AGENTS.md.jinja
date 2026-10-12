@@ -141,6 +141,50 @@ applying it by hand.
   `# /// script` block). `uv` manages it (`uv add --script`); add or edit
   it by hand only when explicitly asked.
 
+## Dependencies
+
+- Change dependencies with `uv`, not by editing `pyproject.toml` by
+  hand: `uv add <pkg>` / `uv remove <pkg>` for what the code imports at
+  run time, `uv add --group dev <pkg>` for what only tests, linting, or
+  type checking need{% if is_library %}, and `uv add --optional <extra> <pkg>` for
+  an optional extra{% endif %}. Commit `pyproject.toml` and `uv.lock`
+  together — CI installs with `uv sync --locked` and fails on a stale
+  lock.
+- To move to a newer release, raise the minimum with
+  `uv add "<pkg>>=X.Y.Z"` (keep the `--group`{% if is_library %} or `--optional`{% endif %} flag
+  it was added with), or refresh only the lock with
+  `uv lock --upgrade-package <pkg>`.
+- Raising `ruff`'s minimum also raises `[tool.ruff] required-version`
+  and the "omitted (ruff vX.Y.Z)" note at the end of `pyproject.toml`;
+  re-check that the sections it lists still use only defaults.
+- A runtime dependency's range is a requirement users see, so it goes
+  in `CHANGELOG.md`; `dev` group changes stay out (see
+  *Documentation → `CHANGELOG.md`*).
+
+### Supported Python versions
+
+The supported versions are stated in several places. Change them
+together, in one commit:
+
+- `requires-python` in `pyproject.toml` — the oldest supported version;
+- `[tool.ty.environment] python-version` — the same oldest version, so
+  `ty` flags syntax and APIs newer than it;
+- one `Programming Language :: Python :: X.Y` classifier per supported
+  version;
+- `.python-version` — the version development and CI run on, any
+  supported one;
+- the README's Python badge and the requirement line in
+  {% if is_library %}📦 Installation{% else %}📦 Setup{% endif %}.
+
+The oldest version is the template's `python_version` answer: move it
+with `copier update -d python_version=X.Y`, which re-renders all of the
+above and the *Project* line of this file; then add back by hand any
+newer versions the project also supports. CI runs `.python-version`
+only, so check the oldest version locally before changing it:
+{% if use_pytest %}`uv run --isolated --python X.Y pytest`{% else %}`uv run --isolated --python X.Y python -c "import {{ package_name }}"`{% endif %}. Dropping a version is a
+`**Breaking:**` `Changed` entry in `CHANGELOG.md`; supporting a new one
+is an `Added` entry.
+
 ## Documentation
 
 `README.md`, `CHANGELOG.md`,{% if include_todo %} `TODO.md`,{% endif %} and this file are kept current by
@@ -507,6 +551,8 @@ Common prefixes used in this project:
 | 📦     | Re-export / packaging structure               |
 | 🚚     | Move / rename files                           |
 | ⬆️     | Bump a dependency or tool version             |
+| ➕     | Add a dependency                              |
+| ➖     | Remove a dependency                           |
 | 🔧     | Config (`pyproject.toml`, `ruff`, `ty`, ...)  |
 | 🔖     | Release a version (commit + matching tag)     |
 

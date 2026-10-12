@@ -635,6 +635,45 @@ def test_agents_md_doc_upkeep_rules_follow_options(tmp_path: Path) -> None:
     assert "### `docs/decisions/`" in agents
 
 
+def test_agents_md_documents_dependency_rules(tmp_path: Path) -> None:
+    """Default (library + pytest): `uv`-only changes, lock with them, the
+    `ruff` lockstep, and every place the supported Python versions live."""
+    project = _generate(tmp_path)
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Dependencies" in agents
+    assert "`uv add --group dev <pkg>`" in agents
+    assert "`uv add --optional <extra> <pkg>`" in agents
+    assert "Commit `pyproject.toml` and `uv.lock`" in agents
+    assert "`uv lock --upgrade-package <pkg>`" in agents
+    assert (
+        "Raising `ruff`'s minimum also raises `[tool.ruff] required-version`" in agents
+    )
+    assert "### Supported Python versions" in agents
+    for place in (
+        "`requires-python` in `pyproject.toml`",
+        "`[tool.ty.environment] python-version`",
+        "`Programming Language :: Python :: X.Y` classifier",
+        "`.python-version`",
+        "the requirement line in\n  📦 Installation",
+    ):
+        assert place in agents, f"missing {place}"
+    assert "`copier update -d python_version=X.Y`" in agents
+    assert "`uv run --isolated --python X.Y pytest`" in agents
+    assert "| \N{HEAVY PLUS SIGN}     | Add a dependency" in agents
+    assert "| \N{HEAVY MINUS SIGN}     | Remove a dependency" in agents
+
+
+def test_agents_md_dependency_rules_follow_options(tmp_path: Path) -> None:
+    """Application without pytest: no extras, Setup, and an import check."""
+    project = _generate(tmp_path, {"is_library": False, "use_pytest": False})
+    agents = (project / "AGENTS.md").read_text(encoding="utf-8")
+    assert "## Dependencies" in agents
+    assert "--optional" not in agents
+    assert "the requirement line in\n  📦 Setup" in agents
+    assert '`uv run --isolated --python X.Y python -c "import test_app"`' in agents
+    assert "--python X.Y pytest" not in agents
+
+
 def test_agents_md_documents_python_style(tmp_path: Path) -> None:
     project = _generate(tmp_path)
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
