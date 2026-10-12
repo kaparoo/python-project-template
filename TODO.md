@@ -115,5 +115,3 @@ Each waits on the user's decision.
 - `template/.gitignore`: ignores all of `.claude/`; consider
   committing `.claude/settings.json` and ignoring only
   `settings.local.json`.
-- `copier.yml`: `license_year` defaults to `2026`; bump it each
-  January or compute it from the current date.

@@ -330,6 +330,20 @@ section names (📦 Installation, 🚀 Quick start, 🧩 Modules, 📦 Setup,
 commit, and assert the shared strings on both sides in
 `tests/test_generate.py`.
 
+### Each new year
+
+`license_year` defaults to the current year, typed in by hand: Copier
+has no date in its render context without the `jinja2-time`
+extension, which every user would then have to install alongside
+Copier. In January:
+
+1. `copier.yml` — raise `license_year`'s `default`.
+2. [`README.md`](./README.md) — the `license_year` row of the options
+   table.
+3. `CHANGELOG.md` → `Changed`.
+
+A recorded answer keeps its year, so only new projects see the change.
+
 ### Keeping this repo's `README.md` current
 
 This repo's own [`README.md`](./README.md) is internal and does not
