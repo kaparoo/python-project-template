@@ -45,13 +45,20 @@ for new copier options or features, `PATCH` for fixes.
   request on the current branch, accumulated changes split into
   single-purpose commits with `git stash`, and secrets kept out of the
   repository.
-- A `## Tests` section in the generated `AGENTS.md` (pytest projects),
-  gathering the test rules from Conventions and adding `fixtures/`
-  packages per subpackage, test data in `tests/assets/`, file I/O under
-  `tmp_path`, no docstrings or comments in tests, warnings and logs,
-  `monkeypatch` over `unittest.mock`, a failing test before a bug fix,
-  how to skip a test (shared marks in `tests/marks.py`), projects whose
-  CI cannot run the tests, and when to raise `fail_under`.
+- **A `## Tests` section in the generated `AGENTS.md`** (pytest
+  projects), taking over the test rules from Conventions:
+  - Layout: `fixtures/` packages at the top or per subpackage, test
+    data in `tests/assets/`, how tests import, and optional
+    annotations.
+  - Writing tests: no docstrings or comments, file I/O under
+    `tmp_path`, named parametrized cases, isolation, seeded randomness
+    and explicit float tolerances, warnings and logs, `monkeypatch`
+    over `unittest.mock`, the public API, no network, and a failing
+    test before a bug fix.
+  - Skipped tests: shared marks in `tests/marks.py`, and projects whose
+    CI cannot run the tests.
+  - Coverage and speed: when to raise `fail_under`, and the `slow`
+    marker.
 - A registered `slow` pytest marker in generated projects, and
   `tests/assets/local/` in the generated `.gitignore` for test data too
   large or private to commit.

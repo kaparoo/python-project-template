@@ -908,6 +908,14 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     assert "If the project has a module named\n  `assets`" in agents
     assert "does so under pytest's `tmp_path`" in agents
     assert "Write no docstrings or comments in tests" in agents
+    assert "`from tests.<pkg>.helpers import ...`" in agents
+    assert "Type annotations are optional in tests" in agents
+    assert '`pytest.param(..., id="empty-source")`' in agents
+    assert "Tests are independent of each other and of their order." in agents
+    assert "never a\n  global seed" in agents
+    assert "`numpy.testing.assert_allclose` for arrays" in agents
+    assert "`# noqa: SLF001` on\n  that line" in agents
+    assert "Tests never touch the network or an outside service" in agents
     assert "(tests take none; see *Tests*)" in agents
     # Warnings and logs, monkeypatch over mock, regression tests first.
     assert "`pytest.warns(Category, match=...)`" in agents

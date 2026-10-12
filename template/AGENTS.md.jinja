@@ -157,6 +157,12 @@ to restore the rest, and `git stash drop` that stash.
   per-package configuration in `conftest.py`, plain helper functions
   and classes in `tests/<pkg>/helpers.py`. Shared skip marks go in
   `tests/marks.py`.
+- Import the code under test the way its users do, from its public
+  path. Import a helper by its absolute path,
+  `from tests.<pkg>.helpers import ...`: `tests/` is a package, so this
+  works under `--import-mode=importlib`.
+- Type annotations are optional in tests: `ruff`'s `ANN` rules are
+  waived for `tests/**`, and `ty` does not check `tests/`.
 
 ### Test data
 
@@ -184,6 +190,26 @@ to restore the rest, and `git stash drop` that stash.
   `test_folder_error_ends_with_the_offending_full_path`.
 - Write no docstrings or comments in tests; the name says what a test
   checks. Document an existing test only when the user asks for it.
+- When a parametrized case's values do not say what it covers, name
+  it with `ids=` or `pytest.param(..., id="empty-source")`, so a
+  failure reads `test_load[empty-source]` rather than
+  `test_load[3-True]`.
+- Tests are independent of each other and of their order. A test that
+  changes module-level state — a registry, a cache, an environment
+  variable — restores it: `monkeypatch` for an attribute or a variable,
+  an autouse fixture in that package's `conftest.py` for state a whole
+  package touches. Fixtures keep the default function scope; widen it
+  only for setup that is expensive and never mutated.
+- Seed randomness per test with a local generator
+  (`random.Random(<seed>)`, `numpy.random.default_rng(<seed>)`), never a
+  global seed. Compare floats with `pytest.approx`, or
+  `numpy.testing.assert_allclose` for arrays, giving the tolerance the
+  check needs rather than the default.
+- Test through the public API. Reach into a private name (`_name`) only
+  when it is itself the contract under test, with `# noqa: SLF001` on
+  that line.
+- Tests never touch the network or an outside service: fake the
+  boundary with `monkeypatch`.
 - Assertions check concrete return values *and* side effects, not
   merely "no exception raised"; error paths use
   `pytest.raises(..., match=...)`; verify numbers against independently
