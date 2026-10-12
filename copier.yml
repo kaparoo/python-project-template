@@ -86,11 +86,16 @@ repo_name:
 
 python_version:
   type: str
-  help: Target Python version (major.minor)
+  help: |
+    Target Python version (major.minor).
+
+    3.12 is deprecated and will be removed in template 2.0.0; pick 3.13
+    or later for a new project.
   choices:
-    - "3.15"
-    - "3.14"
-    - "3.13"
+    "3.15": "3.15"
+    "3.14": "3.14"
+    "3.13": "3.13"
+    "3.12 (deprecated)": "3.12"
   default: "3.14"
 
 
@@ -222,6 +227,11 @@ _message_after_copy: |
      code .
 
   The initial commit is already on branch 'main'. Happy coding!
+  {%- if python_version == '3.12' %}
+
+  ⚠️  Python 3.12 is deprecated in this template and will be removed in
+     template 2.0.0. Move the project to 3.13 or later before then.
+  {%- endif %}
 
 _message_after_update: |
 
@@ -231,6 +241,12 @@ _message_after_update: |
      git diff
 
   Re-lock dependencies if needed, then commit when ready.
+  {%- if python_version == '3.12' %}
+
+  ⚠️  Python 3.12 is deprecated in this template and will be removed in
+     template 2.0.0. Re-run with `-d python_version=3.13` (or later)
+     to move the project before then.
+  {%- endif %}
 
 
 # =================================================================== #
