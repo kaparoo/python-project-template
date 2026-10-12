@@ -28,8 +28,8 @@ for new copier options or features, `PATCH` for fixes.
     and free-form sub-READMEs the root links to as a hub.
   - Design decisions: one MADR-style record per decision under
     `docs/decisions/`, superseded rather than rewritten.
-  - One wrap width, 72 columns, for every document, and English for a
-    new one.
+  - One wrap width, 72 columns, for every document, English for a new
+    one, and no em dashes.
   - `AGENTS.md` itself.
 - A `## Releases` section in the generated `AGENTS.md` for applications
   (`is_library = false`): versions are promoted and tagged, not
@@ -40,6 +40,17 @@ for new copier options or features, `PATCH` for fixes.
   Python versions change together in every place that states them.
 - `➕` and `➖` among the generated `AGENTS.md` commit prefixes, for
   adding and removing a dependency.
+- **A `## Code style` section in the generated `AGENTS.md`**,
+  replacing Conventions and Python style; it no longer asks for a blank
+  line before a function's final `return`:
+  - All Python code: module layout and blank lines, absolute imports,
+    private helpers above their first caller, 88 columns on every line,
+    one argument per line in a broken call, PEP 604 and PEP 695 typing,
+    boxed banners, no em dashes, and single backticks.
+  - Source code: no module docstrings, `Final` constants, class member
+    order, `@override`, frozen slotted dataclasses, one-line lower-case
+    messages without a period, and the form of docstrings and comments,
+    filled to 88 columns.
 - A `## Workflow` section in the generated `AGENTS.md`: the gates a
   change passes before it counts as done, commits and pushes only on
   request on the current branch, accumulated changes split into
@@ -50,7 +61,8 @@ for new copier options or features, `PATCH` for fixes.
   - Layout: `fixtures/` packages at the top or per subpackage, test
     data in `tests/assets/`, how tests import, and optional
     annotations.
-  - Writing tests: no docstrings or comments, file I/O under
+  - Writing tests: no new docstrings or comments on tests (shared
+    helpers and fixtures may take a short docstring), file I/O under
     `tmp_path`, named parametrized cases, isolation, seeded randomness
     and explicit float tolerances, warnings and logs, `monkeypatch`
     over `unittest.mock`, the public API, no network, and a failing

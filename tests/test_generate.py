@@ -823,6 +823,30 @@ def test_generated_markdown_wraps_prose_at_72_columns(
     assert not too_wide, "\n".join(too_wide)
 
 
+@pytest.mark.parametrize(
+    "answers",
+    (
+        {},
+        {"release_automation": "github-oidc"},
+        {"is_library": False, "use_pytest": False, "include_todo": False},
+    ),
+)
+def test_generated_docs_use_no_em_dash(
+    tmp_path: Path, answers: dict[str, object]
+) -> None:
+    project = _generate(tmp_path, answers)
+    dashed = []
+    for name in ("AGENTS.md", "README.md", "CHANGELOG.md", "TODO.md", "pyproject.toml"):
+        path = project / name
+        if not path.exists():
+            continue
+        for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            prose = re.sub(r"`[^`]*`", "", line)
+            if "\N{EM DASH}" in line or " -- " in prose:
+                dashed.append(f"{name}:{number}: {line}")
+    assert not dashed, "\n".join(dashed)
+
+
 def test_agents_md_documents_workflow_and_secrets(tmp_path: Path) -> None:
     """Default (pytest): the gates that make a change done, git actions
     only on request, and secrets kept out of the repository."""
@@ -856,31 +880,51 @@ def test_agents_md_workflow_gates_follow_options(tmp_path: Path) -> None:
     assert "uv run pytest\n```" not in agents
 
 
-def test_agents_md_documents_python_style(tmp_path: Path) -> None:
+def test_agents_md_documents_code_style(tmp_path: Path) -> None:
     project = _generate(tmp_path)
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "## Python style" in agents
+    assert "## Python style" not in agents
+    assert "## Conventions" not in agents
+    for heading in ("## Code style", "### All Python code", "### Source code"):
+        assert f"\n{heading}\n" in agents, f"missing {heading}"
     assert "from __future__ import annotations" in agents
-    assert "Google style" in agents
+    assert "except in an `__init__.py`, which does not need it" in agents
+    assert "2. `__all__` as a tuple" in agents
+    assert "Two\n  blank lines follow the import section" in agents
+    assert "carries `# noqa: TID252`" in agents
+    assert "Define a private helper above its first caller" in agents
+    assert "(ruff `E501`)" in agents
+    assert "takes one argument per line" in agents
+    assert "a body of\n  one or two lines has none" in agents
+    assert "blank line before the final" not in agents
+    assert "never `TypeVar`, `TypeAlias`, `Optional`, or `Union`" in agents
+    assert "30 columns\n  wide" in agents
+    assert "uses no em dash" in agents
+    assert "double backticks only when the content holds a backtick" in agents
     assert "PEP 723" in agents
-    # Docstring philosophy (intent/contracts, not just format).
+    assert "A module takes no docstring unless the user asks for one." in agents
+    assert "annotated `Final`" in agents
+    assert "then `__init__` (or `__post_init__`) and `__repr__`" in agents
+    assert "Mark every override with `@override`" in agents
+    assert "`@dataclass(frozen=True, slots=True)`" in agents
+    assert "starts lower-case and ends without a period" in agents
+    assert "never split the string" in agents
+    assert "Google style" in agents
     assert "intent and contracts" in agents
     assert "Type Parameters:" in agents
-    # Expanded docstring guidance: summary-shape carve-outs + family map.
     assert "family map" in agents
     assert "self-explainable" in agents
-    # Literal option values are backticked like identifiers.
     assert "Literal option values get backticks" in agents
-    # Body-layout conventions ported from the project.
-    assert "blank line before the final" in agents
-    assert "boxed comment" in agents
+    assert "leave `__init__` bare" in agents
+    assert "Keep a comment to one line, three at most" in agents
+    assert "Fill docstring and comment prose toward 88 columns" in agents
 
 
 def test_agents_md_documents_error_message_content(tmp_path: Path) -> None:
     """Beyond the EM ruff rule (format), messages must name the fix."""
     project = _generate(tmp_path)
     agents = (project / "AGENTS.md").read_text(encoding="utf-8")
-    assert "name the valid set or the fix" in agents
+    assert "Name the valid set or the fix" in agents
 
 
 def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> None:
@@ -907,7 +951,7 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     assert "Add a `conftest.py` or a `helpers.py` wherever tests need one" in agents
     assert "If the project has a module named\n  `assets`" in agents
     assert "does so under pytest's `tmp_path`" in agents
-    assert "Write no docstrings or comments in tests" in agents
+    assert "Add no docstrings or comments to test functions and classes" in agents
     assert "`from tests.<pkg>.helpers import ...`" in agents
     assert "Type annotations are optional in tests" in agents
     assert '`pytest.param(..., id="empty-source")`' in agents
@@ -916,7 +960,7 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     assert "`numpy.testing.assert_allclose` for arrays" in agents
     assert "`# noqa: SLF001` on\n  that line" in agents
     assert "Tests never touch the network or an outside service" in agents
-    assert "(tests take none; see *Tests*)" in agents
+    assert "(for tests, see *Tests*)" in agents
     # Warnings and logs, monkeypatch over mock, regression tests first.
     assert "`pytest.warns(Category, match=...)`" in agents
     assert "`record.getMessage()`" in agents
@@ -930,9 +974,9 @@ def test_agents_md_documents_test_conventions_with_pytest(tmp_path: Path) -> Non
     assert "Never lower `fail_under`" in agents
     assert "tests cover the public API" in agents
     assert '`uv run pytest -m "not slow"`' in agents
-    # The old Conventions copy is gone: the rules live in Tests only.
-    conventions = agents.split("## Conventions", 1)[1].split("## Tests", 1)[0]
-    assert "pytest" not in conventions
+    # The Code style section holds no test rules: they live in Tests only.
+    code_style = agents.split("## Code style", 1)[1].split("## Tests", 1)[0]
+    assert "pytest" not in code_style
 
     no_pytest = _generate(tmp_path / "np", {"use_pytest": False})
     agents_np = (no_pytest / "AGENTS.md").read_text(encoding="utf-8")

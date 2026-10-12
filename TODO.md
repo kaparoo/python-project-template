@@ -59,6 +59,9 @@ Python version.
   template now carries.
 - Sub-READMEs: list only `##` sections in `## Contents`.
 - `TODO.md`: drop the heading emoji and the "Last updated" footer.
+- Code: five relative imports in `tests/` and three lines over 88
+  columns now fail `ruff check`. The 42 module docstrings predate the
+  rule against them; keep or drop them as the user decides.
 
 Revisit when `v1.6.0` is out.
 
@@ -67,6 +70,9 @@ Revisit when `v1.6.0` is out.
 - `README.md`: move 🙏 Acknowledgements before 📋 TODO; cut
   🧩 Modules down to a hub over the sub-READMEs; add ⌨️ CLI for
   `iivs_cli`; replace the relative `./iivs/dhm/constants.py` link.
+- Tests: move the real Koala samples from `tests/fixtures/`, which
+  now holds fixture modules, to `tests/assets/local/`.
+- Docstrings: turn the 234 double-backtick spans into single backticks.
 - Publish a release afterwards: the PyPI page keeps the broken
   relative links until a new version is uploaded.
 
@@ -79,17 +85,11 @@ Revisit when `v1.6.0` is out.
 - `TODO.md`: move the settled decisions into `docs/decisions/`
   records, delete implemented and struck-through items, and keep the
   rest as items. It stays in Korean.
+- Tests: gather the `requires_cuda` marks copied into several files
+  into one `tests/marks.py`.
+- Code: eight lines over 88 columns now fail `ruff check`.
 
 Revisit when the `pytorch-v*` release after `v1.6.0` is out.
-
-## Generated `AGENTS.md` rules
-
-- Code style: file and module layout, class member order, docstrings,
-  and comments. Start from the rules downstream projects already keep
-  above their markers: `iivs-lib`'s `__all__` placements, singular
-  module names, and PEP 695 alias imports; `cardiomyocytes`' two
-  logging registers, meaningful `__repr__` for `%r`, and single-line
-  error messages.
 
 ## Infrastructure
 
@@ -97,11 +97,10 @@ Revisit when the `pytorch-v*` release after `v1.6.0` is out.
 
 `template/.github/dependabot.yml`: Dependabot updates for generated
 projects' `uv` dependencies and GitHub Actions. The minimums inside
-`template/*.jinja` stay manual. Postponed by the user until the code
-style and test rules land.
+`template/*.jinja` stay manual. The user postponed it until the code
+style and test rules landed; both are now in.
 
-Revisit when the code style and test rules are in the generated
-`AGENTS.md`.
+Revisit when the user takes it up.
 
 ## This repository
 
