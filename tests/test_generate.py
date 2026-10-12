@@ -338,7 +338,7 @@ def test_include_todo_true_creates_todo_md_and_readme_link(tmp_path: Path) -> No
     assert "Promote an" in todo
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "## 📋 TODO" in readme
-    assert "[TODO.md](./TODO.md)" in readme
+    assert "[TODO.md](https://github.com/kaparoo/test-app/blob/main/TODO.md)" in readme
 
 
 def test_include_todo_false_omits_todo_md_and_readme_link(tmp_path: Path) -> None:
@@ -373,6 +373,29 @@ def test_readme_for_application_swaps_install_to_dev_setup(tmp_path: Path) -> No
     assert "## 🧩 Modules" not in readme  # library-only section
     assert "uv add test-app" not in readme
     assert "uv sync --group dev" in readme
+
+
+def test_library_readme_links_repository_files_absolutely(tmp_path: Path) -> None:
+    """A library's README is its PyPI page, which has no other repo files."""
+    project = _generate(tmp_path)
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert readme.startswith("# test-app\n")
+    assert "](./" not in readme
+    base = "https://github.com/kaparoo/test-app/blob/main"
+    for target in ("LICENSE", "TODO.md", "CHANGELOG.md"):
+        assert f"]({base}/{target})" in readme, f"missing link to {target}"
+
+
+def test_application_readme_links_repository_files_relatively(
+    tmp_path: Path,
+) -> None:
+    """An application's README is only read on GitHub or in a clone."""
+    project = _generate(tmp_path, {"is_library": False})
+    readme = (project / "README.md").read_text(encoding="utf-8")
+    assert readme.startswith("# test-app\n")
+    assert "https://github.com/kaparoo/test-app/blob/main" not in readme
+    for target in ("LICENSE", "TODO.md", "CHANGELOG.md"):
+        assert f"](./{target})" in readme, f"missing link to {target}"
 
 
 # ─── CI workflow ───

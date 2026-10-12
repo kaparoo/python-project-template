@@ -50,6 +50,12 @@ for new copier options or features, `PATCH` for fixes.
 - `"ruff.nativeServer": "on"` from the generated `.vscode/settings.json`;
   Ruff 0.17 ignores it.
 
+### Fixed
+
+- The generated `README.md` of a library links `LICENSE`, `TODO.md`, and
+  `CHANGELOG.md` by absolute GitHub URL, so the links no longer 404 on
+  the PyPI project page. Applications keep relative links.
+
 ## [1.5.5] - 2026-07-07
 
 ### Changed
