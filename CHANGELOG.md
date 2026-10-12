@@ -16,6 +16,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-13
+
 ### Added
 
 - `13.2` as a `cuda_version` choice, routed to the `cu132` PyTorch
@@ -587,7 +589,8 @@ PyTorch-specific deltas are listed below.
   `--vcs-ref pytorch`; the variant lives on a branch, not on the
   latest Git tag.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.4...pytorch
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/pytorch-v2.0.0...pytorch
+[2.0.0]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.4...pytorch-v2.0.0
 [1.7.4]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.3...pytorch-v1.7.4
 [1.7.3]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.2...pytorch-v1.7.3
 [1.7.2]: https://github.com/kaparoo/python-project-template/compare/pytorch-v1.7.1...pytorch-v1.7.2
