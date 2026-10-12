@@ -90,6 +90,7 @@ git clone https://github.com/kaparoo/python-project-template
 cd python-project-template
 uv sync --group dev
 uv run pytest          # generation-scenario tests
+uv run pytest -m "not slow"  # skip the real-toolchain integration tests
 ```
 
 [CI](./.github/workflows/ci.yml) runs `ruff` and the same tests on

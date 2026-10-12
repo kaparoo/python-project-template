@@ -76,14 +76,27 @@ more. It's slow, not hung.
 ### 2. Both branches of every `copier.yml` option must be tested
 
 When adding a new option (e.g., `use_xyz`), add at least one test per
-branch in `tests/test_generate.py`. Default-vs-enabled coverage is the
-minimum bar.
+branch, usually in `tests/test_project.py`. Default-vs-enabled
+coverage is the minimum bar.
 
 ### 3. Verify after every `template/` change
 
 `uv run pytest` runs copier in-process for every scenario in
-`tests/test_generate.py`. If even one file in `template/` changes,
-run the suite before committing.
+`tests/`. If even one file in `template/` changes, run the suite
+before committing; `uv run pytest -m "not slow"` skips the
+real-toolchain tests for quick iteration, but not before a commit.
+
+The suite has one module per concern: `test_project.py` (questions,
+generated files, `pyproject.toml`), `test_docs.py` (README, CHANGELOG,
+TODO, and the width and dash checks over every generated document),
+`test_agents_md.py`, `test_workflows.py` (CI and `publish.yml`), and
+`test_integration.py` (the real toolchain, marked `slow`). Shared code
+lives in `tests/helpers.py`; `tests/conftest.py` holds a session
+`render` fixture that renders each set of answers once for the tests
+that only read. A test that writes into the project or runs `_tasks`
+calls `generate` on its own `tmp_path`. Tests follow the test rules
+generated projects get: no docstrings or comments, and `prose()` for
+phrases that a rewrap could split.
 
 [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) runs the same
 suite, with `ruff format --check` and `ruff check`, on Ubuntu and
@@ -92,7 +105,7 @@ It catches what slipped through; it does not replace the local run.
 
 ### 4. Some tests run the real toolchain on a generated project
 
-A few integration tests in `tests/test_generate.py` don't just inspect
+The integration tests in `tests/test_integration.py` don't just inspect
 rendered text: they `git init` / `uv lock` / `uv sync` / commit a
 generated project, run the gates its `ci.yml` defines (`ruff format
 --check`, `ruff check`, `ty check`, `pytest`), and build a library with
@@ -218,7 +231,7 @@ principle:
   prior releases) and the `pytorch-v*` comparison links at the
   bottom.
 
-`tests/test_generate.py` may also conflict when the default values
+The tests in `tests/` may also conflict when the default values
 diverge (notably `use_pytest`): keep pytorch's `{"use_pytest": True}`
 override in tests that assume the pytest layer; keep pytorch's
 expected-files list (no `tests/__init__.py` when use_pytest is
@@ -244,7 +257,7 @@ default-false there).
    `# ─── ... ───` section (e.g. `# ─── Project nature ───`).
 2. Add conditional Jinja blocks in `template/pyproject.toml.jinja`,
    `template/.vscode/extensions.json.jinja`, etc., as needed.
-3. Add tests in `tests/test_generate.py` covering both branches.
+3. Add tests in `tests/` covering both branches.
 4. Commit changes, then run `uv run pytest` (clean tree required).
 5. Update [`README.md`](./README.md) options table if applicable.
 
@@ -262,7 +275,7 @@ behavior (see [Changelog](#changelog)), so a change to one touches:
 1. `copier.yml`: the question itself.
 2. [`README.md`](./README.md) options table: its row (type, default,
    notes) and the prose under the table that describes it.
-3. `tests/test_generate.py`: the new value and, where it matters, the
+3. `tests/test_project.py`: the new value and, where it matters, the
    old one.
 4. `CHANGELOG.md` → `[Unreleased]`.
 
@@ -283,7 +296,7 @@ reads the `python_version` answer. A change touches:
 2. [`README.md`](./README.md): the Python badge lists every version
    still offered (deprecated ones included), and the options table row
    and its notes.
-3. `tests/test_generate.py`: the default, a round-trip of each new
+3. `tests/test_project.py`: the default, a round-trip of each new
    choice, rejection of a version outside the list, and the warning for
    a deprecated choice and its absence on the default.
 4. `CHANGELOG.md`: `Added` for a new choice, `Changed` for a new
@@ -330,7 +343,7 @@ release together, in one `⬆️` commit:
    three files.
    `pypa/gh-action-pypi-publish` stays on `release/v1`, the ref PyPA
    documents.
-2. The version assertions in `tests/test_generate.py`
+2. The version assertions in `tests/test_workflows.py`
    (`test_ci_workflow_present_and_pinned` and the
    `test_release_automation_*` tests).
 3. `CHANGELOG.md` → `Changed`.
@@ -344,8 +357,7 @@ section names (📦 Installation, 🚀 Quick start, 🧩 Modules, 📦 Setup,
 `_No entries yet._`, the `[Unreleased]` link reference), what
 `publish.yml` does, and `pyproject.toml` settings (`error-on-warning`,
 `fail_under`, `required-imports`). Change both sides in the same
-commit, and assert the shared strings on both sides in
-`tests/test_generate.py`.
+commit, and assert the shared strings on both sides in `tests/`.
 
 ### Each new year
 

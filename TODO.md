@@ -27,7 +27,7 @@ beyond the usual `CHANGELOG.md` one (see *Merging `main` into
   right after the Python badge;
 - `template/.github/workflows/ci.yml.jinja`: the Python matrix against
   the variant's CPU `torch` install and its `lock` job;
-- `tests/test_generate.py`, where `use_pytest` defaults to `false`.
+- the modules in `tests/`, where `use_pytest` defaults to `false`.
 
 Work the variant needs beyond resolving conflicts:
 
@@ -64,11 +64,3 @@ projects' `uv` dependencies and GitHub Actions. The minimums inside
 style and test rules landed; both are now in.
 
 Revisit when the user takes it up.
-
-## This repository
-
-- `tests/test_generate.py`: refactor it to the test rules generated
-  projects now get, for consistency. Its tests carry docstrings and
-  explanatory comments, which those rules leave out unless the user
-  asks; the file is also one 1,100-line module where the rules would
-  split it by concern.
