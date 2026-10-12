@@ -23,6 +23,12 @@ for new copier options or features, `PATCH` for fixes.
   `actions/download-artifact@v8` (`actions/upload-artifact@v7` is already
   current). All still run on Node 24.
 
+### Removed
+
+- Dropped `"ruff.nativeServer": "on"` from the generated (and workspace)
+  `.vscode/settings.json` — Ruff 0.17 removed `ruff-lsp`, so the setting is
+  deprecated and ignored by the VS Code extension.
+
 ## [1.5.5] - 2026-07-07
 
 ### Changed
