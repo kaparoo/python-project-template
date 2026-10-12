@@ -81,6 +81,10 @@ for new copier options or features, `PATCH` for fixes.
     CI cannot run the tests.
   - Coverage and speed: when to raise `fail_under`, and the `slow`
     marker.
+- A `tests/test_<package>.py` smoke test in pytest projects that
+  imports the package, so the generated CI passes on the first push;
+  until now `pytest` collected nothing and failed it, which also
+  blocked `publish.yml`.
 - A registered `slow` pytest marker in generated projects, and
   `tests/assets/local/` in the generated `.gitignore` for test data too
   large or private to commit.

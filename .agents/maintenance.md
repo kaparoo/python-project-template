@@ -152,7 +152,7 @@ copier copy --vcs-ref HEAD --UNSAFE . ~/tmp/dogfood-$(date +%s) -d project_name=
 cd ~/tmp/dogfood-*
 uv run ruff check .
 uv run ty check
-uv run pytest    # may exit 5 = no tests collected, that's expected
+uv run pytest
 uv build
 ```
 

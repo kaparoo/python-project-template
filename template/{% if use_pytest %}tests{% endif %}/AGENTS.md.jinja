@@ -15,6 +15,10 @@ whenever it works in `tests/`; the project-wide rules are in the root
 - Not every source file needs a dedicated test file: types-only
   modules, re-export `__init__.py` markers, and details covered through
   a public-facing module are intentional exceptions.
+- `tests/test_{{ package_name }}.py` starts as a smoke test that imports
+  the package, so CI passes before the first real test. Grow it into
+  the tests of the package's top-level API, or delete it once other
+  tests exist.
 - Fixtures live in `tests/conftest.py` when you need them (modern
   default, applies to `tests/` only). Use a root `conftest.py` only for
   `pytest_plugins` declarations, doctest fixtures shared with source

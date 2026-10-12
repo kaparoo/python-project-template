@@ -30,6 +30,7 @@ def test_default_generation_creates_expected_files(render: Render) -> None:
         "tests/__init__.py",
         "tests/AGENTS.md",
         "tests/CLAUDE.md",
+        "tests/test_test_app.py",
         "CHANGELOG.md",
         "TODO.md",
         ".copier-answers.yml",
@@ -137,6 +138,9 @@ def test_use_pytest_true_includes_pytest_machinery(render: Render) -> None:
     project = render()
     assert (project / "tests" / "__init__.py").is_file()
     assert not (project / "tests" / "conftest.py").exists()
+    smoke = (project / "tests" / "test_test_app.py").read_text(encoding="utf-8")
+    assert "import test_app\n" in smoke
+    assert 'assert test_app.__name__ == "test_app"' in smoke
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
     assert '"pytest>=9.1.1"' in pyproject
     assert '"pytest-cov>=7.1.0"' in pyproject

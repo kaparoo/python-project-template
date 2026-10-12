@@ -47,7 +47,7 @@ def test_generated_library_passes_its_own_ci(tmp_path: Path) -> None:
     run_in_project(project, ["uv", "run", "ruff", "format", "--check", "."])
     run_in_project(project, ["uv", "run", "ruff", "check", "."])
     run_in_project(project, ["uv", "run", "ty", "check"])
-    run_in_project(project, ["uv", "run", "pytest"], allow_codes=(0, 5))
+    run_in_project(project, ["uv", "run", "pytest"])
     ci = yaml.safe_load(
         (project / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
     )
