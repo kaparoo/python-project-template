@@ -9,6 +9,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-13
+
 ### Added
 
 - `3.15` as a `python_version` choice, now that Python 3.15.0 is out.
@@ -537,7 +539,8 @@ Python projects with the Astral toolchain (`uv`, `ruff`, `ty`) plus
   in `tests/test_generate.py`, and an `AGENTS.md` for the template
   repository itself.
 
-[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v1.5.5...HEAD
+[Unreleased]: https://github.com/kaparoo/python-project-template/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/kaparoo/python-project-template/compare/v1.5.5...v2.0.0
 [1.5.5]: https://github.com/kaparoo/python-project-template/compare/v1.5.4...v1.5.5
 [1.5.4]: https://github.com/kaparoo/python-project-template/compare/v1.5.3...v1.5.4
 [1.5.3]: https://github.com/kaparoo/python-project-template/compare/v1.5.2...v1.5.3

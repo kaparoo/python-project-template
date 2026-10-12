@@ -6,13 +6,6 @@ resolves it.
 
 ## Releases and variants
 
-- Cut `v2.0.0` once the user asks for it. It is a major release:
-  removing the `3.12` choice breaks `copier update` for a project that
-  recorded it. `[Unreleased]` also holds the CI Python matrix and build
-  job, the stricter `ruff` settings, and the generated agent guides
-  (`AGENTS.md`, `.agents/`, `tests/AGENTS.md`) with their workflow,
-  code style, test, dependency, and documentation rules.
-
 ### Merge `main` into `pytorch`
 
 `pytorch` has none of the commits from `v1.5.5` on. Expect conflicts
