@@ -18,6 +18,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Added
 
+- `13.2` as a `cuda_version` choice, routed to the `cu132` PyTorch
+  index.
 - **Task guides in generated projects**: `AGENTS.md` keeps the rules
   every task needs and indexes one guide per task, which an agent reads
   only when that task comes up. The guides live in `.agents/`
@@ -110,6 +112,8 @@ for new copier options or features, `PATCH` for fixes.
 
 ### Changed
 
+- `torch_version` and `torchvision_version` default to `2.14.1` and
+  `0.29.1`, the newest releases. A recorded answer keeps its version.
 - Generated projects require `ruff>=0.17.0`, `ty>=0.0.86`, and
   `uv_build>=0.13.0,<0.14`; the `[tool.ruff]` `required-version` floor
   follows to `0.17.0`.
@@ -160,8 +164,11 @@ for new copier options or features, `PATCH` for fixes.
 
 - **Breaking:** `3.12` as a `python_version` choice: generated projects
   need Python 3.13 or newer. Update a project that recorded `3.12` with
-  `copier update -d python_version=3.13` (or later); with `--defaults`
-  alone, it silently takes the default, `3.14`.
+  `copier update --vcs-ref pytorch -d python_version=3.13` (or later);
+  with `--defaults` alone, it silently takes the default, `3.14`.
+- **Breaking:** `12.8` as a `cuda_version` choice: `torch` 2.14.1 has
+  no `cu128` build. Update a project that recorded `12.8` with
+  `copier update --vcs-ref pytorch -d cuda_version=13.0` (or `12.6`).
 - `"ruff.nativeServer": "on"` from the generated
   `.vscode/settings.json`; Ruff 0.17 ignores it.
 

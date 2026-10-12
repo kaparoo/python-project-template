@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pytest
+
 from tests.helpers import prose
 
 if TYPE_CHECKING:
@@ -11,8 +13,8 @@ if TYPE_CHECKING:
 def test_torch_in_dependencies(render: Render) -> None:
     project = render()
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
-    assert '"torch>=2.12.1"' in pyproject
-    assert '"torchvision>=0.27.1"' in pyproject
+    assert '"torch>=2.14.1"' in pyproject
+    assert '"torchvision>=0.29.1"' in pyproject
     assert "Artificial Intelligence" in pyproject
 
 
@@ -26,6 +28,23 @@ def test_cuda_backend_routes_to_cuda_index(render: Render) -> None:
     assert 'torchvision = { index = "pytorch" }' in pyproject
 
 
+@pytest.mark.parametrize(
+    ("cuda_version", "index"),
+    (("12.6", "cu126"), ("13.0", "cu130"), ("13.2", "cu132")),
+)
+def test_cuda_version_picks_its_index(
+    render: Render, cuda_version: str, index: str
+) -> None:
+    project = render({"cuda_version": cuda_version})
+    pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
+    assert f'url = "https://download.pytorch.org/whl/{index}"' in pyproject
+
+
+def test_cuda_version_rejects_builds_torch_no_longer_ships(render: Render) -> None:
+    with pytest.raises(ValueError, match="Invalid choice for 'cuda_version'"):
+        render({"cuda_version": "12.8"})
+
+
 def test_cpu_backend_routes_to_cpu_index(render: Render) -> None:
     project = render({"compute_backend": "cpu"})
     pyproject = (project / "pyproject.toml").read_text(encoding="utf-8")
@@ -37,7 +56,7 @@ def test_readme_documents_compute_environment(render: Render) -> None:
     project = render()
     readme = (project / "README.md").read_text(encoding="utf-8")
     assert "## 🖥️ Compute environment" in readme
-    assert "badge/PyTorch-2.12.1" in readme
+    assert "badge/PyTorch-2.14.1" in readme
     assert "badge/CUDA-13.0" in readme
     assert "https://download.pytorch.org/whl/cu130" in readme
     assert (

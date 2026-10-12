@@ -72,7 +72,7 @@ This project targets **PyTorch**{% if compute_backend == 'cuda' %} on **NVIDIA G
 ### Switching the compute backend
 
 The backend is the `[[tool.uv.index]]` named `pytorch` in
-`pyproject.toml` (`cu126` / `cu128` / `cu130`, or `.../whl/cpu`).
+`pyproject.toml` (`cu126` / `cu130` / `cu132`, or `.../whl/cpu`).
 After changing it, re-resolve with `uv lock && uv sync`, or re-run
 `copier update --UNSAFE --vcs-ref pytorch` and answer
 `compute_backend` / `cuda_version` again.

@@ -67,10 +67,10 @@ versions without losing your customizations.
 | `use_pytest` | bool | `false` | Adds `tests/` + pytest config |
 | `coverage_fail_under` | int | `0` | Branch-coverage gate; `0` = off (pytest only) |
 | `include_todo` | bool | `true` | Generates `TODO.md` + a README 📋 TODO section |
-| `torch_version` | str | `2.12.1` | Minimum `torch` version |
-| `torchvision_version` | str | `0.27.1` | Minimum `torchvision` version |
+| `torch_version` | str | `2.14.1` | Minimum `torch` version |
+| `torchvision_version` | str | `0.29.1` | Minimum `torchvision` version |
 | `compute_backend` | choice | `cuda` | `cpu` / `cuda`; selects the PyTorch index |
-| `cuda_version` | choice | `13.0` | `12.6` / `12.8` / `13.0` (asked only for `cuda`) |
+| `cuda_version` | choice | `13.0` | `12.6` / `13.0` / `13.2` (asked only for `cuda`) |
 
 `release_automation`, `use_testpypi`, and `coverage_fail_under` are only
 asked when their parent feature is enabled (a library, or pytest).
