@@ -195,7 +195,10 @@ Modules and classes:
   `raise NotImplementedError`; a `Protocol` member keeps `...`.
 - A value type is `@dataclass(frozen=True, slots=True)`; a plain
   `@dataclass` is for mutable configuration.
-- A closed set of options is a `Literal` alias, not an `Enum`.
+- A closed set of options a caller passes as strings is a `Literal`
+  alias, not an `Enum`. Use an `Enum` when the members carry a value
+  of their own, such as the integer codes a file format stores (an
+  `IntEnum`).
 - Keep code fully typed (`ty` runs with `error-on-warning`), with
   standard typing only: `ty` has no plugins, so use PEP 681
   `dataclass_transform` or `.pyi` stubs.

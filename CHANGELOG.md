@@ -9,6 +9,13 @@ for new copier options or features, `PATCH` for fixes.
 
 ## [Unreleased]
 
+### Changed
+
+- The generated `AGENTS.md` asks for a `Literal` alias only for
+  options a caller passes as strings, and for an `Enum` when the
+  members carry a value of their own, such as the integer codes a
+  file format stores.
+
 ## [2.0.0] - 2026-10-13
 
 ### Added
